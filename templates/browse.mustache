@@ -1,0 +1,135 @@
+{{!
+This file is part of MuTMS suite of plugins for Moodle™ LMS.
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+@copyright   2026 Petr Skoda
+@license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+
+}}
+{{!
+    @template tool_mucatalog/browse
+
+    This template renders the Universal catalog content.
+
+    Example context (json):
+    {
+        "sectionid": 2,
+        "hidesectionselect": false,
+        "sectionselect": {
+            "all": {
+                "name": "All items",
+                "value": 0,
+                "iscurrent": false
+            },
+            "hascollections": true,
+            "collections": [
+                {
+                    "name": "Collection 1",
+                    "value": -1,
+                    "iscurrent": false
+                }
+            ],
+            "sections": [
+                {
+                    "name": "Section 1",
+                    "value": "1",
+                    "iscurrent": false
+                },
+                {
+                    "name": "Section 2",
+                    "value": "2",
+                    "iscurrent": true
+                }
+            ],
+            "hassections": true
+        },
+        "typeselect": [
+            {
+                "name": "Any type",
+                "value": "",
+                "iscurrent": true
+            },
+            {
+                "name": "Course",
+                "value": "course",
+                "iscurrent": false
+            },
+            {
+                "name": "Program",
+                "value": "program",
+                "iscurrent": false
+            },
+            {
+                "name": "Certification",
+                "value": "certification",
+                "iscurrent": false
+            }
+        ],
+        "hastypeselect": true,
+        "items": [
+            {
+                "itemtype": "Certification",
+                "itemname": "Certification 2",
+                "sectionname": "Section 2",
+                "itemurl": "https://www.example.com/admin/tool/mucatalog/item.php?id=23",
+                "imageurl": "https://www.example.com/pluginfile.php/1/tool_mucatalog/item_image/23/geopattern.svg",
+                "registered": false
+            },
+            {
+                "itemtype": "Program",
+                "itemname": "Program 1",
+                "sectionname": "Section 2",
+                "itemurl": "https://www.example.com/admin/tool/mucatalog/item.php?id=17",
+                "imageurl": "https://www.example.com/pluginfile.php/1/tool_mucatalog/item_image/17/moodlelogo.png",
+                "registered": true
+            },
+            {
+                "itemtype": "Course",
+                "itemname": "Test course: S",
+                "sectionname": "Section 2",
+                "itemurl": "https://www.example.com/admin/tool/mucatalog/item.php?id=3",
+                "imageurl": "https://www.example.com/pluginfile.php/1/tool_mucatalog/item_image/3/geopattern.svg",
+                "registered": true
+            }
+        ],
+        "hasmore": false,
+        "nextlimitfrom": 12
+    }
+}}
+<div id="tool_mucatalog-browse">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="d-flex flex-column col-12 col-md-3 col-lg-2 p-3">
+                {{> tool_mucatalog/browse-filters }}
+            </div>
+            <div class="container-fluid col-md-9 col-lg-10">
+                <div class="card-grid mx-0 row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xl-4" id="tool_mucatalog-browse-items" data-region="card-deck" role="list">
+                    {{> tool_mucatalog/browse-items }}
+                </div>
+                <div class="col-12 pt-2 d-flex justify-content-end">
+                    <button class="btn btn-primary {{^hasmore}}hidden{{/hasmore}}" id="tool_mucatalog-browse-more">
+                        <span class="hidden loading-icon icon-no-margin" id="tool_mucatalog-browse-loading">{{#pix}} i/loading, core, {{#str}} loading {{/str}} {{/pix}}</span>
+                        {{#str}}items_more, tool_mucatalog{{/str}}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{{#js}}
+require(['tool_mucatalog/browse'], function(Browse) {
+    Browse.init();
+});
+{{/js}}

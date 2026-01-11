@@ -1,0 +1,50 @@
+#tool_mucatalog-browse {
+    .item-card {
+        .card-img-top {
+            height: 7rem;
+            background-position: center;
+            background-size: cover;
+        }
+    }
+
+    .form-icon-input {
+        position: relative;
+        input {
+            padding-left: 40px;
+        }
+        .form-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            pointer-events: none;
+            z-index: 1;
+        }
+    }
+
+    .form-icon-select {
+        position: relative;
+        select {
+            padding-left: 40px;
+        }
+        .form-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            pointer-events: none;
+            z-index: 1;
+        }
+    }
+}
+
+#tool_mucatalog-item {
+    .item-detail-card {
+        padding: 0 !important;
+        .card-img-top {
+            height: 7rem;
+            background-position: center;
+            background-size: cover;
+        }
+    }
+}

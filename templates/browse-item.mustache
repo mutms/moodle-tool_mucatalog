@@ -1,0 +1,66 @@
+{{!
+This file is part of MuTMS suite of plugins for Moodle™ LMS.
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+@copyright   2026 Petr Skoda
+@license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+
+}}
+{{!
+    @template tool_mucatalog/browse-item
+
+    This template renders the Universal catalog item.
+
+    Example context (json):
+    {}
+}}
+{{! htmlhint-disable aria-required-parent }}
+{{#id}}
+<div class="card item-card mx-1 overflow-hidden" role="listitem"
+     data-region="item-content"
+     data-item-id="{{id}}">
+    <a href="{{itemurl}}" tabindex="-1">
+        <div class="card-img-top" style='background-image: url("{{imageurl}}");'>
+            <span class="sr-only">{{name}}</span>
+        </div>
+    </a>
+    <div class="card-body item-info-container">
+        <div class="d-flex align-items-start">
+            <div class="w-100 text-truncate">
+                <a href="{{itemurl}}" class="aalink itemname me-2 mb-0">
+                    <span class="sr-only">
+                        {{#str}}item_name, tool_mucatalog{{/str}}
+                    </span>
+                    {{itemname}}
+                </a>
+                <div class="text-muted muted d-flex mb-1 flex-wrap">
+                    <div>
+                        <span class="sr-only">
+                            {{#str}}item_type, tool_mucatalog{{/str}}
+                        </span>
+                        <small>{{itemtype}}</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {{#registered}}
+        <div class="position-absolute top-0 end-0 bg-primary text-white px-2 py-1"
+             style="font-size: 0.75rem;">
+            <i class="fa-solid fa-bookmark me-1" role="presentation"></i> {{#str}}item_registered, tool_mucatalog{{/str}}
+        </div>
+    {{/registered}}
+</div>
+{{/id}}

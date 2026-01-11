@@ -1,0 +1,72 @@
+{{!
+This file is part of MuTMS suite of plugins for Moodle™ LMS.
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+@copyright   2026 Petr Skoda
+@license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+
+}}
+{{!
+    @template tool_mucatalog/item
+
+    This template renders the Universal catalog item in single-item detail view.
+
+    Example context (json):
+    {}
+}}
+<div id="tool_mucatalog-item">
+    <div class="card item-detail-card overflow-hidden" role="main"
+         data-region="item-content"
+         data-item-id="{{id}}">
+        <div class="card-img-top" style='background-image: url("{{imageurl}}");'>
+            <span class="sr-only">{{name}}</span>
+        </div>
+        <div class="card-body item-info-container" id="item-info-container-{{id}}-{{uniqid}}">
+            <h2 class="itemname h3 mb-0">
+                <span class="sr-only">
+                    {{#str}}item_name, tool_mucatalog{{/str}}
+                </span>
+                {{itemname}}
+            </h2>
+            <div class="text-muted d-flex mb-3 flex-wrap">
+                <span class="sr-only">
+                    {{#str}}item_type, tool_mucatalog{{/str}}
+                </span>
+                <small>{{itemtype}}</small>
+            </div>
+            {{#description}}
+                <div class="item-description pt-4 mb-4 border-top">
+                    {{{description}}}
+                </div>
+            {{/description}}
+            <div class="item-detail-actions pt-4 mt-3 border-top">
+                {{#openurl}}
+                    <a href="{{openurl}}" class="btn btn-primary">
+                        {{#str}}item_open, tool_mucatalog{{/str}}
+                    </a>
+                {{/openurl}}
+                <button type="button" class="btn btn-secondary ms-2" onclick="history.back()">
+                    {{#str}}back{{/str}}
+                </button>
+            </div>
+        </div>
+        {{#registered}}
+            <div class="position-absolute top-0 end-0 bg-primary text-white px-2 py-1"
+                 style="font-size: 0.75rem;">
+                <i class="fa-solid fa-bookmark me-1" role="presentation"></i> {{#str}}item_registered, tool_mucatalog{{/str}}
+            </div>
+        {{/registered}}
+    </div>
+</div>

@@ -1,0 +1,66 @@
+{{!
+This file is part of MuTMS suite of plugins for Moodle™ LMS.
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+@copyright   2026 Petr Skoda
+@license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+
+}}
+{{!
+    @template tool_mucatalog/frontpage
+
+    This template renders the frontpage area for the Universal catalog.
+
+    Example context (json):
+    {
+        "sections": [
+            {
+                "iscollection": true,
+                "name": "Collection 1",
+                "shortdescription": "<p>Collection 1</p>\n",
+                "url": "https://www.example.com/admin/tool/mucatalog/?sectionid=-1",
+                "frontpagepriority": "77"
+            },
+            {
+                "issection": true,
+                "name": "Section 2",
+                "shortdescription": "<p>iuh</p>\n",
+                "url": "https://www.example.com/admin/tool/mucatalog/?sectionid=2",
+                "frontpagepriority": "50"
+            },
+            {
+                "isall": true,
+                "name": "All items",
+                "shortdescription": "<p>List of all items available in catalogue.</p>\n",
+                "url": "https://www.example.com/admin/tool/mucatalog/?sectionid=0",
+                "frontpagepriority": 0
+            }
+        ]
+    }
+}}
+
+<div class="tool-mucatalog-frontpage">
+    {{#sections}}
+        {{#isall}}
+            {{> tool_mucatalog/frontpage-all }}
+        {{/isall}}
+        {{#issection}}
+            {{> tool_mucatalog/frontpage-section }}
+        {{/issection}}
+        {{#iscollection}}
+            {{> tool_mucatalog/frontpage-collection }}
+        {{/iscollection}}
+    {{/sections}}
+</div>

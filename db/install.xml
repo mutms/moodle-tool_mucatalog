@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="admin/tool/mucatalog/db" VERSION="20260227" COMMENT="XMLDB file for tool_mucatalog plugin"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="tool_mucatalog_section" COMMENT="List of catalogue section">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="contextid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Context for section management access control, apart from tenant separation context does not affect visibility of sections - system or category context only"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="254" NOTNULL="true" SEQUENCE="false" COMMENT="Section name, it is recommended to be unique"/>
+        <FIELD NAME="shortdescription" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="Short section description text in markdown format - should not be empty"/>
+        <FIELD NAME="presentationjson" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="Visual presentation of section, such as image file info"/>
+        <FIELD NAME="frontpagepriority" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="NULL means do not show on the catalogue front page, highest priority number section/collection is displayed first on the front page"/>
+        <FIELD NAME="guestvisible" TYPE="int" LENGTH="1" NOTNULL="true" SEQUENCE="false" COMMENT="Are guests and not-logged-in users allowed to access the section?"/>
+        <FIELD NAME="uservisible" TYPE="int" LENGTH="1" NOTNULL="true" SEQUENCE="false" COMMENT="Are all users allowed to access the section? if 0 then cohort required"/>
+        <FIELD NAME="hiddenfromtenants" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="1 means section is not visible when site is switched to any tenant, 0 means section can be visible when switch to tenant depending on other restrictions"/>
+        <FIELD NAME="status" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="0 means draft, 1 means normal visibility logic applies, 2 means archived"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="contextid" TYPE="foreign" FIELDS="contextid" REFTABLE="context" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="name" UNIQUE="false" FIELDS="name" COMMENT="Performance improvement"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="tool_mucatalog_section_cohortvisible" COMMENT="Members of these cohorts may see section when uservisible is 0">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="sectionid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="cohortid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="sectionid" TYPE="foreign" FIELDS="sectionid" REFTABLE="tool_mucatalog_section" REFFIELDS="id"/>
+        <KEY NAME="cohortid" TYPE="foreign" FIELDS="cohortid" REFTABLE="cohort" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="sectionid-cohortid" UNIQUE="true" FIELDS="sectionid, cohortid" COMMENT="Prevent duplicates"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="tool_mucatalog_item" COMMENT="List of catalogue items">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="sectionid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="type" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false" COMMENT="Type of item (cannot be changed): course, bundle, program, cohort, etc."/>
+        <FIELD NAME="referenceid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="course, program, certification id"/>
+        <FIELD NAME="syncname" TYPE="int" LENGTH="1" NOTNULL="true" SEQUENCE="false" COMMENT="1 means sync item name with course, cohort, etc."/>
+        <FIELD NAME="name" TYPE="char" LENGTH="254" NOTNULL="true" SEQUENCE="false" COMMENT="Custom or synced item name"/>
+        <FIELD NAME="presentationjson" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="Visual presentation of item, such as image files"/>
+        <FIELD NAME="hiddenbefore" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Date when item becomes visible"/>
+        <FIELD NAME="hiddenafter" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Item visibility end date"/>
+        <FIELD NAME="status" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="0 means draft, 1 means normal visibility logic applies, 2 means archived"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="sectionid" TYPE="foreign" FIELDS="sectionid" REFTABLE="tool_mucatalog_section" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="name" UNIQUE="false" FIELDS="name" COMMENT="Performance improvement"/>
+        <INDEX NAME="type-referenceid" UNIQUE="false" FIELDS="type, referenceid" COMMENT="Performance improvement"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="tool_mucatalog_collection" COMMENT="List of catalogue collections - hand-picked lists of items, visibility of items is still controlled via sections">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="contextid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Context for collection management access control, apart from tenant separation context does not affect visibility of collections - system or category context only"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="254" NOTNULL="true" SEQUENCE="false" COMMENT="Collection name, it is recommended to be unique"/>
+        <FIELD NAME="shortdescription" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="Short collection description text - should not be empty"/>
+        <FIELD NAME="presentationjson" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="Visual presentation of collection, such as image file info"/>
+        <FIELD NAME="frontpagepriority" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="NULL means do not show on the catalogue front page, highest priority number section/collection is displayed first on the front page"/>
+        <FIELD NAME="guestvisible" TYPE="int" LENGTH="1" NOTNULL="true" SEQUENCE="false" COMMENT="Are guests and not-logged-in users allowed to access the collection?"/>
+        <FIELD NAME="uservisible" TYPE="int" LENGTH="1" NOTNULL="true" SEQUENCE="false" COMMENT="Are all users allowed to access the collection? if 0 then cohort required"/>
+        <FIELD NAME="hiddenfromtenants" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="1 means collection is not visible when site is switched to any tenant, 0 means collection can be visible when switch to tenant depending on other restrictions"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="contextid" TYPE="foreign" FIELDS="contextid" REFTABLE="context" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="name" UNIQUE="false" FIELDS="name" COMMENT="Performance improvement"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="tool_mucatalog_collection_cohortvisible" COMMENT="Members of these cohorts may see collection when uservisible is 0">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="collectionid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="cohortid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="collectionid" TYPE="foreign" FIELDS="collectionid" REFTABLE="tool_mucatalog_collection" REFFIELDS="id"/>
+        <KEY NAME="cohortid" TYPE="foreign" FIELDS="cohortid" REFTABLE="cohort" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="collectionid-cohortid" UNIQUE="true" FIELDS="collectionid, cohortid" COMMENT="Prevent duplicates"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="tool_mucatalog_collection_item" COMMENT="Items included in collections">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="collectionid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="itemid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="collectionid" TYPE="foreign" FIELDS="collectionid" REFTABLE="tool_mucatalog_collection" REFFIELDS="id"/>
+        <KEY NAME="itemid" TYPE="foreign" FIELDS="itemid" REFTABLE="cohort" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="collectionid-itemid" UNIQUE="true" FIELDS="collectionid, itemid" COMMENT="Prevent duplicates"/>
+      </INDEXES>
+    </TABLE>
+  </TABLES>
+</XMLDB>
