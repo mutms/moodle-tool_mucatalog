@@ -167,6 +167,7 @@ final class browse implements \core\output\named_templatable, \core\output\rende
             return null;
         }
         return [
+            'id' => $item->id,
             'itemtype' => $classname::get_type_name(),
             'itemname' => format_string($item->name),
             'sectionname' => format_string($item->sectionname),
