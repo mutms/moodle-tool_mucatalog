@@ -29,7 +29,7 @@ Required plugins:
 
 ## Documentation
 
-See [online documentation](https://docs.mutms.org/catalogue/) for more information.
+See [online documentation](https://docs.mutms.org/mucatalog/) for more information.
 
 ---
 
