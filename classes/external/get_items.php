@@ -150,6 +150,7 @@ final class get_items extends external_api {
         return new external_single_structure([
             'items' => new external_multiple_structure(
                 new external_single_structure([
+                    'itemid' => new external_value(PARAM_INT, 'Item id'),
                     'itemtype' => new external_value(PARAM_TEXT, 'Item type'),
                     'itemname' => new external_value(PARAM_TEXT, 'Item name'),
                     'sectionname' => new external_value(PARAM_TEXT, 'Item name'),

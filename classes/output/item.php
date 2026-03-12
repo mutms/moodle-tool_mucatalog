@@ -78,7 +78,7 @@ final class item implements \core\output\named_templatable, \core\output\rendera
         $openurl = $classname::get_open_url($item);
 
         return [
-            'id' => $item->id,
+            'itemid' => $item->id,
             'itemtype' => $classname::get_type_name(),
             'itemname' => format_string($item->name),
             'sectionname' => format_string($section->name),

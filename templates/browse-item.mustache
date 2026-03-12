@@ -27,10 +27,10 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
     {}
 }}
 {{! htmlhint-disable aria-required-parent }}
-{{#id}}
+{{#itemid}}
 <div class="card item-card mx-1 overflow-hidden" role="listitem"
      data-region="item-content"
-     data-item-id="{{id}}">
+     data-item-id="{{itemid}}">
     <a href="{{itemurl}}" tabindex="-1">
         <div class="card-img-top" style='background-image: url("{{imageurl}}");'>
             <span class="sr-only">{{name}}</span>
@@ -63,4 +63,4 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
         </div>
     {{/registered}}
 </div>
-{{/id}}
+{{/itemid}}
