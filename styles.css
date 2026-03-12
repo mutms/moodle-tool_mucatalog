@@ -40,7 +40,7 @@
 
 #tool_mucatalog-item {
     .item-detail-card {
-        padding: 0 !important;
+        padding: 0 !important; /* stylelint-disable-line declaration-no-important */
         .card-img-top {
             height: 7rem;
             background-position: center;
