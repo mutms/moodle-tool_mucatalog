@@ -161,7 +161,7 @@ abstract class item {
         if (trim($record->name) === '') {
             throw new invalid_parameter_exception('item name is required');
         }
-        if (\core_text::strlen($data->name) > 254) {
+        if (\core_text::strlen($record->name) > 254) {
             $record->name = \core_text::substr($record->name, 254);
         }
 
@@ -265,7 +265,7 @@ abstract class item {
 
         static::pre_update($record, $section, $data, $oldrecord);
 
-        if (property_exists($data, 'name') && \core_text::strlen($data->name) > 254) {
+        if (property_exists($record, 'name') && \core_text::strlen($record->name) > 254) {
             $record->name = \core_text::substr($record->name, 254);
         }
 

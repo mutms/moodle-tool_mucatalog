@@ -83,12 +83,13 @@ final class section {
 
         if (isset($data->frontpageshow) && !$data->frontpageshow) {
             $data->frontpagepriority = null;
-        }
-        $record->frontpagepriority = $data->frontpagepriority ?? null;
-        if (!$record->frontpagepriority || trim($record->frontpagepriority) === '') {
-            $record->frontpagepriority = null;
         } else {
-            $record->frontpagepriority = (int)$record->frontpagepriority;
+            $record->frontpagepriority = $data->frontpagepriority ?? null;
+            if (!$record->frontpagepriority || trim($record->frontpagepriority) === '') {
+                $record->frontpagepriority = null;
+            } else {
+                $record->frontpagepriority = (int)$record->frontpagepriority;
+            }
         }
 
         $record->status = (int)($data->status ?? util::STATUS_DRAFT);
@@ -160,13 +161,14 @@ final class section {
 
         if (isset($data->frontpageshow) && !$data->frontpageshow) {
             $data->frontpagepriority = null;
-        }
-        if (property_exists($data, 'frontpagepriority')) {
-            $record->frontpagepriority = $data->frontpagepriority;
-            if (!$record->frontpagepriority || trim($record->frontpagepriority) === '') {
-                $record->frontpagepriority = null;
-            } else {
-                $record->frontpagepriority = (int)$record->frontpagepriority;
+        } else {
+            if (property_exists($data, 'frontpagepriority')) {
+                $record->frontpagepriority = $data->frontpagepriority;
+                if (!$record->frontpagepriority || trim($record->frontpagepriority) === '') {
+                    $record->frontpagepriority = null;
+                } else {
+                    $record->frontpagepriority = (int)$record->frontpagepriority;
+                }
             }
         }
 

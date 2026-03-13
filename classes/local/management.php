@@ -69,7 +69,7 @@ final class management {
             $PAGE->navbar->add($name, $url);
         }
 
-        $actions = new header_actions(get_string('management_sections_actions', 'tool_mucatalog'));
+        $actions = new header_actions(get_string('management_actions', 'tool_mucatalog'));
         if (has_capability('tool/mucatalog:managesections', $context)) {
             $url = new url('/admin/tool/mucatalog/management/section_create.php', ['contextid' => $context->id]);
             $button = new button($url, get_string('section_create', 'tool_mucatalog'));
@@ -125,7 +125,7 @@ final class management {
             $PAGE->navbar->add($name, $url);
         }
 
-        $actions = new header_actions(get_string('management_collections_actions', 'tool_mucatalog'));
+        $actions = new header_actions(get_string('management_actions', 'tool_mucatalog'));
         if (has_capability('tool/mucatalog:managecollections', $context)) {
             $url = new url('/admin/tool/mucatalog/management/collection_create.php', ['contextid' => $context->id]);
             $button = new button($url, get_string('collection_create', 'tool_mucatalog'));
@@ -236,14 +236,9 @@ final class management {
 
         $PAGE->set_pagelayout('admin');
         $PAGE->set_title(implode(\moodle_page::TITLE_SEPARATOR, $titles));
-        $PAGE->set_heading($sectionname);
+        $PAGE->set_heading($itemname);
 
-        $secondarynav = new \tool_mucatalog\navigation\views\section_secondary($PAGE, $section);
-        $PAGE->set_secondarynav($secondarynav);
-        $PAGE->set_secondary_active_tab('section_items');
-        $secondarynav->initialise();
-
-        $PAGE->set_secondary_navigation(true);
+        $PAGE->set_secondary_navigation(false);
 
         $parentcontextids = $context->get_parent_context_ids(true);
         $parentcontextids = array_reverse($parentcontextids);

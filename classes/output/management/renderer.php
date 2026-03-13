@@ -218,9 +218,6 @@ class renderer extends \plugin_renderer_base {
         }
         $details->add(get_string('item_status', 'tool_mucatalog'), $status);
 
-        $result = $this->output->heading(format_string($item->name), 2, 'h3');
-        $result .= $this->output->render($details);
-
-        return $result;
+        return $this->output->render($details);
     }
 }

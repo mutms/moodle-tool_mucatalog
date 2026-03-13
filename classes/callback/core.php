@@ -71,9 +71,7 @@ final class core {
             $title,
             'tool_mucatalog'
         );
-        if (defined('TOOL_MUCATALOG_PRIMARY_ACTIVE') && TOOL_MUCATALOG_PRIMARY_ACTIVE) {
-            $catalognode->make_active();
-        }
+
         $primary->add_node($catalognode, $beforekey);
     }
 }

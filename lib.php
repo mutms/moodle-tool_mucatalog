@@ -73,11 +73,12 @@ function tool_mucatalog_extend_navigation_category_settings($navigation, $course
  * @return void
  */
 function tool_mucatalog_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options = []) {
-    global $DB, $CFG;
+    global $DB, $CFG, $PAGE;
 
     if ($context->contextlevel != CONTEXT_SYSTEM) {
         send_file_not_found();
     }
+    $PAGE->set_context($context);
 
     if ($filearea === 'item_image') {
         if ($CFG->forcelogin) {
