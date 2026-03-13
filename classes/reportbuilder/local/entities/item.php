@@ -178,7 +178,7 @@ final class item extends base {
 
         $columns[] = (new column(
             'hiddenbefore',
-            new lang_string('hiddenbefore', 'tool_muhome'),
+            new lang_string('hiddenbefore', 'tool_mucatalog'),
             $this->get_entity_name()
         ))
             ->add_joins($this->get_joins())
@@ -189,7 +189,7 @@ final class item extends base {
 
         $columns[] = (new column(
             'hiddenafter',
-            new lang_string('hiddenafter', 'tool_muhome'),
+            new lang_string('hiddenafter', 'tool_mucatalog'),
             $this->get_entity_name()
         ))
             ->add_joins($this->get_joins())
