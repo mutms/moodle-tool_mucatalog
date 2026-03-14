@@ -82,7 +82,7 @@ $PAGE->set_cacheable(true);
 $PAGE->set_secondary_navigation(false);
 $PAGE->set_heading($catalogue);
 $PAGE->set_title($itemname . \moodle_page::TITLE_SEPARATOR . $catalogue);
-$PAGE->add_body_class('limitedwidth');
+$PAGE->set_pagelayout('standard');
 
 $actions = new \tool_mulib\output\header_actions(get_string('actions'));
 

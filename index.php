@@ -91,7 +91,6 @@ $catalogue = get_string('catalogue_title', 'tool_mucatalog');
 
 $PAGE->set_context($syscontext);
 $PAGE->set_url($currenturl);
-$PAGE->set_cacheable(true);
 $PAGE->set_secondary_navigation(false);
 $PAGE->set_heading($catalogue);
 $PAGE->set_title($catalogue);
@@ -119,20 +118,28 @@ if ($viewcontext) {
     $actions->get_dropdown()->add_item(get_string('management_collections', 'tool_mucatalog'), $url, new \core\output\pix_icon('i/menubars', ''));
 }
 
-if ($actions->has_items()) {
-    $PAGE->add_header_action($OUTPUT->render($actions));
-}
-
 if ($sectionid === null) {
     $frontpage = new \tool_mucatalog\output\frontpage();
     if ($frontpage->is_usable()) {
-        $PAGE->add_body_class('limitedwidth');
+        $PAGE->set_pagelayout('standard');
+
+        if ($actions->has_items()) {
+            $PAGE->add_header_action($OUTPUT->render($actions));
+        }
+
         echo $OUTPUT->header();
         echo $OUTPUT->render($frontpage);
         echo $OUTPUT->footer();
         exit;
     }
     $sectionid = 0;
+}
+
+$PAGE->set_cacheable(true);
+$PAGE->set_pagelayout('report');
+
+if ($actions->has_items()) {
+    $PAGE->add_header_action($OUTPUT->render($actions));
 }
 
 echo $OUTPUT->header();
