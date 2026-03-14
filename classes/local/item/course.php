@@ -192,7 +192,7 @@ final class course extends item {
         $name = format_string($course->fullname);
 
         $context = \context_course::instance($course->id);
-        if (has_capability('moodle/course:view', $context)) {
+        if (has_capability('moodle/course:view', $context) || is_enrolled($context)) {
             $url = new url('/course/view.php', ['id' => $course->id]);
             $name = \html_writer::link($url, $name);
         }

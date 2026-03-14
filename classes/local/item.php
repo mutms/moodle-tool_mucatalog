@@ -140,7 +140,14 @@ abstract class item {
         $section = $DB->get_record('tool_mucatalog_section', ['id' => $data->sectionid], '*', MUST_EXIST);
 
         $now = time();
-        $statuses = util::get_statuses_menu();
+
+        if (!isset($data->syncname)) {
+            if (trim($data->name ?? '') === '') {
+                $data->syncname = 1;
+            } else {
+                $data->syncname = 0;
+            }
+        }
 
         $record = (object)[
             'sectionid' => $section->id,
@@ -151,10 +158,15 @@ abstract class item {
             'presentationjson' => '{}',
             'hiddenbefore' => empty($data->hiddenbefore) ? null : (int)$data->hiddenbefore,
             'hiddenafter' => empty($data->hiddenafter) ? null : (int)$data->hiddenafter,
-            'status' => isset($statuses[$data->status ?? util::STATUS_DRAFT]) ? $data->status : util::STATUS_DRAFT,
+            'status' => (int)($data->status ?? util::STATUS_DRAFT),
             'timecreated' => $now,
             'timemodified' => $now,
         ];
+
+        $options = util::get_statuses_menu();
+        if (!isset($options[$record->status])) {
+            throw new invalid_parameter_exception('invalid item status');
+        }
 
         static::pre_create($record, $section, $data);
 
@@ -197,6 +209,7 @@ abstract class item {
             $itemdata = clone($data);
             unset($itemdata->referenceids);
             $itemdata->referenceid = $referenceid;
+            $itemdata->syncname = 1;
             $item = static::create($itemdata);
             $result[$item->id] = $item;
         }
@@ -476,8 +489,6 @@ abstract class item {
         $trans = $DB->start_delegated_transaction();
 
         $DB->delete_records('tool_mucatalog_collection_item', ['itemid' => $item->id]);
-
-        // TODO: delete files, etc.
 
         $DB->delete_records('tool_mucatalog_item', ['id' => $item->id]);
 

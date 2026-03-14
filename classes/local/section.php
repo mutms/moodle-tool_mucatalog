@@ -143,6 +143,13 @@ final class section {
         $record->id = $data->id;
 
         $oldsection = $DB->get_record('tool_mucatalog_section', ['id' => $record->id], '*', MUST_EXIST);
+
+        if (property_exists($data, 'contextid')) {
+            if ($data->contextid != $oldsection->contextid) {
+                throw new invalid_parameter_exception('use move to change section context');
+            }
+        }
+
         $context = \context::instance_by_id($oldsection->contextid);
 
         if (property_exists($data, 'name')) {
@@ -413,8 +420,7 @@ final class section {
 
         $items = $DB->get_records('tool_mucatalog_item', ['sectionid' => $section->id]);
         foreach ($items as $item) {
-            $typeclass = item::get_type_classname($item->type);
-            $typeclass::delete($item->id);
+            item::delete($item->id);
         }
 
         $DB->delete_records('tool_mucatalog_section_cohortvisible', ['sectionid' => $section->id]);
@@ -459,7 +465,7 @@ final class section {
             $guestvisible = (int)$DB->record_exists('tool_mucatalog_section', ['status' => util::STATUS_ACTIVE, 'guestvisible' => 1]);
             set_config('guestvisible', $guestvisible, 'tool_mucatalog');
         } else {
-            set_config('guestvisible', $active, 'tool_mucatalog');
+            set_config('guestvisible', 0, 'tool_mucatalog');
         }
     }
 

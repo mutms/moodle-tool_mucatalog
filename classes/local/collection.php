@@ -135,6 +135,13 @@ final class collection {
         $record->id = $data->id;
 
         $oldcollection = $DB->get_record('tool_mucatalog_collection', ['id' => $record->id], '*', MUST_EXIST);
+
+        if (property_exists($data, 'contextid')) {
+            if ($data->contextid != $oldcollection->contextid) {
+                throw new invalid_parameter_exception('use move to change collection context');
+            }
+        }
+
         $context = \context::instance_by_id($oldcollection->contextid);
 
         if (property_exists($data, 'name')) {
@@ -339,12 +346,11 @@ final class collection {
     public static function pre_course_category_delete(int $categoryid): void {
         global $DB;
 
-        $syscontext = \context_system::instance();
         $catcontext = \context_coursecat::instance($categoryid);
 
         $collections = $DB->get_records('tool_mucatalog_collection', ['contextid' => $catcontext->id]);
         foreach ($collections as $collection) {
-            self::move($collection->id, $syscontext->id);
+            self::delete($collection->id);
         }
     }
 }
