@@ -62,6 +62,9 @@ final class tool_mucatalog_generator extends component_generator_base {
         if (!isset($record->name)) {
             $record->name = 'Section ' . $this->sectioncount;
         }
+        if (trim($record->shortdescription ?? '') === '') {
+            $record->shortdescription = 'Description of section ' . $record->name;
+        }
 
         return section::create($record);
     }
@@ -111,6 +114,9 @@ final class tool_mucatalog_generator extends component_generator_base {
 
         if (!isset($record->name)) {
             $record->name = 'Collection ' . $this->collectioncount;
+        }
+        if (trim($record->shortdescription ?? '') === '') {
+            $record->shortdescription = 'Description of collection ' . $record->name;
         }
 
         return collection::create($record);

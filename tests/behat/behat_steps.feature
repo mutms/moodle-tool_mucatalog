@@ -54,7 +54,7 @@ Feature: tool_mucatalog navigation behat steps test
     Given I log in as "viewer1"
 
     When I am on the "tool_mucatalog > All sections management" page
-    Then I should see "Catalogue sections"
+    Then I should see "Section management"
     And the following should exist in the "reportbuilder-table" table:
       | Section name       | Management category | Section status |
       | Some section 1     | System              | Active         |
@@ -65,7 +65,7 @@ Feature: tool_mucatalog navigation behat steps test
     Given I log in as "viewer2"
 
     When I am on the "Cat 2" "tool_mucatalog > Sections management" page
-    Then I should see "Catalogue sections"
+    Then I should see "Section management"
     And the following should exist in the "reportbuilder-table" table:
       |Section name     | Management category | Section status |
       |Other section 2  | Cat 2               | Draft          |
@@ -83,8 +83,8 @@ Feature: tool_mucatalog navigation behat steps test
     And I follow "Cat 2"
     And I click on "More" "link" in the ".secondary-navigation" "css_element"
 
-    When I click on "Catalogue sections" "link" in the ".secondary-navigation" "css_element"
-    Then I should see "Catalogue sections"
+    When I click on "Section management" "link" in the ".secondary-navigation" "css_element"
+    Then I should see "Section management"
     And the following should exist in the "reportbuilder-table" table:
       |Section name     | Management category | Section status |
       |Other section 2  | Cat 2               | Draft          |
@@ -95,7 +95,7 @@ Feature: tool_mucatalog navigation behat steps test
     Given I log in as "viewer1"
 
     When I am on the "tool_mucatalog > All collections management" page
-    Then I should see "Catalogue collections"
+    Then I should see "Collection management"
     And the following should exist in the "reportbuilder-table" table:
       | Collection name       | Management category |
       | Some collection 1     | System              |
@@ -106,7 +106,7 @@ Feature: tool_mucatalog navigation behat steps test
     Given I log in as "viewer2"
 
     When I am on the "Cat 2" "tool_mucatalog > Collections management" page
-    Then I should see "Catalogue collections"
+    Then I should see "Collection management"
     And the following should exist in the "reportbuilder-table" table:
       | Collection name     | Management category |
       | Other collection 2  | Cat 2               |
@@ -124,10 +124,10 @@ Feature: tool_mucatalog navigation behat steps test
     And I follow "Cat 2"
     And I click on "More" "link" in the ".secondary-navigation" "css_element"
 
-    When I click on "Catalogue sections" "link" in the ".secondary-navigation" "css_element"
-    And I click on "Catalogue collections" action from "Catalogue actions" dropdown
+    When I click on "Section management" "link" in the ".secondary-navigation" "css_element"
+    And I click on "Collection management" action from "Catalogue actions" dropdown
 
-    Then I should see "Catalogue collections"
+    Then I should see "Collection management"
     And the following should exist in the "reportbuilder-table" table:
       |Collection name     | Management category |
       |Other collection 2  | Cat 2               |

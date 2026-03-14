@@ -55,6 +55,7 @@ final class generator_test extends \advanced_testcase {
         $this->setCurrentTimeStart();
         $section = $generator->create_section();
         $this->assertSame('Section 1', $section->name);
+        $this->assertSame('Description of section Section 1', $section->shortdescription);
         $this->assertSame((string)$syscontext->id, $section->contextid);
         $this->assertSame(null, $section->frontpagepriority);
         $this->assertSame((string)util::STATUS_ACTIVE, $section->status);
@@ -70,6 +71,7 @@ final class generator_test extends \advanced_testcase {
 
         $section = $generator->create_section([
             'name' => 'Some section',
+            'shortdescription' => 'Some desc',
             'contextid' => $categorycontext->id,
             'frontpagepriority' => '777',
             'status' => util::STATUS_DRAFT,
@@ -78,6 +80,7 @@ final class generator_test extends \advanced_testcase {
             'cohortvisible' => [$cohort1->id, $cohort2->id],
         ]);
         $this->assertSame('Some section', $section->name);
+        $this->assertSame('Some desc', $section->shortdescription);
         $this->assertSame('777', $section->frontpagepriority);
         $this->assertSame((string)util::STATUS_DRAFT, $section->status);
         $this->assertSame('1', $section->guestvisible);
@@ -183,6 +186,7 @@ final class generator_test extends \advanced_testcase {
         $this->setCurrentTimeStart();
         $collection = $generator->create_collection();
         $this->assertSame('Collection 1', $collection->name);
+        $this->assertSame('Description of collection Collection 1', $collection->shortdescription);
         $this->assertSame((string)$syscontext->id, $collection->contextid);
         $this->assertSame(null, $collection->frontpagepriority);
         $this->assertSame('0', $collection->guestvisible);
@@ -197,6 +201,7 @@ final class generator_test extends \advanced_testcase {
 
         $collection = $generator->create_collection([
             'name' => 'Some collection',
+            'shortdescription' => 'Some desc',
             'contextid' => $categorycontext->id,
             'frontpagepriority' => '777',
             'guestvisible' => 1,
@@ -204,6 +209,7 @@ final class generator_test extends \advanced_testcase {
             'cohortvisible' => [$cohort1->id, $cohort2->id],
         ]);
         $this->assertSame('Some collection', $collection->name);
+        $this->assertSame('Some desc', $collection->shortdescription);
         $this->assertSame('777', $collection->frontpagepriority);
         $this->assertSame('1', $collection->guestvisible);
         $this->assertSame('0', $collection->uservisible);

@@ -97,25 +97,25 @@ $PAGE->set_title($catalogue);
 
 $actions = new \tool_mulib\output\header_actions(get_string('actions'));
 
-$viewcontext = null;
-if (has_capability('tool/mucatalog:view', $syscontext)) {
-    $viewcontext = $syscontext;
-} else if ($section && $section->contextid != $syscontext->id) {
+if ($section) {
     $context = context::instance_by_id($section->contextid);
     if (has_capability('tool/mucatalog:view', $context)) {
-        $viewcontext = $context;
+        $url = new url('/admin/tool/mucatalog/management/section.php', ['id' => $section->id]);
+        $actions->get_dropdown()->add_item(get_string('management_sections', 'tool_mucatalog'), $url, new \core\output\pix_icon('i/menubars', ''));
     }
-} else if ($collection && $collection->contextid != $syscontext->id) {
+} else if ($collection) {
     $context = context::instance_by_id($collection->contextid);
     if (has_capability('tool/mucatalog:view', $context)) {
-        $viewcontext = $context;
+        $url = new url('/admin/tool/mucatalog/management/collection.php', ['id' => $collection->id]);
+        $actions->get_dropdown()->add_item(get_string('management_collections', 'tool_mucatalog'), $url, new \core\output\pix_icon('i/menubars', ''));
     }
-}
-if ($viewcontext) {
-    $url = new url('/admin/tool/mucatalog/management/sections.php', ['contextid' => $viewcontext->id]);
-    $actions->get_dropdown()->add_item(get_string('management_sections', 'tool_mucatalog'), $url, new \core\output\pix_icon('i/menubars', ''));
-    $url = new url('/admin/tool/mucatalog/management/collections.php', ['contextid' => $viewcontext->id]);
-    $actions->get_dropdown()->add_item(get_string('management_collections', 'tool_mucatalog'), $url, new \core\output\pix_icon('i/menubars', ''));
+} else {
+    if (has_capability('tool/mucatalog:view', $syscontext)) {
+        $url = new url('/admin/tool/mucatalog/management/sections.php', ['contextid' => $syscontext->id]);
+        $actions->get_dropdown()->add_item(get_string('management_sections', 'tool_mucatalog'), $url, new \core\output\pix_icon('i/menubars', ''));
+        $url = new url('/admin/tool/mucatalog/management/collections.php', ['contextid' => $syscontext->id]);
+        $actions->get_dropdown()->add_item(get_string('management_collections', 'tool_mucatalog'), $url, new \core\output\pix_icon('i/menubars', ''));
+    }
 }
 
 if ($sectionid === null) {
