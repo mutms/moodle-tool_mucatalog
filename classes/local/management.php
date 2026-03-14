@@ -70,7 +70,7 @@ final class management {
         }
 
         $actions = new header_actions(get_string('management_actions', 'tool_mucatalog'));
-        if (has_capability('tool/mucatalog:managesections', $context)) {
+        if (has_capability('tool/mucatalog:manage', $context)) {
             $url = new url('/admin/tool/mucatalog/management/section_create.php', ['contextid' => $context->id]);
             $button = new button($url, get_string('section_create', 'tool_mucatalog'));
             $actions->add_button($button);
@@ -126,7 +126,7 @@ final class management {
         }
 
         $actions = new header_actions(get_string('management_actions', 'tool_mucatalog'));
-        if (has_capability('tool/mucatalog:managecollections', $context)) {
+        if (has_capability('tool/mucatalog:manage', $context)) {
             $url = new url('/admin/tool/mucatalog/management/collection_create.php', ['contextid' => $context->id]);
             $button = new button($url, get_string('collection_create', 'tool_mucatalog'));
             $actions->add_button($button);
@@ -192,7 +192,7 @@ final class management {
 
         $actions = new header_actions(get_string('section_actions', 'tool_mucatalog'));
 
-        if ($secondarytab === 'section_items' && has_capability('tool/mucatalog:manageitems', $context)) {
+        if ($secondarytab === 'section_items' && has_capability('tool/mucatalog:manage', $context)) {
             if ($section->status != util::STATUS_ARCHIVED) {
                 $url = new url('/admin/tool/mucatalog/management/items_create.php', ['sectionid' => $section->id]);
                 $button = new button($url, get_string('items_create', 'tool_mucatalog'));
@@ -200,7 +200,7 @@ final class management {
             }
         }
 
-        if ($secondarytab === 'section_general' && has_capability('tool/mucatalog:managesections', $context)) {
+        if ($secondarytab === 'section_general' && has_capability('tool/mucatalog:manage', $context)) {
             if (section::is_delete_possible($section)) {
                 $url = new \core\url('/admin/tool/mucatalog/management/section_delete.php', ['id' => $section->id]);
                 $link = new \tool_mulib\output\ajax_form\link($url, get_string('section_delete', 'tool_mucatalog'), 'i/delete');
@@ -310,13 +310,13 @@ final class management {
 
         $actions = new header_actions(get_string('collection_actions', 'tool_mucatalog'));
 
-        if ($secondarytab === 'collection_items' && has_capability('tool/mucatalog:managecollections', $context)) {
+        if ($secondarytab === 'collection_items' && has_capability('tool/mucatalog:manage', $context)) {
             $url = new url('/admin/tool/mucatalog/management/collection_items_add.php', ['collectionid' => $collection->id]);
             $button = new button($url, get_string('collection_items_add', 'tool_mucatalog'));
             $actions->add_button($button);
         }
 
-        if ($secondarytab === 'collection_general' && has_capability('tool/mucatalog:managecollections', $context)) {
+        if ($secondarytab === 'collection_general' && has_capability('tool/mucatalog:manage', $context)) {
             $url = new \core\url('/admin/tool/mucatalog/management/collection_delete.php', ['id' => $collection->id]);
             $link = new \tool_mulib\output\ajax_form\link($url, get_string('collection_delete', 'tool_mucatalog'), 'i/delete');
             $link->add_class('text-danger');

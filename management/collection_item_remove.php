@@ -46,7 +46,7 @@ $item = $DB->get_record('tool_mucatalog_item', ['id' => $ci->itemid], '*', MUST_
 $context = context::instance_by_id($collection->contextid);
 
 require_login();
-require_capability('tool/mucatalog:managecollections', $context);
+require_capability('tool/mucatalog:manage', $context);
 
 $currenturl = new url('/admin/tool/mucatalog/management/collection_item_remove.php', ['collectionid' => $collection->id]);
 $returnurl = new url('/admin/tool/mucatalog/management/collection_items.php', ['id' => $collection->id]);

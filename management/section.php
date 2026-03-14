@@ -50,7 +50,7 @@ $currenturl = new url('/admin/tool/mucatalog/management/section.php', ['id' => $
 management::setup_section_page($currenturl, $context, $section, 'section_general');
 
 $buttons = [];
-if (has_capability('tool/mucatalog:managesections', $context)) {
+if (has_capability('tool/mucatalog:manage', $context)) {
     $url = new url('/admin/tool/mucatalog/management/section_update.php', ['id' => $section->id]);
     $button = new button($url, get_string('section_update', 'tool_mucatalog'));
     $buttons[] = $OUTPUT->render($button);

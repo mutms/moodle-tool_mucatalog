@@ -79,7 +79,7 @@ final class items_create_certificationids extends \tool_mulib\external\form_auto
         // Validate context.
         $context = \context::instance_by_id($section->contextid);
         self::validate_context($context);
-        require_capability('tool/mucatalog:managesections', $context);
+        require_capability('tool/mucatalog:manage', $context);
 
         $capjoin = context_map::get_contexts_by_capability_join('tool/mucatalog:addcertification', $USER->id, 'ctx');
 

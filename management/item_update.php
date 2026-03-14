@@ -43,7 +43,7 @@ $section = $DB->get_record('tool_mucatalog_section', ['id' => $item->sectionid],
 $context = context::instance_by_id($section->contextid);
 
 require_login();
-require_capability('tool/mucatalog:manageitems', $context);
+require_capability('tool/mucatalog:manage', $context);
 
 $currenturl = new url('/admin/tool/mucatalog/management/item_update.php', ['id' => $item->id]);
 $returnurl = new url('/admin/tool/mucatalog/management/item.php', ['id' => $item->id]);

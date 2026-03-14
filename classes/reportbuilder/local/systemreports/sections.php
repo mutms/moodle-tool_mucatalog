@@ -153,7 +153,7 @@ final class sections extends system_report {
                     return false;
                 }
 
-                return has_capability('tool/mucatalog:managesections', $context);
+                return has_capability('tool/mucatalog:manage', $context);
             }));
 
         $url = new url('/admin/tool/mucatalog/management/section_activate.php', ['id' => ':id']);
@@ -171,7 +171,7 @@ final class sections extends system_report {
                     return false;
                 }
 
-                return has_capability('tool/mucatalog:managesections', $context);
+                return has_capability('tool/mucatalog:manage', $context);
             }));
 
         $url = new url('/admin/tool/mucatalog/management/section_delete.php', ['id' => ':id']);
@@ -189,7 +189,7 @@ final class sections extends system_report {
                     return false;
                 }
 
-                return has_capability('tool/mucatalog:managesections', $context);
+                return has_capability('tool/mucatalog:manage', $context);
             }));
     }
 }

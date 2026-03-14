@@ -141,7 +141,7 @@ final class collections extends system_report {
                     return false;
                 }
 
-                return has_capability('tool/mucatalog:managecollections', $context);
+                return has_capability('tool/mucatalog:manage', $context);
             }));
 
         $url = new url('/admin/tool/mucatalog/management/collection_delete.php', ['id' => ':id']);
@@ -156,7 +156,7 @@ final class collections extends system_report {
                     $context = \context_system::instance();
                 }
 
-                return has_capability('tool/mucatalog:managecollections', $context);
+                return has_capability('tool/mucatalog:manage', $context);
             }));
     }
 }

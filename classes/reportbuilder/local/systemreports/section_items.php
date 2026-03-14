@@ -161,7 +161,7 @@ final class section_items extends system_report {
                     return false;
                 }
 
-                return has_capability('tool/mucatalog:manageitems', $context);
+                return has_capability('tool/mucatalog:manage', $context);
             }));
 
         $url = new url('/admin/tool/mucatalog/management/item_move.php', ['id' => ':id']);
@@ -176,7 +176,7 @@ final class section_items extends system_report {
                     return false;
                 }
 
-                return has_capability('tool/mucatalog:manageitems', $context);
+                return has_capability('tool/mucatalog:manage', $context);
             }));
 
         $url = new url('/admin/tool/mucatalog/management/item_activate.php', ['id' => ':id']);
@@ -195,7 +195,7 @@ final class section_items extends system_report {
                     return false;
                 }
 
-                return has_capability('tool/mucatalog:manageitems', $context);
+                return has_capability('tool/mucatalog:manage', $context);
             }));
 
         $url = new url('/admin/tool/mucatalog/management/item_archive.php', ['id' => ':id']);
@@ -214,7 +214,7 @@ final class section_items extends system_report {
                     return false;
                 }
 
-                return has_capability('tool/mucatalog:manageitems', $context);
+                return has_capability('tool/mucatalog:manage', $context);
             }));
 
         $url = new url('/admin/tool/mucatalog/management/item_restore.php', ['id' => ':id']);
@@ -233,7 +233,7 @@ final class section_items extends system_report {
                     return false;
                 }
 
-                return has_capability('tool/mucatalog:manageitems', $context);
+                return has_capability('tool/mucatalog:manage', $context);
             }));
 
         $url = new url('/admin/tool/mucatalog/management/item_delete.php', ['id' => ':id']);
@@ -248,7 +248,7 @@ final class section_items extends system_report {
                     return false;
                 }
 
-                return has_capability('tool/mucatalog:manageitems', $context);
+                return has_capability('tool/mucatalog:manage', $context);
             }));
     }
 }

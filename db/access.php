@@ -69,21 +69,7 @@ $capabilities = [
             'manager' => CAP_ALLOW,
         ],
     ],
-    'tool/mucatalog:managesections' => [
-        'captype' => 'write',
-        'contextlevel' => CONTEXT_COURSECAT,
-        'archetypes' => [
-            'manager' => CAP_ALLOW,
-        ],
-    ],
-    'tool/mucatalog:managecollections' => [
-        'captype' => 'write',
-        'contextlevel' => CONTEXT_COURSECAT,
-        'archetypes' => [
-            'manager' => CAP_ALLOW,
-        ],
-    ],
-    'tool/mucatalog:manageitems' => [
+    'tool/mucatalog:manage' => [
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSECAT,
         'archetypes' => [

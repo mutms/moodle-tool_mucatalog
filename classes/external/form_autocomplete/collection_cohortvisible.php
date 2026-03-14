@@ -75,7 +75,7 @@ final class collection_cohortvisible extends \tool_mulib\external\form_autocompl
             $context = \context::instance_by_id($contextid);
         }
         self::validate_context($context);
-        require_capability('tool/mucatalog:managecollections', $context);
+        require_capability('tool/mucatalog:manage', $context);
 
         $sql = (
         new sql(

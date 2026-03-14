@@ -57,7 +57,7 @@ $managementoutput = $PAGE->get_renderer('tool_mucatalog', 'management');
 $actions = new header_actions(get_string('item_actions', 'tool_mucatalog'));
 
 $buttons = [];
-if (has_capability('tool/mucatalog:manageitems', $context)) {
+if (has_capability('tool/mucatalog:manage', $context)) {
     $url = new url('/admin/tool/mucatalog/item.php', ['id' => $item->id]);
     $button = $OUTPUT->single_button($url, get_string('item_preview', 'tool_mucatalog'), 'get');
     $actions->add_button($button);

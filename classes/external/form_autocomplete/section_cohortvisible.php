@@ -75,7 +75,7 @@ final class section_cohortvisible extends \tool_mulib\external\form_autocomplete
             $context = \context::instance_by_id($contextid);
         }
         self::validate_context($context);
-        require_capability('tool/mucatalog:managesections', $context);
+        require_capability('tool/mucatalog:manage', $context);
 
         $sql = (
         new sql(

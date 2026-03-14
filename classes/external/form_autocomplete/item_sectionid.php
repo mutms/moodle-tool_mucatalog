@@ -75,9 +75,9 @@ final class item_sectionid extends \tool_mulib\external\form_autocomplete\base {
         // Validate context.
         $context = \context::instance_by_id($section->contextid);
         self::validate_context($context);
-        require_capability('tool/mucatalog:managesections', $context);
+        require_capability('tool/mucatalog:manage', $context);
 
-        $capjoin = context_map::get_contexts_by_capability_join('tool/mucatalog:managesections', $USER->id, 'ctx');
+        $capjoin = context_map::get_contexts_by_capability_join('tool/mucatalog:manage', $USER->id, 'ctx');
 
         $sql = (
             new sql(
@@ -122,7 +122,7 @@ final class item_sectionid extends \tool_mulib\external\form_autocomplete\base {
         }
         $newcontext = \context::instance_by_id($newsection->contextid);
 
-        if (!has_capability('tool/mucatalog:managesections', $newcontext)) {
+        if (!has_capability('tool/mucatalog:manage', $newcontext)) {
             return get_string('error');
         }
 

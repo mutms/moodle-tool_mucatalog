@@ -33,6 +33,6 @@ final class section_contextid extends \tool_mulib\external\form_autocomplete\cat
      * @return string
      */
     public static function get_required_capability(): string {
-        return 'tool/mucatalog:managesections';
+        return 'tool/mucatalog:manage';
     }
 }

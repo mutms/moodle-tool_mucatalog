@@ -40,7 +40,7 @@ $contextid = required_param('contextid', PARAM_INT);
 $context = context::instance_by_id($contextid);
 
 require_login();
-require_capability('tool/mucatalog:managecollections', $context);
+require_capability('tool/mucatalog:manage', $context);
 
 if ($context->contextlevel != CONTEXT_SYSTEM && $context->contextlevel != CONTEXT_COURSECAT) {
     throw new moodle_exception('invalidcontext');

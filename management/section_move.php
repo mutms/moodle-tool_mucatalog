@@ -42,7 +42,7 @@ $section = $DB->get_record('tool_mucatalog_section', ['id' => $id], '*', MUST_EX
 $context = context::instance_by_id($section->contextid);
 
 require_login();
-require_capability('tool/mucatalog:managesections', $context);
+require_capability('tool/mucatalog:manage', $context);
 
 $currenturl = new url('/admin/tool/mucatalog/management/section_move.php', ['id' => $section->id]);
 $returnurl = new url('/admin/tool/mucatalog/management/sections.php', ['contextid' => $context->id]);

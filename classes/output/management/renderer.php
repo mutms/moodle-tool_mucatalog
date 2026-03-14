@@ -54,7 +54,7 @@ class renderer extends \plugin_renderer_base {
         $categoryname = $context->get_context_name(false);
         $url = new url('/admin/tool/mucatalog/management/sections.php', ['contextid' => $context->id]);
         $categoryname = html_writer::link($url, $categoryname);
-        if (has_capability('tool/mucatalog:managesections', $context)) {
+        if (has_capability('tool/mucatalog:manage', $context)) {
             $url = new url('/admin/tool/mucatalog/management/section_move.php', ['id' => $section->id]);
             $link = new \tool_mulib\output\ajax_form\icon($url, get_string('section_move', 'tool_mucatalog'), 'i/edit');
             $categoryname .= $this->output->render($link);
@@ -84,7 +84,7 @@ class renderer extends \plugin_renderer_base {
 
         $statuses = util::get_statuses_menu();
         $status = $statuses[$section->status];
-        if (has_capability('tool/mucatalog:managesections', $context)) {
+        if (has_capability('tool/mucatalog:manage', $context)) {
             $action = null;
             if (section::is_activate_possible($section)) {
                 $url = new url('/admin/tool/mucatalog/management/section_activate.php', ['id' => $section->id]);
@@ -131,7 +131,7 @@ class renderer extends \plugin_renderer_base {
         $categoryname = $context->get_context_name(false);
         $url = new url('/admin/tool/mucatalog/management/collections.php', ['contextid' => $context->id]);
         $categoryname = html_writer::link($url, $categoryname);
-        if (has_capability('tool/mucatalog:managecollections', $context)) {
+        if (has_capability('tool/mucatalog:manage', $context)) {
             $url = new url('/admin/tool/mucatalog/management/collection_move.php', ['id' => $collection->id]);
             $link = new \tool_mulib\output\ajax_form\icon($url, get_string('collection_move', 'tool_mucatalog'), 'i/edit');
             $categoryname .= $this->output->render($link);
@@ -197,7 +197,7 @@ class renderer extends \plugin_renderer_base {
 
         $statuses = util::get_statuses_menu();
         $status = $statuses[$item->status];
-        if (has_capability('tool/mucatalog:manageitems', $context)) {
+        if (has_capability('tool/mucatalog:manage', $context)) {
             $action = null;
             if ($classname::is_activate_possible($item)) {
                 $url = new url('/admin/tool/mucatalog/management/item_activate.php', ['id' => $item->id]);

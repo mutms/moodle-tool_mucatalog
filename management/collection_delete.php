@@ -45,7 +45,7 @@ if (!$context) {
 }
 
 require_login();
-require_capability('tool/mucatalog:managecollections', $context);
+require_capability('tool/mucatalog:manage', $context);
 
 $currenturl = new url('/admin/tool/mucatalog/management/collection_delete.php', ['id' => $collection->id]);
 $returnurl = new url('/admin/tool/mucatalog/management/collections.php', ['contextid' => $context->id]);

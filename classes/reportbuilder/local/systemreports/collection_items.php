@@ -178,7 +178,7 @@ final class collection_items extends system_report {
                     return false;
                 }
 
-                return has_capability('tool/mucatalog:managecollections', $context);
+                return has_capability('tool/mucatalog:manage', $context);
             }));
     }
 }

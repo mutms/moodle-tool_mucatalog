@@ -43,7 +43,7 @@ $section = $DB->get_record('tool_mucatalog_section', ['id' => $sectionid], '*', 
 $context = context::instance_by_id($section->contextid);
 
 require_login();
-require_capability('tool/mucatalog:manageitems', $context);
+require_capability('tool/mucatalog:manage', $context);
 
 $currenturl = new url('/admin/tool/mucatalog/management/items_create.php', ['sectionid' => $section->id]);
 $returnurl = new url('/admin/tool/mucatalog/management/section_items.php', ['id' => $section->id]);

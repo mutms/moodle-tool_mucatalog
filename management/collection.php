@@ -50,7 +50,7 @@ $currenturl = new url('/admin/tool/mucatalog/management/collection.php', ['id' =
 management::setup_collection_page($currenturl, $context, $collection, 'collection_general');
 
 $buttons = [];
-if (has_capability('tool/mucatalog:managecollections', $context)) {
+if (has_capability('tool/mucatalog:manage', $context)) {
     $url = new url('/admin/tool/mucatalog/management/collection_update.php', ['id' => $collection->id]);
     $button = new button($url, get_string('collection_update', 'tool_mucatalog'));
     $buttons[] = $OUTPUT->render($button);

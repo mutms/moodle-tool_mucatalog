@@ -76,9 +76,9 @@ final class collection_itemids extends \tool_mulib\external\form_autocomplete\ba
         // Validate context.
         $context = \context::instance_by_id($collection->contextid);
         self::validate_context($context);
-        require_capability('tool/mucatalog:managecollections', $context);
+        require_capability('tool/mucatalog:manage', $context);
 
-        $capjoin = context_map::get_contexts_by_capability_join('tool/mucatalog:managecollections', $USER->id, 'ctx');
+        $capjoin = context_map::get_contexts_by_capability_join('tool/mucatalog:manage', $USER->id, 'ctx');
 
         $sql = (
             new sql(
@@ -160,7 +160,7 @@ final class collection_itemids extends \tool_mulib\external\form_autocomplete\ba
         }
 
         $itemcontext = \context::instance_by_id($section->contextid);
-        if (!has_capability('tool/mucatalog:managecollections', $itemcontext)) {
+        if (!has_capability('tool/mucatalog:manage', $itemcontext)) {
             return get_string('error');
         }
 

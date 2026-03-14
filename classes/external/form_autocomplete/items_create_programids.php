@@ -79,7 +79,7 @@ final class items_create_programids extends \tool_mulib\external\form_autocomple
         // Validate context.
         $context = \context::instance_by_id($section->contextid);
         self::validate_context($context);
-        require_capability('tool/mucatalog:managesections', $context);
+        require_capability('tool/mucatalog:manage', $context);
 
         $capjoin = context_map::get_contexts_by_capability_join('tool/mucatalog:addprogram', $USER->id, 'ctx');
 

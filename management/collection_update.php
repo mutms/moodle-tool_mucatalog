@@ -42,7 +42,7 @@ $collection = $DB->get_record('tool_mucatalog_collection', ['id' => $id], '*', M
 $context = context::instance_by_id($collection->contextid);
 
 require_login();
-require_capability('tool/mucatalog:managecollections', $context);
+require_capability('tool/mucatalog:manage', $context);
 
 $currenturl = new url('/admin/tool/mucatalog/management/collection_update.php', ['id' => $collection->id]);
 $returnurl = new url('/admin/tool/mucatalog/management/collections.php', ['contextid' => $context->id]);
