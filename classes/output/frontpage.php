@@ -47,8 +47,8 @@ final class frontpage implements \core\output\named_templatable, \core\output\re
             $tenantid = null;
         }
 
-        $this->sections = catalogue::get_sections($USER->id, true, $tenantid);
-        $this->collections = catalogue::get_collections($USER->id, true, $tenantid);
+        $this->sections = catalogue::get_visible_sections($USER->id, true, $tenantid);
+        $this->collections = catalogue::get_visible_collections($USER->id, true, $tenantid);
     }
 
     /**

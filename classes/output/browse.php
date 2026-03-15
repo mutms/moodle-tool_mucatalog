@@ -78,7 +78,7 @@ final class browse implements \core\output\named_templatable, \core\output\rende
             'hasmore' => false,
         ];
 
-        $collections = catalogue::get_collections($USER->id, false, $tenantid);
+        $collections = catalogue::get_visible_collections($USER->id, false, $tenantid);
         if ($collections) {
             foreach ($collections as $collection) {
                 $sid = -1 * (int)$collection->id;
@@ -92,7 +92,7 @@ final class browse implements \core\output\named_templatable, \core\output\rende
             $data['hidesectionselect'] = false;
         }
 
-        $sections = catalogue::get_sections($USER->id, false, $tenantid);
+        $sections = catalogue::get_visible_sections($USER->id, false, $tenantid);
         if (count($sections) > 1) {
             foreach ($sections as $section) {
                 $data['sectionselect']['sections'][] = [
@@ -131,7 +131,7 @@ final class browse implements \core\output\named_templatable, \core\output\rende
             $data['hastypeselect'] = true;
         }
 
-        $rawitems = catalogue::fetch_items($this->sectionid, $USER->id, $tenantid, catalogue::ITEMS_BY_NAME, 0, catalogue::ITEMS_PER_PAGE + 1);
+        $rawitems = catalogue::get_visible_items($this->sectionid, $USER->id, $tenantid, catalogue::ITEMS_BY_NAME, 0, catalogue::ITEMS_PER_PAGE + 1);
         if (count($rawitems) > catalogue::ITEMS_PER_PAGE) {
             $rawitems = array_slice($rawitems, 0, catalogue::ITEMS_PER_PAGE, true);
             $data['hasmore'] = true;

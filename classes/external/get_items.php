@@ -119,7 +119,7 @@ final class get_items extends external_api {
         }
 
         $hasmore = false;
-        $rawitems = catalogue::fetch_items($sectionid, $USER->id, $tenantid, $orderby, $limitfrom, $limitnum + 1, $filters);
+        $rawitems = catalogue::get_visible_items($sectionid, $USER->id, $tenantid, $orderby, $limitfrom, $limitnum + 1, $filters);
         if (count($rawitems) > $limitnum) {
             $rawitems = array_slice($rawitems, 0, $limitnum, true);
             $hasmore = true;

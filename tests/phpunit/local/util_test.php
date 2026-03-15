@@ -23,7 +23,7 @@ namespace tool_mucatalog\phpunit\local;
 use tool_mucatalog\local\util;
 
 /**
- * Catalogue helper test.
+ * Catalogue utility test.
  *
  * @group       MuTMS
  * @package     tool_mucatalog
