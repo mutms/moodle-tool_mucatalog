@@ -126,8 +126,11 @@ final class items_create_courseids extends \tool_mulib\external\form_autocomplet
             return get_string('error');
         }
 
-        $sectionid = $args['sectionid'];
-        $section = $DB->get_record('tool_mucatalog_section', ['id' => $sectionid], '*', MUST_EXIST);
+        $section = $DB->get_record('tool_mucatalog_section', ['id' => $args['sectionid']], '*', MUST_EXIST);
+        if ($section->contextid != $context->id) {
+            debugging('section contextid parameter mismatch', DEBUG_DEVELOPER);
+            return get_string('error');
+        }
 
         // NOTE: technically we could allow one course to be included repeatedly in one section, but that would be confusing.
         if ($DB->record_exists('tool_mucatalog_item', ['sectionid' => $section->id, 'type' => 'course', 'referenceid' => $course->id])) {

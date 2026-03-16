@@ -103,7 +103,7 @@ final class items_create_programids extends \tool_mulib\external\form_autocomple
             ->replace_comment('capwhere', $capjoin['where']->wrap("AND ", ""))
             ->replace_comment(
                 'searchsql',
-                self::get_search_query($query, ['fullname', 'idnumber'], 'c')->wrap("AND ", "")
+                self::get_search_query($query, ['fullname', 'idnumber'], 'p')->wrap("AND ", "")
             );
 
         if (mulib::is_mutenancy_active()) {

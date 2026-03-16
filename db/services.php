@@ -76,15 +76,15 @@ $functions = [
         'ajax' => true,
         'loginrequired' => true,
     ],
-    'tool_mucatalog_form_autocomplete_item_sectionid' => [
-        'classname' => tool_mucatalog\external\form_autocomplete\item_sectionid::class,
+    'tool_mucatalog_form_autocomplete_item_move_sectionid' => [
+        'classname' => tool_mucatalog\external\form_autocomplete\item_move_sectionid::class,
         'description' => 'Returns list of section candidates for moving item.',
         'type' => 'read',
         'ajax' => true,
         'loginrequired' => true,
     ],
-    'tool_mucatalog_form_autocomplete_collection_itemids' => [
-        'classname' => tool_mucatalog\external\form_autocomplete\collection_itemids::class,
+    'tool_mucatalog_form_autocomplete_collection_items_add_itemids' => [
+        'classname' => tool_mucatalog\external\form_autocomplete\collection_items_add_itemids::class,
         'description' => 'Returns list of item ids for adding to collection.',
         'type' => 'read',
         'ajax' => true,

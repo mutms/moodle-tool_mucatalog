@@ -51,11 +51,11 @@ final class collection_cohortvisible extends \tool_mulib\external\form_autocompl
      * Gets list of available cohorts.
      *
      * @param string $query The search request.
-     * @param int $collectionid 0 is allowed
-     * @param int $contextid ignored if collectionid provided (unfortunately this does not match modified context selection)
+     * @param int|null $collectionid if empty contextid must be provided
+     * @param int|null $contextid ignored if collectionid provided
      * @return array
      */
-    public static function execute(string $query, int $collectionid, int $contextid): array {
+    public static function execute(string $query, ?int $collectionid, ?int $contextid): array {
         global $DB, $USER;
 
         [
@@ -80,12 +80,12 @@ final class collection_cohortvisible extends \tool_mulib\external\form_autocompl
         $sql = (
         new sql(
             "SELECT ch.id, ch.name
-                  FROM {cohort} ch
-                  /* tenantjoin */
-                  /* capsubquery */
-                /* capwhere */ /* searchsql */
-              ORDER BY ch.name ASC"
-        )
+              FROM {cohort} ch
+              /* tenantjoin */
+              /* capsubquery */
+            /* capwhere */ /* searchsql */
+          ORDER BY ch.name ASC"
+            )
         )
             ->replace_comment(
                 'capsubquery',
@@ -125,11 +125,20 @@ final class collection_cohortvisible extends \tool_mulib\external\form_autocompl
             return get_string('error');
         }
 
-        $collectionid = $args['collectionid'];
-        if ($collectionid) {
-            if ($DB->record_exists('tool_mucatalog_collection_cohortvisible', ['cohortid' => $cohort->id, 'collectionid' => $collectionid])) {
+        if (!empty($args['collectionid'])) {
+            $collection = $DB->get_record('tool_mucatalog_collection', ['id' => $args['collectionid']], '*', MUST_EXIST);
+            if ($collection->contextid != $context->id) {
+                debugging('collection contextid parameter mismatch', DEBUG_DEVELOPER);
+                return get_string('error');
+            }
+            if ($DB->record_exists('tool_mucatalog_collection_cohortvisible', ['cohortid' => $cohort->id, 'collectionid' => $collection->id])) {
                 // Existing cohorts are always fine.
                 return null;
+            }
+        } else {
+            if ($args['contextid'] != $context->id) {
+                debugging('contextid parameter mismatch', DEBUG_DEVELOPER);
+                return get_string('error');
             }
         }
 

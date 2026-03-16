@@ -19,7 +19,7 @@
 
 namespace tool_mucatalog\local\form;
 
-use tool_mucatalog\external\form_autocomplete\item_sectionid;
+use tool_mucatalog\external\form_autocomplete\item_move_sectionid;
 
 /**
  * Move item to a different section.
@@ -43,7 +43,7 @@ final class item_move extends \tool_mulib\local\ajax_form {
         $mform->addElement('static', 'staticname', get_string('item_name', 'tool_mucatalog'), format_string($item->name));
 
         $args = ['itemid' => $item->id];
-        item_sectionid::add_element(
+        item_move_sectionid::add_element(
             $mform,
             $args,
             'sectionid',
@@ -70,7 +70,7 @@ final class item_move extends \tool_mulib\local\ajax_form {
         if (!$data['sectionid']) {
             $errors['sectionid'] = get_string('required');
         } else {
-            $error = item_sectionid::validate_value($data['sectionid'], ['itemid' => $item->id], $context);
+            $error = item_move_sectionid::validate_value($data['sectionid'], ['itemid' => $item->id], $context);
             if ($error !== null) {
                 $errors['sectionid'] = $error;
             }

@@ -19,7 +19,7 @@
 
 namespace tool_mucatalog\local\form;
 
-use tool_mucatalog\external\form_autocomplete\collection_itemids;
+use tool_mucatalog\external\form_autocomplete\collection_items_add_itemids;
 
 /**
  * Add existing item to collection.
@@ -37,7 +37,7 @@ final class collection_items_add extends \tool_mulib\local\ajax_form {
         $currentdata = $this->_customdata['currentdata'];
 
         $args = ['collectionid' => $collection->id];
-        collection_itemids::add_element(
+        collection_items_add_itemids::add_element(
             $mform,
             $args,
             'itemids',

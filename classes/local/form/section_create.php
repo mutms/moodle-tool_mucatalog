@@ -62,7 +62,7 @@ final class section_create extends \tool_mulib\local\ajax_form {
 
         section_cohortvisible::add_element(
             $mform,
-            ['sectionid' => 0, 'contextid' => $context->id],
+            ['sectionid' => null, 'contextid' => $context->id],
             'cohortvisible',
             get_string('cohortvisible', 'tool_mucatalog'),
             $context
@@ -90,9 +90,9 @@ final class section_create extends \tool_mulib\local\ajax_form {
 
     #[\Override]
     public function validation($data, $files) {
-        $context = $this->_customdata['context'];
-
         $errors = parent::validation($data, $files);
+
+        $context = $this->_customdata['context'];
 
         if (trim($data['name']) === '') {
             $errors['name'] = get_string('required');
@@ -119,7 +119,7 @@ final class section_create extends \tool_mulib\local\ajax_form {
         }
 
         if ($validatecontext && $data['cohortvisible']) {
-            $args = ['sectionid' => 0, 'contextid' => $context->id];
+            $args = ['sectionid' => null, 'contextid' => $context->id];
             foreach ($data['cohortvisible'] as $cohortid) {
                 $error = section_cohortvisible::validate_value($cohortid, $args, $validatecontext);
                 if ($error !== null) {

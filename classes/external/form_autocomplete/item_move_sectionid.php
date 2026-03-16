@@ -24,57 +24,56 @@ use core_external\external_value;
 use tool_mulib\local\sql;
 use tool_mulib\local\context_map;
 use tool_mulib\local\mulib;
-use tool_mucatalog\local\util;
-use stdClass;
 
 /**
- * Add items to collection.
+ * Move item to different section candidates.
  *
  * @package     tool_mucatalog
  * @copyright   2026 Petr Skoda
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-final class collection_itemids extends \tool_mulib\external\form_autocomplete\base {
-    /** @var string|null tool_mucatalog_item table */
-    protected const ITEM_TABLE = 'tool_mucatalog_item';
+final class item_move_sectionid extends \tool_mulib\external\form_autocomplete\base {
+    /** @var string|null course table */
+    protected const ITEM_TABLE = 'tool_mucatalog_section';
     /** @var string|null field used for item name */
     protected const ITEM_FIELD = 'name';
 
     #[\Override]
     public static function get_multiple(): bool {
-        return true;
+        return false;
     }
 
     #[\Override]
     public static function execute_parameters(): external_function_parameters {
         return new external_function_parameters([
             'query' => new external_value(PARAM_RAW, 'The search query', VALUE_REQUIRED),
-            'collectionid' => new external_value(PARAM_INT, 'Collection id', VALUE_REQUIRED),
+            'itemid' => new external_value(PARAM_INT, 'Item id', VALUE_REQUIRED),
         ]);
     }
 
     /**
-     * Finds candidates for adding items to collection.
+     * Finds candidate sections for moving of item.
      *
      * @param string $query The search request.
-     * @param int $collectionid The collection.
+     * @param int $itemid The item.
      * @return array
      */
-    public static function execute(string $query, int $collectionid): array {
+    public static function execute(string $query, int $itemid): array {
         global $DB, $USER;
 
         [
             'query' => $query,
-            'collectionid' => $collectionid,
+            'itemid' => $itemid,
         ] = self::validate_parameters(self::execute_parameters(), [
             'query' => $query,
-            'collectionid' => $collectionid,
+            'itemid' => $itemid,
         ]);
 
-        $collection = $DB->get_record('tool_mucatalog_collection', ['id' => $collectionid], '*', MUST_EXIST);
+        $item = $DB->get_record('tool_mucatalog_item', ['id' => $itemid], '*', MUST_EXIST);
+        $section = $DB->get_record('tool_mucatalog_section', ['id' => $item->sectionid], '*', MUST_EXIST);
 
         // Validate context.
-        $context = \context::instance_by_id($collection->contextid);
+        $context = \context::instance_by_id($section->contextid);
         self::validate_context($context);
         require_capability('tool/mucatalog:manage', $context);
 
@@ -82,24 +81,22 @@ final class collection_itemids extends \tool_mulib\external\form_autocomplete\ba
 
         $sql = (
             new sql(
-                "SELECT i.id, i.name, i.type, s.name AS sectionname
-                   FROM {tool_mucatalog_item} i
-                   JOIN {tool_mucatalog_section} s ON s.id = i.sectionid AND s.status <> :archived1
+                "SELECT s.id, s.name
+                   FROM {tool_mucatalog_section} s
                    JOIN {context} ctx ON ctx.id = s.contextid
                    /* capjoin */
-              LEFT JOIN {tool_mucatalog_collection_item} ei ON ei.collectionid = :collectionid AND ei.itemid = i.id
-                  WHERE ei.id IS NULL AND i.status <> :archived2
+                  WHERE s.id <> :sectionid
                         /* capwhere */ /* searchsql */ /* tenantwhere */
-               GROUP BY i.id, i.name, i.type, s.name
-               ORDER BY i.name ASC, s.name ASC",
-                ['collectionid' => $collection->id, 'archived1' => util::STATUS_ARCHIVED, 'archived2' => util::STATUS_ARCHIVED]
+               GROUP BY s.id, s.name
+               ORDER BY s.name ASC",
+                ['sectionid' => $section->id]
             )
         )
             ->replace_comment('capjoin', $capjoin['join'])
             ->replace_comment('capwhere', $capjoin['where']->wrap("AND ", ""))
             ->replace_comment(
                 'searchsql',
-                self::get_search_query($query, ['name', 'idnumber'], 'c')->wrap("AND ", "")
+                self::get_search_query($query, ['name', 'shortdescription'], 's')->wrap("AND ", "")
             );
 
         if (mulib::is_mutenancy_active()) {
@@ -111,62 +108,39 @@ final class collection_itemids extends \tool_mulib\external\form_autocomplete\ba
             }
         }
 
-        $items = $DB->get_records_sql($sql->sql, $sql->params, 0, self::MAX_RESULTS + 1);
-        return self::prepare_result($items, $context);
-    }
-
-    /**
-     * Format user label for display.
-     *
-     * NOTE: there is no need to change format_list() because this is not used for editing.
-     *
-     * @param stdClass $item
-     * @param \context $context
-     * @return string HTML fragment
-     */
-    public static function format_label(stdClass $item, \context $context): string {
-        $parts = [];
-        $parts[] = parent::format_label($item, $context);
-
-        $classname = \tool_mucatalog\local\item::get_type_classname($item->type);
-        if ($classname) {
-            $parts[] = $classname::get_type_name();
-        } else {
-            $parts[] = get_string('error');
-        }
-
-        if (isset($item->sectionname)) {
-            $parts[] = format_string($item->sectionname);
-        }
-
-        return implode(\moodle_page::TITLE_SEPARATOR, $parts);
+        $courses = $DB->get_records_sql($sql->sql, $sql->params, 0, self::MAX_RESULTS + 1);
+        return self::prepare_result($courses, $context);
     }
 
     #[\Override]
     public static function validate_value(int $value, array $args, \context $context): ?string {
         global $DB;
 
-        $item = $DB->get_record('tool_mucatalog_item', ['id' => $value]);
-        if (!$item) {
+        $item = $DB->get_record('tool_mucatalog_item', ['id' => $args['itemid']], '*', MUST_EXIST);
+        if ($item->sectionid == $value) {
             return get_string('error');
         }
-        $section = $DB->get_record('tool_mucatalog_section', ['id' => $item->sectionid], '*', MUST_EXIST);
-
-        $collectionid = $args['collectionid'];
-        $collection = $DB->get_record('tool_mucatalog_collection', ['id' => $collectionid], '*', MUST_EXIST);
-
-        if ($DB->record_exists('tool_mucatalog_collection_item', ['collectionid' => $collection->id, 'itemid' => $item->id])) {
-            return get_string('error');
+        $section = $DB->get_record('tool_mucatalog_section', ['id' => $item->sectionid]);
+        if ($section) {
+            if ($section->contextid != $context->id) {
+                debugging('section contextid parameter mismatch', DEBUG_DEVELOPER);
+                return get_string('error');
+            }
         }
 
-        $itemcontext = \context::instance_by_id($section->contextid);
-        if (!has_capability('tool/mucatalog:manage', $itemcontext)) {
+        $newsection = $DB->get_record('tool_mucatalog_section', ['id' => $value]);
+        if (!$newsection) {
+            return get_string('error');
+        }
+        $newcontext = \context::instance_by_id($newsection->contextid);
+
+        if (!has_capability('tool/mucatalog:manage', $newcontext)) {
             return get_string('error');
         }
 
         if (mulib::is_mutenancy_active()) {
             if ($context->tenantid) {
-                if ($itemcontext->tenantid && $itemcontext->tenantid != $context->tenantid) {
+                if ($newcontext->tenantid && $newcontext->tenantid != $context->tenantid) {
                     return get_string('error');
                 }
             }

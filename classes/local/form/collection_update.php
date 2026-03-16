@@ -59,7 +59,7 @@ final class collection_update extends \tool_mulib\local\ajax_form {
 
         collection_cohortvisible::add_element(
             $mform,
-            ['collectionid' => $currentdata->id, 'contextid' => $context->id],
+            ['collectionid' => $currentdata->id, 'contextid' => null],
             'cohortvisible',
             get_string('cohortvisible', 'tool_mucatalog'),
             $context
@@ -80,9 +80,10 @@ final class collection_update extends \tool_mulib\local\ajax_form {
 
     #[\Override]
     public function validation($data, $files) {
-        $context = $this->_customdata['context'];
-
         $errors = parent::validation($data, $files);
+
+        $context = $this->_customdata['context'];
+        $currentdata = $this->_customdata['currentdata'];
 
         if (trim($data['name']) === '') {
             $errors['name'] = get_string('required');
@@ -97,7 +98,7 @@ final class collection_update extends \tool_mulib\local\ajax_form {
         }
 
         if ($data['cohortvisible']) {
-            $args = ['collectionid' => 0, 'contextid' => $context->id];
+            $args = ['collectionid' => $currentdata->id, 'contextid' => null];
             foreach ($data['cohortvisible'] as $cohortid) {
                 $error = collection_cohortvisible::validate_value($cohortid, $args, $context);
                 if ($error !== null) {
