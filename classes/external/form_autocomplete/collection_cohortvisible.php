@@ -77,16 +77,14 @@ final class collection_cohortvisible extends \tool_mulib\external\form_autocompl
         self::validate_context($context);
         require_capability('tool/mucatalog:manage', $context);
 
-        $sql = (
-        new sql(
+        $sql = (new sql(
             "SELECT ch.id, ch.name
-              FROM {cohort} ch
-              /* tenantjoin */
-              /* capsubquery */
-            /* capwhere */ /* searchsql */
-          ORDER BY ch.name ASC"
-            )
-        )
+               FROM {cohort} ch
+               /* tenantjoin */
+               /* capsubquery */
+             /* capwhere */ /* searchsql */
+           ORDER BY ch.name ASC"
+        ))
             ->replace_comment(
                 'capsubquery',
                 context_map::get_contexts_by_capability_query(
