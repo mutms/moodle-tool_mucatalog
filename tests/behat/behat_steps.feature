@@ -139,7 +139,7 @@ Feature: tool_mucatalog navigation behat steps test
 
     When I am on the "Other section 2" "tool_mucatalog > Section" page
     Then I should see "Other section 2"
-    And I should see "Cat 2" in the "Category" definition list item
+    And I should see "Cat 2" in the "Management category" definition list item
     And I should see "Draft" in the "Section status" definition list item
 
   Scenario: Viewer navigates to Collection management via behat step
@@ -147,7 +147,7 @@ Feature: tool_mucatalog navigation behat steps test
 
     When I am on the "Other collection 3" "tool_mucatalog > Collection" page
     Then I should see "Other collection 3"
-    And I should see "Cat 3" in the "Category" definition list item
+    And I should see "Cat 3" in the "Management category" definition list item
     And I should see "-10" in the "Front page priority" definition list item
 
   Scenario: Viewer navigates to Item management via behat step
