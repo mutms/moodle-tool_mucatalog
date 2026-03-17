@@ -59,7 +59,7 @@ class renderer extends \plugin_renderer_base {
             $link = new \tool_mulib\output\ajax_form\icon($url, get_string('section_move', 'tool_mucatalog'), 'i/edit');
             $categoryname .= $this->output->render($link);
         }
-        $details->add(get_string('category'), $categoryname);
+        $details->add(get_string('section_category', 'tool_mucatalog'), $categoryname);
 
         if ($section->frontpagepriority) {
             $details->add(get_string('frontpagepriority', 'tool_mucatalog'), $section->frontpagepriority);
@@ -136,7 +136,7 @@ class renderer extends \plugin_renderer_base {
             $link = new \tool_mulib\output\ajax_form\icon($url, get_string('collection_move', 'tool_mucatalog'), 'i/edit');
             $categoryname .= $this->output->render($link);
         }
-        $details->add(get_string('category'), $categoryname);
+        $details->add(get_string('collection_category', 'tool_mucatalog'), $categoryname);
 
         if ($collection->frontpagepriority) {
             $details->add(get_string('frontpagepriority', 'tool_mucatalog'), $collection->frontpagepriority);
@@ -181,8 +181,9 @@ class renderer extends \plugin_renderer_base {
 
         $details = new \tool_mulib\output\entity_details();
 
-        $details->add($classname::get_type_name(), $classname::get_reference($item->id));
+        $details->add(get_string('section', 'tool_mucatalog'), format_string($section->name));
 
+        $details->add($classname::get_type_name(), $classname::get_reference($item->id));
         $details->add(get_string('item_syncname', 'tool_mucatalog'), $item->syncname ? get_string('yes') : get_string('no'));
 
         $details->add(

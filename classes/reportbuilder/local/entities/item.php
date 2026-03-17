@@ -185,7 +185,13 @@ final class item extends base {
             ->set_type(column::TYPE_TIMESTAMP)
             ->add_field("{$itemalias}.hiddenbefore")
             ->set_is_sortable(true)
-            ->add_callback([format::class, 'userdate'], $dateformat);
+            ->add_callback([format::class, 'userdate'], $dateformat)
+            ->add_callback(static function (?string $value, \stdClass $row): string {
+                if (!$value) {
+                    return '-';
+                }
+                return $value;
+            });
 
         $columns[] = (new column(
             'hiddenafter',
@@ -196,7 +202,13 @@ final class item extends base {
             ->set_type(column::TYPE_TIMESTAMP)
             ->add_field("{$itemalias}.hiddenafter")
             ->set_is_sortable(true)
-            ->add_callback([format::class, 'userdate'], $dateformat);
+            ->add_callback([format::class, 'userdate'], $dateformat)
+            ->add_callback(static function (?string $value, \stdClass $row): string {
+                if (!$value) {
+                    return '-';
+                }
+                return $value;
+            });
 
         return $columns;
     }

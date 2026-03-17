@@ -84,7 +84,6 @@ $formclass = $itemclass::get_create_form_class();
 $currentdata = (object)[
     'sectionid' => $section->id,
     'type' => $type,
-    'syncname' => 1,
     'status' => util::STATUS_ACTIVE,
 ];
 

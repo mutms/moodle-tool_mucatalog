@@ -31,8 +31,11 @@ final class item_activate extends \tool_mulib\local\ajax_form {
     protected function definition() {
         $mform = $this->_form;
         $item = $this->_customdata['item'];
+        $section = $this->_customdata['section'];
 
         // TODO: add explanation.
+
+        $mform->addElement('static', 'staticsectionname', get_string('section_name', 'tool_mucatalog'), format_string($section->name));
 
         $mform->addElement('static', 'staticname', get_string('section_name', 'tool_mucatalog'), format_string($item->name));
 

@@ -54,10 +54,9 @@ final class item_move extends \tool_mulib\local\ajax_form {
 
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);
+        $mform->setDefault('id', $item->id);
 
         $this->add_action_buttons(true, get_string('item_move', 'tool_mucatalog'));
-
-        $this->set_data($item);
     }
 
     #[\Override]

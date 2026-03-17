@@ -61,7 +61,7 @@ final class item_update extends \tool_mulib\local\ajax_form {
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
 
-        if (!empty($data['syncname'])) {
+        if ($data['syncname']) {
             if (trim($data['name']) === '') {
                 $errors['name'] = get_string('required');
             }

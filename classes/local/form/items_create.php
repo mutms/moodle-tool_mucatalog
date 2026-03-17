@@ -51,12 +51,6 @@ final class items_create extends \tool_mulib\local\ajax_form {
         );
         $mform->addRule('referenceids', get_string('required'), 'required', null, 'client');
 
-        $mform->addElement('advcheckbox', 'syncname', get_string('item_syncname', 'tool_mucatalog'), ' ');
-
-        $mform->addElement('text', 'name', get_string('item_name', 'tool_mucatalog'), 'maxlength="254" size="100"');
-        $mform->setType('name', PARAM_TEXT);
-        $mform->hideIf('name', 'syncname', 'eq', 1);
-
         $mform->addElement('date_time_selector', 'hiddenbefore', get_string('hiddenbefore', 'tool_mucatalog'), ['optional' => true]);
 
         $mform->addElement('date_time_selector', 'hiddenafter', get_string('hiddenafter', 'tool_mucatalog'), ['optional' => true]);
