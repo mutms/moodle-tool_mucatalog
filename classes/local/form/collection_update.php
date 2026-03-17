@@ -40,7 +40,7 @@ final class collection_update extends \tool_mulib\local\ajax_form {
         $mform->addRule('name', get_string('required'), 'required', null, 'client');
         $mform->setType('name', PARAM_TEXT);
 
-        $mform->addElement('textarea', 'shortdescription', get_string('collection_shortdescription', 'tool_mucatalog'), ['rows' => '3', 'cols' => '50']);
+        $mform->addElement('textarea', 'shortdescription', get_string('shortdescription', 'tool_mucatalog'), ['rows' => '3', 'cols' => '50']);
         $mform->addRule('shortdescription', get_string('required'), 'required', null, 'client');
         $mform->setType('shortdescription', PARAM_RAW);
 

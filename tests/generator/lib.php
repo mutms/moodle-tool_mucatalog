@@ -53,9 +53,6 @@ final class tool_mucatalog_generator extends component_generator_base {
         $syscontext = context_system::instance();
 
         $record = (array)$record;
-        if (isset($record['frontpageshow']) && trim($record['frontpageshow']) === '') {
-            unset($record['frontpageshow']);
-        }
         $defaults = (array)section::get_defaults($record['contextid'] ?? $syscontext->id);
         $record = (object)array_merge($defaults, $record);
 
@@ -106,9 +103,6 @@ final class tool_mucatalog_generator extends component_generator_base {
         $syscontext = context_system::instance();
 
         $record = (array)$record;
-        if (isset($record['frontpageshow']) && trim($record['frontpageshow']) === '') {
-            unset($record['frontpageshow']);
-        }
         $defaults = (array)collection::get_defaults($record['contextid'] ?? $syscontext->id);
         $record = (object)array_merge($defaults, $record);
 

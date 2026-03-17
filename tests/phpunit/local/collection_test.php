@@ -116,6 +116,8 @@ final class collection_test extends \advanced_testcase {
         $collection = collection::create((object)[
             'contextid' => $syscontext->id,
             'name' => 'Third collection',
+            'frontpageshow' => '0',
+            'frontpagepriority' => '999',
             'uservisible' => 1,
         ]);
         $this->assertSame('Third collection', $collection->name);

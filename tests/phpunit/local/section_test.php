@@ -120,6 +120,8 @@ final class section_test extends \advanced_testcase {
         $section = section::create((object)[
             'contextid' => $syscontext->id,
             'name' => 'Third section',
+            'frontpageshow' => '0',
+            'frontpagepriority' => '999',
             'uservisible' => 1,
         ]);
         $this->assertSame('Third section', $section->name);

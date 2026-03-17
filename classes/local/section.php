@@ -83,13 +83,12 @@ final class section {
 
         if (isset($data->frontpageshow) && !$data->frontpageshow) {
             $data->frontpagepriority = null;
+        }
+        // NOTE: 0 priority value is reserved for "All items".
+        if (empty($data->frontpagepriority) || trim($data->frontpagepriority) === '') {
+            $record->frontpagepriority = null;
         } else {
-            $record->frontpagepriority = $data->frontpagepriority ?? null;
-            if (!$record->frontpagepriority || trim($record->frontpagepriority) === '') {
-                $record->frontpagepriority = null;
-            } else {
-                $record->frontpagepriority = (int)$record->frontpagepriority;
-            }
+            $record->frontpagepriority = (int)$data->frontpagepriority;
         }
 
         $record->status = (int)($data->status ?? util::STATUS_DRAFT);
@@ -168,14 +167,13 @@ final class section {
 
         if (isset($data->frontpageshow) && !$data->frontpageshow) {
             $data->frontpagepriority = null;
-        } else {
-            if (property_exists($data, 'frontpagepriority')) {
-                $record->frontpagepriority = $data->frontpagepriority;
-                if (!$record->frontpagepriority || trim($record->frontpagepriority) === '') {
-                    $record->frontpagepriority = null;
-                } else {
-                    $record->frontpagepriority = (int)$record->frontpagepriority;
-                }
+        }
+        if (property_exists($data, 'frontpagepriority')) {
+            // NOTE: 0 priority value is reserved for "All items".
+            if (empty($data->frontpagepriority) || trim($data->frontpagepriority) === '') {
+                $record->frontpagepriority = null;
+            } else {
+                $record->frontpagepriority = (int)$data->frontpagepriority;
             }
         }
 

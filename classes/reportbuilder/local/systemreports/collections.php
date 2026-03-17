@@ -78,6 +78,7 @@ final class collections extends system_report {
             'collection:name',
             'collection:items',
             'collection:context',
+            'collection:frontpageshow',
             'collection:frontpagepriority',
             'collection:guestvisible',
             'collection:uservisible',

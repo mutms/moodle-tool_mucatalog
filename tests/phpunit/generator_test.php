@@ -103,8 +103,11 @@ final class generator_test extends \advanced_testcase {
 
         $section = $generator->create_section([
             'hiddenfromtenants' => 1,
+            'frontpageshow' => '1',
+            'frontpagepriority' => '888',
         ]);
         $this->assertSame('1', $section->hiddenfromtenants);
+        $this->assertSame('888', $section->frontpagepriority);
     }
 
     public function test_create_item(): void {
@@ -231,8 +234,11 @@ final class generator_test extends \advanced_testcase {
 
         $collection = $generator->create_collection([
             'hiddenfromtenants' => 1,
+            'frontpageshow' => '1',
+            'frontpagepriority' => '888',
         ]);
         $this->assertSame('1', $collection->hiddenfromtenants);
+        $this->assertSame('888', $collection->frontpagepriority);
     }
 
     public function test_create_collection_item(): void {

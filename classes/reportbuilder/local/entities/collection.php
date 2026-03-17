@@ -126,14 +126,43 @@ final class collection extends base {
             });
 
         $columns[] = (new column(
+            'frontpageshow',
+            new lang_string('frontpageshow', 'tool_mucatalog'),
+            $this->get_entity_name()
+        ))
+            ->add_joins($this->get_joins())
+            ->set_type(column::TYPE_INTEGER)
+            ->add_field("(CASE WHEN {$collectionalias}.frontpagepriority IS NULL THEN 0 ELSE 1 END)", 'frontpageshow')
+            ->set_is_sortable(true)
+            ->add_callback(static function (?int $value, \stdClass $row): string {
+                if ($value === null) {
+                    return '';
+                }
+                if ($value) {
+                    return get_string('yes');
+                } else {
+                    return get_string('no');
+                }
+            });
+
+        $columns[] = (new column(
             'frontpagepriority',
             new lang_string('frontpagepriority', 'tool_mucatalog'),
             $this->get_entity_name()
         ))
             ->add_joins($this->get_joins())
             ->set_type(column::TYPE_INTEGER)
-            ->add_field("{$collectionalias}.frontpagepriority")
-            ->set_is_sortable(true);
+            ->add_fields("{$collectionalias}.frontpagepriority, {$collectionalias}.id")
+            ->set_is_sortable(true)
+            ->add_callback(static function (?int $value, \stdClass $row): string {
+                if (!$row->id) {
+                    return '';
+                }
+                if (is_null($value)) {
+                    return '-';
+                }
+                return $value;
+            });
 
         $columns[] = (new column(
             'guestvisible',

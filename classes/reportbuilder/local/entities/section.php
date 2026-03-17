@@ -125,14 +125,43 @@ final class section extends base {
             });
 
         $columns[] = (new column(
+            'frontpageshow',
+            new lang_string('frontpageshow', 'tool_mucatalog'),
+            $this->get_entity_name()
+        ))
+            ->add_joins($this->get_joins())
+            ->set_type(column::TYPE_INTEGER)
+            ->add_field("(CASE WHEN {$sectionalias}.frontpagepriority IS NULL THEN 0 ELSE 1 END)", 'frontpageshow')
+            ->set_is_sortable(true)
+            ->add_callback(static function (?int $value, \stdClass $row): string {
+                if ($value === null) {
+                    return '';
+                }
+                if ($value) {
+                    return get_string('yes');
+                } else {
+                    return get_string('no');
+                }
+            });
+
+        $columns[] = (new column(
             'frontpagepriority',
             new lang_string('frontpagepriority', 'tool_mucatalog'),
             $this->get_entity_name()
         ))
             ->add_joins($this->get_joins())
             ->set_type(column::TYPE_INTEGER)
-            ->add_field("{$sectionalias}.frontpagepriority")
-            ->set_is_sortable(true);
+            ->add_fields("{$sectionalias}.frontpagepriority, {$sectionalias}.id")
+            ->set_is_sortable(true)
+            ->add_callback(static function (?int $value, \stdClass $row): string {
+                if (!$row->id) {
+                    return '';
+                }
+                if (is_null($value)) {
+                    return '-';
+                }
+                return $value;
+            });
 
         $columns[] = (new column(
             'status',

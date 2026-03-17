@@ -78,6 +78,7 @@ final class sections extends system_report {
             'section:name',
             'section:items',
             'section:context',
+            'section:frontpageshow',
             'section:frontpagepriority',
             'section:guestvisible',
             'section:uservisible',
@@ -168,6 +169,42 @@ final class sections extends system_report {
                     return false;
                 }
                 if (!\tool_mucatalog\local\section::is_activate_possible($row)) {
+                    return false;
+                }
+
+                return has_capability('tool/mucatalog:manage', $context);
+            }));
+
+        $url = new url('/admin/tool/mucatalog/management/section_archive.php', ['id' => ':id']);
+        $link = new \tool_mulib\output\ajax_form\link($url, get_string('section_archive', 'tool_mucatalog'), 'i/settings');
+        $this->add_action($link->create_report_action()
+            ->add_callback(static function (\stdclass $row): bool {
+                if (!$row->id) {
+                    return false;
+                }
+                $context = \context::instance_by_id($row->contextid, IGNORE_MISSING);
+                if (!$context) {
+                    return false;
+                }
+                if (!\tool_mucatalog\local\section::is_archive_possible($row)) {
+                    return false;
+                }
+
+                return has_capability('tool/mucatalog:manage', $context);
+            }));
+
+        $url = new url('/admin/tool/mucatalog/management/section_restore.php', ['id' => ':id']);
+        $link = new \tool_mulib\output\ajax_form\link($url, get_string('section_restore', 'tool_mucatalog'), 'i/settings');
+        $this->add_action($link->create_report_action()
+            ->add_callback(static function (\stdclass $row): bool {
+                if (!$row->id) {
+                    return false;
+                }
+                $context = \context::instance_by_id($row->contextid, IGNORE_MISSING);
+                if (!$context) {
+                    return false;
+                }
+                if (!\tool_mucatalog\local\section::is_restore_possible($row)) {
                     return false;
                 }
 
