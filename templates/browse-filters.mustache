@@ -84,7 +84,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 <form id="tool_mucatalog-form-section" onsubmit="event.preventDefault()" class="{{#hidesectionselect}}hidden{{/hidesectionselect}}">
     <div class="form-icon-select">
         <i class="fa fa-bars form-icon" aria-hidden="true"></i>
-        <select class="form-select custom-select" name="sectionid" id="tool_mucatalog-sectionid" aria-label="{{#str}}section, tool_mucatalog{{/str}}" title="{{#str}}section, tool_mucatalog{{/str}}">
+        <select class="form-select" name="sectionid" id="tool_mucatalog-sectionid" aria-label="{{#str}}section, tool_mucatalog{{/str}}" title="{{#str}}section, tool_mucatalog{{/str}}">
             <option value="{{sectionselect.all.value}}" {{#sectionselect.all.iscurrent}}selected{{/sectionselect.all.iscurrent}}>{{sectionselect.all.name}}</option>
             {{#sectionselect.hascollections}}
                 <optgroup label="{{#str}}collections, tool_mucatalog{{/str}}">
@@ -107,13 +107,13 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 <form id="tool_mucatalog-form-filters" onsubmit="event.preventDefault()" data-original-nextlimitfrom="{{nextlimitfrom}}" data-original-hasmore="{{hasmore}}" data-original-sectionid="{{sectionid}}">
     <div class="form-icon-input">
-        <input type="text" class="form-control custom-control" name="search" id="tool_mucatalog-search" placeholder="{{#str}}search_placeholder, tool_mucatalog{{/str}}" aria-label="{{#str}}search, tool_mucatalog{{/str}}" title="{{#str}}search, tool_mucatalog{{/str}}">
+        <input type="text" class="form-control" name="search" id="tool_mucatalog-search" placeholder="{{#str}}search_placeholder, tool_mucatalog{{/str}}" aria-label="{{#str}}search, tool_mucatalog{{/str}}" title="{{#str}}search, tool_mucatalog{{/str}}">
         <i class="fa fa-magnifying-glass form-icon" aria-hidden="true"></i>
     </div>
     {{#hastypeselect}}
         <div class="pt-3 pb-1"><strong>{{#str}}item_type, tool_mucatalog{{/str}}</strong></div>
         {{#typeselect}}
-            <div class="custom-control custom-radio" data-type-radios>
+            <div class="form-check" data-type-radios>
                 <input class="form-check-input" type="radio" name="type" value="{{value}}" {{#iscurrent}}checked{{/iscurrent}} id="tool_mucatalog-itemtype-{{value}}-{{uniqid}}">
                 <label class="form-check-label" for="tool_mucatalog-itemtype-{{value}}-{{uniqid}}">
                     {{name}}
