@@ -451,6 +451,206 @@ final class collection_test extends \advanced_testcase {
         $this->assertSame(3, $DB->count_records('tool_mucatalog_collection_cohortvisible', []));
     }
 
+    public function test_add_item(): void {
+        global $DB;
+
+        /** @var \tool_mucatalog_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('tool_mucatalog');
+
+        $syscontext = \context_system::instance();
+
+        $category1 = $this->getDataGenerator()->create_category();
+        $catcontext1 = \context_coursecat::instance($category1->id);
+
+        $course0 = $this->getDataGenerator()->create_course();
+        $course1 = $this->getDataGenerator()->create_course();
+        $course2 = $this->getDataGenerator()->create_course();
+
+        $section0 = $generator->create_section(['contextid' => $syscontext->id]);
+        $section1 = $generator->create_section(['contextid' => $catcontext1->id]);
+
+        $item0x0 = $generator->create_item([
+            'sectionid' => $section0->id,
+            'type' => 'course',
+            'name' => 'Fancy name',
+            'referenceid' => $course0->id,
+            'status' => util::STATUS_ACTIVE,
+        ]);
+        $item0x1 = $generator->create_item([
+            'sectionid' => $section0->id,
+            'type' => 'course',
+            'referenceid' => $course1->id,
+            'status' => util::STATUS_DRAFT,
+        ]);
+        $item0x2 = $generator->create_item([
+            'sectionid' => $section0->id,
+            'type' => 'course',
+            'referenceid' => $course2->id,
+            'status' => util::STATUS_DRAFT,
+        ]);
+        $item1x1 = $generator->create_item([
+            'sectionid' => $section1->id,
+            'type' => 'course',
+            'referenceid' => $course1->id,
+            'status' => util::STATUS_ACTIVE,
+        ]);
+
+        $collection0 = $generator->create_collection(['contextid' => $syscontext->id]);
+        $collection1 = $generator->create_collection(['contextid' => $catcontext1->id]);
+
+        $ci0x0x0 = collection::add_item($collection0->id, $item0x0->id);
+        $ci0x0x1 = collection::add_item($collection0->id, $item0x1->id); // Status is checked in UI only.
+        $ci0x1x1 = collection::add_item($collection0->id, $item1x1->id);
+        $ci1x0x0 = collection::add_item($collection1->id, $item0x0->id);
+
+        $this->assertSame($collection0->id, $ci0x0x0->collectionid);
+        $this->assertSame($item0x0->id, $ci0x0x0->itemid);
+        $this->assertSame($collection0->id, $ci0x0x1->collectionid);
+        $this->assertSame($item0x1->id, $ci0x0x1->itemid);
+        $this->assertSame($collection0->id, $ci0x1x1->collectionid);
+        $this->assertSame($item1x1->id, $ci0x1x1->itemid);
+        $this->assertSame($collection1->id, $ci1x0x0->collectionid);
+        $this->assertSame($item0x0->id, $ci1x0x0->itemid);
+        $this->assertSame(4, $DB->count_records('tool_mucatalog_collection_item', []));
+
+        try {
+            collection::add_item($collection0->id, $item0x0->id);
+            $this->fail('Exception expected');
+        } catch (moodle_exception $ex) {
+            $this->assertInstanceOf(invalid_parameter_exception::class, $ex);
+            $this->assertSame('Invalid parameter value detected (items cannot be duplicated in collections)', $ex->getMessage());
+        }
+    }
+
+    public function test_remove_item(): void {
+        global $DB;
+
+        /** @var \tool_mucatalog_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('tool_mucatalog');
+
+        $syscontext = \context_system::instance();
+
+        $category1 = $this->getDataGenerator()->create_category();
+        $catcontext1 = \context_coursecat::instance($category1->id);
+
+        $course0 = $this->getDataGenerator()->create_course();
+        $course1 = $this->getDataGenerator()->create_course();
+        $course2 = $this->getDataGenerator()->create_course();
+
+        $section0 = $generator->create_section(['contextid' => $syscontext->id]);
+        $section1 = $generator->create_section(['contextid' => $catcontext1->id]);
+
+        $item0x0 = $generator->create_item([
+            'sectionid' => $section0->id,
+            'type' => 'course',
+            'name' => 'Fancy name',
+            'referenceid' => $course0->id,
+            'status' => util::STATUS_ACTIVE,
+        ]);
+        $item0x1 = $generator->create_item([
+            'sectionid' => $section0->id,
+            'type' => 'course',
+            'referenceid' => $course1->id,
+            'status' => util::STATUS_DRAFT,
+        ]);
+        $item0x2 = $generator->create_item([
+            'sectionid' => $section0->id,
+            'type' => 'course',
+            'referenceid' => $course2->id,
+            'status' => util::STATUS_DRAFT,
+        ]);
+        $item1x1 = $generator->create_item([
+            'sectionid' => $section1->id,
+            'type' => 'course',
+            'referenceid' => $course1->id,
+            'status' => util::STATUS_ACTIVE,
+        ]);
+
+        $collection0 = $generator->create_collection(['contextid' => $syscontext->id]);
+        $collection1 = $generator->create_collection(['contextid' => $catcontext1->id]);
+
+        $ci0x0x0 = collection::add_item($collection0->id, $item0x0->id);
+        $ci0x0x1 = collection::add_item($collection0->id, $item0x1->id); // Status is checked in UI only.
+        $ci0x1x1 = collection::add_item($collection0->id, $item1x1->id);
+        $ci1x0x0 = collection::add_item($collection1->id, $item0x0->id);
+
+        collection::remove_item($collection0->id, $item0x0->id);
+
+        $this->assertSame($collection0->id, $ci0x0x1->collectionid);
+        $this->assertSame($item0x1->id, $ci0x0x1->itemid);
+        $this->assertSame($collection0->id, $ci0x1x1->collectionid);
+        $this->assertSame($item1x1->id, $ci0x1x1->itemid);
+        $this->assertSame($collection1->id, $ci1x0x0->collectionid);
+        $this->assertSame($item0x0->id, $ci1x0x0->itemid);
+        $this->assertSame(3, $DB->count_records('tool_mucatalog_collection_item', []));
+
+        collection::remove_item($collection0->id, $item0x0->id);
+        $this->assertSame(3, $DB->count_records('tool_mucatalog_collection_item', []));
+    }
+
+    public function test_get_item_collections(): void {
+        /** @var \tool_mucatalog_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('tool_mucatalog');
+
+        $syscontext = \context_system::instance();
+
+        $category1 = $this->getDataGenerator()->create_category();
+        $catcontext1 = \context_coursecat::instance($category1->id);
+
+        $course0 = $this->getDataGenerator()->create_course();
+        $course1 = $this->getDataGenerator()->create_course();
+        $course2 = $this->getDataGenerator()->create_course();
+
+        $section0 = $generator->create_section(['contextid' => $syscontext->id]);
+        $section1 = $generator->create_section(['contextid' => $catcontext1->id]);
+
+        $item0x0 = $generator->create_item([
+            'sectionid' => $section0->id,
+            'type' => 'course',
+            'name' => 'Fancy name',
+            'referenceid' => $course0->id,
+            'status' => util::STATUS_ACTIVE,
+        ]);
+        $item0x1 = $generator->create_item([
+            'sectionid' => $section0->id,
+            'type' => 'course',
+            'referenceid' => $course1->id,
+            'status' => util::STATUS_DRAFT,
+        ]);
+        $item0x2 = $generator->create_item([
+            'sectionid' => $section0->id,
+            'type' => 'course',
+            'referenceid' => $course2->id,
+            'status' => util::STATUS_DRAFT,
+        ]);
+        $item1x1 = $generator->create_item([
+            'sectionid' => $section1->id,
+            'type' => 'course',
+            'referenceid' => $course1->id,
+            'status' => util::STATUS_ACTIVE,
+        ]);
+
+        $collection0 = $generator->create_collection(['contextid' => $syscontext->id]);
+        $collection1 = $generator->create_collection(['contextid' => $catcontext1->id]);
+
+        $ci0x0x0 = collection::add_item($collection0->id, $item0x0->id);
+        $ci0x0x1 = collection::add_item($collection0->id, $item0x1->id); // Status is checked in UI only.
+        $ci0x1x1 = collection::add_item($collection0->id, $item1x1->id);
+        $ci1x0x0 = collection::add_item($collection1->id, $item0x0->id);
+
+        $result = collection::get_item_collections($item0x0->id);
+        $this->assertEquals([$collection0->id, $collection1->id], array_keys($result));
+        $this->assertEquals($collection0, $result[$collection0->id]);
+        $this->assertEquals($collection1, $result[$collection1->id]);
+
+        $result = collection::get_item_collections($item0x1->id);
+        $this->assertEquals([$collection0->id], array_keys($result));
+        $this->assertEquals($collection0, $result[$collection0->id]);
+
+        $result = collection::get_item_collections($item0x2->id);
+        $this->assertEquals([], array_keys($result));
+    }
+
     public function test_pre_course_category_delete(): void {
         global $DB;
 

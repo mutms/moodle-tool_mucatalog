@@ -335,6 +335,28 @@ final class collection {
     }
 
     /**
+     * Returns list of collections for give item.
+     *
+     * NOTE: visibility is not considered.
+     *
+     * @param int $itemid
+     * @return array collection records
+     */
+    public static function get_item_collections(int $itemid): array {
+        global $DB;
+
+        $sql = new sql(
+            "SELECT c.*
+               FROM {tool_mucatalog_collection} c
+               JOIN {tool_mucatalog_collection_item} ci ON ci.collectionid = c.id
+              WHERE ci.itemid = :itemid
+           ORDER BY c.id ASC",
+            ['itemid' => $itemid]
+        );
+        return $DB->get_records_sql($sql->sql, $sql->params);
+    }
+
+    /**
      * When deleting course category delete all draft collections attached to that category,
      * archived active collections and finally move archived collections to system context.
      *

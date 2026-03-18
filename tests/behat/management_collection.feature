@@ -7,10 +7,11 @@ Feature: Management of collections in tool_mucatalog
       | Cat 2 | 0        | CAT2     |
       | Cat 3 | CAT2     | CAT3     |
     And the following "courses" exist:
-      | fullname | shortname |
-      | Course 1 | C1        |
-      | Course 2 | C2        |
-      | Course 3 | C3        |
+      | fullname | shortname | category |
+      | Course 1 | C1        | CAT2     |
+      | Course 2 | C2        | CAT2     |
+      | Course 3 | C3        | CAT3     |
+      | Course 4 | C4        | CAT3     |
     And the following "cohorts" exist:
       | name       | idnumber | contextlevel | reference | public |
       | Cohort 1   | CH1      | System       |           | 1      |
@@ -324,3 +325,39 @@ Feature: Management of collections in tool_mucatalog
     And the following should exist in the "reportbuilder-table" table:
       | Collection name      |
       | Second collection    |
+
+  Scenario: Category manager may add and remove collection items in Universal catalogue
+    Given the following "tool_mucatalog > sections" exist:
+      | name           | status   | contextlevel | reference |
+      | First section  | active   | Category     | CAT2      |
+      | Second section | active   | Category     | CAT3      |
+    And the following "tool_mucatalog > items" exist:
+      | section        | type   | reference | status   |
+      | First section  | course | Course 1  | draft    |
+      | First section  | course | Course 2  | active   |
+      | First section  | course | Course 3  | archived |
+      | Second section | course | Course 4  | active   |
+    And the following "tool_mucatalog > collections" exist:
+      | name              | contextlevel | reference |
+      | First collection  | Category     | CAT2      |
+      | Second collection | Category     | CAT3      |
+    And I log in as "manager2"
+    And I am on the "First collection" "tool_mucatalog > Collection" page
+    And I click on "Items" "link" in the ".secondary-navigation" "css_element"
+
+    When I press "Add items"
+    And I set the following fields in the ".modal-dialog" "css_element" to these values:
+      | Items | Course 2, Course 4 |
+    And I click on "Add items" "button" in the ".modal-dialog" "css_element"
+    Then the following should exist in the "reportbuilder-table" table:
+      | Item name | Item type | Hidden before | Hidden after | Item status | Section name   | Section status |
+      | Course 2  | Course    | -             | -            | Active      | First section  | Active         |
+      | Course 4  | Course    | -             | -            | Active      | Second section | Active         |
+
+    When I click on "Actions" "link" in the "Course 2" "table_row"
+    And I click on "Remove item" "link" in the "Course 2" "table_row"
+    And I click on "Remove item" "button" in the ".modal-dialog" "css_element"
+    Then I should not see "Course 2"
+    And the following should exist in the "reportbuilder-table" table:
+      | Item name | Item type | Hidden before | Hidden after | Item status | Section name   | Section status |
+      | Course 4  | Course    | -             | -            | Active      | Second section | Active         |

@@ -196,6 +196,24 @@ class renderer extends \plugin_renderer_base {
             $item->hiddenafter ? userdate($item->hiddenafter) : get_string('notset', 'tool_mulib')
         );
 
+        $collections = collection::get_item_collections($item->id);
+        if ($collections) {
+            $menu = [];
+            foreach ($collections as $collection) {
+                $colname = format_string($collection->name);
+                $colcontext = \context::instance_by_id($collection->contextid, IGNORE_MISSING);
+                if ($colcontext) {
+                    if (has_capability('tool/mucatalog:view', $colcontext)) {
+                        $url = new url('/admin/tool/mucatalog/management/collection.php', ['id' => $collection->id]);
+                        $colname = html_writer::link($url, $colname);
+                    }
+                }
+                $menu[$collection->id] = $colname;
+            }
+            \core_collator::asort($menu, \core_collator::SORT_NATURAL);
+            $details->add(get_string('collections', 'tool_mucatalog'), implode(', ', $menu));
+        }
+
         $statuses = util::get_statuses_menu();
         $status = $statuses[$item->status];
         if (has_capability('tool/mucatalog:manage', $context)) {

@@ -36,6 +36,8 @@ final class collection_items_add extends \tool_mulib\local\ajax_form {
         $context = $this->_customdata['context'];
         $currentdata = $this->_customdata['currentdata'];
 
+        $mform->addElement('static', 'staticcollectionname', get_string('collection_name', 'tool_mucatalog'), format_string($collection->name));
+
         $args = ['collectionid' => $collection->id];
         collection_items_add_itemids::add_element(
             $mform,
@@ -63,7 +65,7 @@ final class collection_items_add extends \tool_mulib\local\ajax_form {
 
         if ($data['itemids']) {
             foreach ($data['itemids'] as $itemid) {
-                $error = collection_itemids::validate_value($itemid, ['collectionid' => $collection->id], $context);
+                $error = collection_items_add_itemids::validate_value($itemid, ['collectionid' => $collection->id], $context);
                 if ($error !== null) {
                     $errors['itemids'] = $error;
                     break;

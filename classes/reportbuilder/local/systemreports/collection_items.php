@@ -117,6 +117,8 @@ final class collection_items extends system_report {
         $columns = [
             'item:namewithlink',
             'item:type',
+            'item:hiddenbefore',
+            'item:hiddenafter',
             'item:status',
             'section:name',
             'section:status',

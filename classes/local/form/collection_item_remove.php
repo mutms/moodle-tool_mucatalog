@@ -35,6 +35,8 @@ final class collection_item_remove extends \tool_mulib\local\ajax_form {
         $context = $this->_customdata['context'];
         $currentdata = $this->_customdata['currentdata'];
 
+        $mform->addElement('static', 'staticcollectionname', get_string('collection_name', 'tool_mucatalog'), format_string($collection->name));
+
         if ($item) {
             $classname = \tool_mucatalog\local\item::get_type_classname($item->type);
 
