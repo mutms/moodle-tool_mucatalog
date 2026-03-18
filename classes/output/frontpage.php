@@ -56,7 +56,7 @@ final class frontpage implements \core\output\named_templatable, \core\output\re
      * @return bool
      */
     public function is_usable(): bool {
-        return (count($this->sections) > 1 || $this->collections);
+        return ($this->sections || $this->collections);
     }
 
     /**
