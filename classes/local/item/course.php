@@ -207,12 +207,17 @@ final class course extends item {
      * @return string
      */
     public static function get_image_url(stdClass $item): string {
+        global $CFG;
+
         if ($item->type !== self::TYPE) {
             throw new coding_exception('incorrect type class used');
         }
 
         $image = \cache::make('core', 'course_image')->get($item->referenceid);
         if ($image) {
+            if (str_starts_with($image, '/')) {
+                $image = $CFG->wwwroot . $image;
+            }
             return $image;
         }
 
