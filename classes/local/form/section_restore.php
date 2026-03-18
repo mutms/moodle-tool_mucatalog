@@ -32,8 +32,6 @@ final class section_restore extends \tool_mulib\local\ajax_form {
         $mform = $this->_form;
         $currentdata = $this->_customdata['currentdata'];
 
-        // TODO: add explanation.
-
         $mform->addElement('static', 'staticname', get_string('section_name', 'tool_mucatalog'), format_string($currentdata->name));
 
         $mform->addElement('hidden', 'id');

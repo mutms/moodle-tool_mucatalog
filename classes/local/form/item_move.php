@@ -36,8 +36,6 @@ final class item_move extends \tool_mulib\local\ajax_form {
         $context = $this->_customdata['context'];
         $classname = \tool_mucatalog\local\item::get_type_classname($item->type);
 
-        // TODO: add explanation.
-
         $mform->addElement('static', 'statictype', get_string('item_type', 'tool_mucatalog'), $classname ? $classname::get_type() : get_string('error'));
 
         $mform->addElement('static', 'staticname', get_string('item_name', 'tool_mucatalog'), format_string($item->name));

@@ -34,8 +34,6 @@ final class item_delete extends \tool_mulib\local\ajax_form {
         $item = $this->_customdata['item'];
         $classname = \tool_mucatalog\local\item::get_type_classname($item->type);
 
-        // TODO: add explanation.
-
         $mform->addElement('static', 'staticsction', get_string('section_name', 'tool_mucatalog'), format_string($section->name));
 
         $mform->addElement('static', 'statictype', get_string('item_type', 'tool_mucatalog'), $classname ? $classname::get_type() : get_string('error'));
