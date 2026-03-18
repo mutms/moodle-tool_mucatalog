@@ -164,3 +164,345 @@ Feature: Browsing of Universal catalogue
     When I click on "Catalogue" "link" in the ".primary-navigation" "css_element"
     Then the following fields match these values:
       | sectionid | All items |
+
+  Scenario: Users may select sections and collections in Universal catalogue
+    Given the following "tool_mucatalog > sections" exist:
+      | contextlevel | reference | name      | guestvisible | uservisible | status   |
+      |              |           | Section 1 | 1            | 1           | draft    |
+      |              |           | Section 2 | 1            | 1           | archived |
+      | Category     | CAT3      | Section 3 | 1            | 1           | active   |
+      |              |           | Section 4 | 1            | 1           | active   |
+    And the following "tool_mucatalog > collections" exist:
+      | contextlevel | reference | name         | guestvisible | uservisible |
+      |              |           | Collection 1 | 0            | 0           |
+      |              |           | Collection 2 | 1            | 1           |
+      | Category     | CAT3      | Collection 3 | 1            | 1           |
+    And the following "tool_mucatalog > items" exist:
+      | section    | type   | reference |
+      | Section 1  | course | Course 01 |
+      | Section 2  | course | Course 02 |
+      | Section 3  | course | Course 03 |
+      | Section 4  | course | Course 04 |
+      | Section 4  | course | Course 05 |
+    When the following "tool_mucatalog > collection_items" exist:
+      | collection   | item      |
+      | Collection 1 | Course 01 |
+      | Collection 2 | Course 02 |
+      | Collection 3 | Course 03 |
+
+    When I am on the "tool_mucatalog > Catalogue Frontpage" page
+    Then the following fields match these values:
+      | sectionid | All items |
+    And I should see "Course 03"
+    And I should see "Course 04"
+    And I should see "Course 05"
+    And I should not see "Course 01"
+    And I should not see "Course 02"
+
+    When I set the following fields to these values:
+      | sectionid | Collection 2 |
+    Then I should see "No items found"
+
+    When I set the following fields to these values:
+      | sectionid | Collection 3 |
+    Then I should see "Course 03"
+    And I should not see "Course 01"
+    And I should not see "Course 02"
+    And I should not see "Course 04"
+    And I should not see "Course 05"
+
+    When I set the following fields to these values:
+      | sectionid | Section 3 |
+    Then I should see "Course 03"
+    And I should not see "Course 01"
+    And I should not see "Course 02"
+    And I should not see "Course 04"
+    And I should not see "Course 05"
+
+    When I set the following fields to these values:
+      | sectionid | Section 4 |
+    Then I should see "Course 04"
+    And I should see "Course 05"
+    And I should not see "Course 01"
+    And I should not see "Course 02"
+    And I should not see "Course 03"
+
+    And I log in as "guest"
+
+    When I am on the "tool_mucatalog > Catalogue Frontpage" page
+    Then the following fields match these values:
+      | sectionid | All items |
+    And I should see "Course 03"
+    And I should see "Course 04"
+    And I should see "Course 05"
+    And I should not see "Course 01"
+    And I should not see "Course 02"
+
+    When I set the following fields to these values:
+      | sectionid | Collection 2 |
+    Then I should see "No items found"
+
+    When I set the following fields to these values:
+      | sectionid | Collection 3 |
+    Then I should see "Course 03"
+    And I should not see "Course 01"
+    And I should not see "Course 02"
+    And I should not see "Course 04"
+    And I should not see "Course 05"
+
+    When I set the following fields to these values:
+      | sectionid | Section 3 |
+    Then I should see "Course 03"
+    And I should not see "Course 01"
+    And I should not see "Course 02"
+    And I should not see "Course 04"
+    And I should not see "Course 05"
+
+    When I set the following fields to these values:
+      | sectionid | Section 4 |
+    Then I should see "Course 04"
+    And I should see "Course 05"
+    And I should not see "Course 01"
+    And I should not see "Course 02"
+    And I should not see "Course 03"
+
+    And I log in as "student1"
+
+    When I am on the "tool_mucatalog > Catalogue Frontpage" page
+    Then the following fields match these values:
+      | sectionid | All items |
+    And I should see "Course 03"
+    And I should see "Course 04"
+    And I should see "Course 05"
+    And I should not see "Course 01"
+    And I should not see "Course 02"
+
+    When I set the following fields to these values:
+      | sectionid | Collection 2 |
+    Then I should see "No items found"
+
+    When I set the following fields to these values:
+      | sectionid | Collection 3 |
+    Then I should see "Course 03"
+    And I should not see "Course 01"
+    And I should not see "Course 02"
+    And I should not see "Course 04"
+    And I should not see "Course 05"
+
+    When I set the following fields to these values:
+      | sectionid | Section 3 |
+    Then I should see "Course 03"
+    And I should not see "Course 01"
+    And I should not see "Course 02"
+    And I should not see "Course 04"
+    And I should not see "Course 05"
+
+    When I set the following fields to these values:
+      | sectionid | Section 4 |
+    Then I should see "Course 04"
+    And I should see "Course 05"
+    And I should not see "Course 01"
+    And I should not see "Course 02"
+    And I should not see "Course 03"
+
+  Scenario: Users may load more items in Universal catalogue
+    Given the following "tool_mucatalog > sections" exist:
+      | contextlevel | reference | name      | guestvisible | uservisible | status   |
+      |              |           | Section 1 | 1            | 1           | active   |
+      |              |           | Section 2 | 1            | 1           | active   |
+    And the following "tool_mucatalog > items" exist:
+      | section    | type   | reference |
+      | Section 1  | course | Course 01 |
+      | Section 1  | course | Course 02 |
+      | Section 1  | course | Course 03 |
+      | Section 1  | course | Course 04 |
+      | Section 1  | course | Course 05 |
+      | Section 1  | course | Course 06 |
+      | Section 1  | course | Course 07 |
+      | Section 1  | course | Course 08 |
+      | Section 1  | course | Course 09 |
+      | Section 1  | course | Course 10 |
+      | Section 1  | course | Course 11 |
+      | Section 1  | course | Course 12 |
+      | Section 1  | course | Course 13 |
+      | Section 1  | course | Course 14 |
+
+    And I am on the "tool_mucatalog > Catalogue Frontpage" page
+    And I set the following fields to these values:
+      | sectionid | Section 1 |
+    And I should see "Course 01"
+    And I should see "Course 12"
+    And I should not see "Course 13"
+    And I should not see "Course 14"
+
+    When I press "Show more items"
+    Then I should see "Course 01"
+    And I should see "Course 12"
+    And I should see "Course 13"
+    And I should see "Course 14"
+
+    And I log in as "guest"
+
+    And I am on the "tool_mucatalog > Catalogue Frontpage" page
+    And I should see "Course 01"
+    And I should see "Course 12"
+    And I should not see "Course 13"
+    And I should not see "Course 14"
+
+    When I press "Show more items"
+    Then I should see "Course 01"
+    And I should see "Course 12"
+    And I should see "Course 13"
+    And I should see "Course 14"
+
+    And I log in as "student1"
+
+    And I am on the "tool_mucatalog > Catalogue Frontpage" page
+    And I set the following fields to these values:
+      | sectionid | Section 1 |
+    And I should see "Course 01"
+    And I should see "Course 12"
+    And I should not see "Course 13"
+    And I should not see "Course 14"
+
+    When I press "Show more items"
+    Then I should see "Course 01"
+    And I should see "Course 12"
+    And I should see "Course 13"
+    And I should see "Course 14"
+
+  Scenario: Users may search for items by name in Universal catalogue
+    Given the following "tool_mucatalog > sections" exist:
+      | contextlevel | reference | name      | guestvisible | uservisible | status   |
+      |              |           | Section 1 | 1            | 1           | active   |
+      |              |           | Section 2 | 1            | 1           | active   |
+    And the following "tool_mucatalog > items" exist:
+      | section    | type   | reference |
+      | Section 1  | course | Course 01 |
+      | Section 1  | course | Course 02 |
+      | Section 1  | course | Course 03 |
+      | Section 2  | course | Course 10 |
+      | Section 2  | course | Course 11 |
+      | Section 2  | course | Course 12 |
+
+    And I am on the "tool_mucatalog > Catalogue Frontpage" page
+
+    When I set the following fields to these values:
+      | search | Course 0 |
+    And I press the enter key
+    Then I should see "Course 01"
+    And I should see "Course 02"
+    And I should see "Course 03"
+    And I should not see "Course 10"
+
+    When I set the following fields to these values:
+      | search | Course 1 |
+    And I press the enter key
+    Then I should see "Course 10"
+    And I should see "Course 11"
+    And I should see "Course 12"
+    And I should not see "Course 01"
+
+    When I set the following fields to these values:
+      | sectionid | Section 1 |
+    And I set the following fields to these values:
+      | search | Course 1 |
+    Then I should see "No items found"
+
+    And I log in as "student1"
+
+    And I am on the "tool_mucatalog > Catalogue Frontpage" page
+
+    When I set the following fields to these values:
+      | search | Course 0 |
+    And I press the enter key
+    Then I should see "Course 01"
+    And I should see "Course 02"
+    And I should see "Course 03"
+    And I should not see "Course 10"
+
+    When I set the following fields to these values:
+      | search | Course 1 |
+    And I press the enter key
+    Then I should see "Course 10"
+    And I should see "Course 11"
+    And I should see "Course 12"
+    And I should not see "Course 01"
+
+    When I set the following fields to these values:
+      | sectionid | Section 1 |
+    And I set the following fields to these values:
+      | search | Course 1 |
+    Then I should see "No items found"
+
+  Scenario: Users may filter items by type in Universal catalogue
+    Given I skip tests if "tool_muprog" is not installed
+    And the following "tool_muprog > programs" exist:
+      | fullname   | idnumber |
+      | Program 01 | PR1      |
+      | Program 02 | PR2      |
+    And the following "tool_mucatalog > sections" exist:
+      | contextlevel | reference | name      | guestvisible | uservisible | status   |
+      |              |           | Section 1 | 1            | 1           | active   |
+    And the following "tool_mucatalog > items" exist:
+      | section    | type    | reference  |
+      | Section 1  | course  | Course 01  |
+      | Section 1  | course  | Course 02  |
+      | Section 1  | program | Program 01 |
+      | Section 1  | program | Program 02 |
+
+    And I am on the "tool_mucatalog > Catalogue Frontpage" page
+    And I should see "Course 01"
+    And I should see "Course 02"
+    And I should see "Program 01"
+    And I should see "Program 02"
+
+    When I set the following fields to these values:
+      | Course | 1 |
+    Then I should see "Course 01"
+    And I should see "Course 02"
+    And I should not see "Program 01"
+    And I should not see "Program 02"
+
+    When I set the following fields to these values:
+      | Program | 1 |
+    Then I should see "Program 01"
+    And I should see "Program 02"
+    And I should not see "Course 01"
+    And I should not see "Course 02"
+
+    When I set the following fields to these values:
+      | Any type | 1 |
+    Then I should see "Course 01"
+    And I should see "Course 02"
+    And I should see "Program 01"
+    And I should see "Program 02"
+
+    And I log in as "student1"
+
+    And I am on the "tool_mucatalog > Catalogue Frontpage" page
+    And I should see "Course 01"
+    And I should see "Course 02"
+    And I should see "Program 01"
+    And I should see "Program 02"
+
+    When I set the following fields to these values:
+      | Course | 1 |
+    Then I should see "Course 01"
+    And I should see "Course 02"
+    And I should not see "Program 01"
+    And I should not see "Program 02"
+
+    When I set the following fields to these values:
+      | Program | 1 |
+    Then I should see "Program 01"
+    And I should see "Program 02"
+    And I should not see "Course 01"
+    And I should not see "Course 02"
+
+    When I set the following fields to these values:
+      | Any type | 1 |
+    Then I should see "Course 01"
+    And I should see "Course 02"
+    And I should see "Program 01"
+    And I should see "Program 02"
