@@ -6,7 +6,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
 ## [Unreleased](https://github.com/mutms/moodle-tool_mucatalog/compare/v5.0.6.00...MOODLE_500_STABLE)
 
-- No changes
+### Added
+
+- Added composer.json for Packagist distribution
 
 ## [v5.0.6.00](https://github.com/mutms/moodle-tool_mucatalog/tree/v5.0.6.00) - 2026-03-18
 
