@@ -1,0 +1,17 @@
+{
+  "name": "mutms/moodle-tool_mucatalog",
+  "type": "moodle-tool",
+  "description": "Universal catalogue plugin for Moodle LMS",
+  "homepage": "https://github.com/mutms/moodle-tool_mucatalog",
+  "license": "GPL-3.0-or-later",
+  "require": {
+    "composer/installers": "*"
+  },
+  "extra": {
+    "installer-name": "mucatalog"
+  },
+  "support": {
+    "issues": "https://github.com/mutms/moodle-tool_mucatalog/issues",
+    "source": "https://github.com/mutms/moodle-tool_mucatalog"
+  }
+}
