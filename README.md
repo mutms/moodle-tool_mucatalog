@@ -1,6 +1,6 @@
 # Universal catalogue plugin for Moodle™ LMS
 
-![Moodle Plugin CI](https://github.com/mutms/moodle-tool_mucatalog/actions/workflows/moodle-ci.yml/badge.svg)
+![Moodle Plugin CI](https://github.com/mutms/moodle-tool_mucatalog/actions/workflows/moodle-ci.yml/badge.svg) [![camp](https://camp-registry.org/badge/tool_mucatalog.svg)](https://camp-registry.org/plugin/tool_mucatalog.html)
 
 A unified catalogue of courses, programs, and certifications for standard Moodle™ LMS installations
 — fully open source under GPL 3.0, with no restrictions on commercial use. Part of the
