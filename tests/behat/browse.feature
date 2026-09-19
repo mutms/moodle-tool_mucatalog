@@ -51,6 +51,9 @@ Feature: Browsing of Universal catalogue
     And the following "role assigns" exist:
       | user      | role         | contextlevel | reference |
       | viewer1   | sviewer      | System       |           |
+    And the following config values are set as admin:
+      | forcelogin    | 0 |
+      | enablemyhome  | 1 |
 
   Scenario: Nobody can see Catalog menu if Universal catalogue not used
     When I am on homepage
