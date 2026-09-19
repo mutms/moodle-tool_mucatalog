@@ -31,17 +31,17 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
          data-region="item-content"
          data-item-id="{{itemid}}">
         <div class="card-img-top" style='background-image: url("{{imageurl}}");'>
-            <span class="sr-only">{{name}}</span>
+            <span class="visually-hidden">{{name}}</span>
         </div>
         <div class="card-body item-info-container" id="item-info-container-{{itemid}}-{{uniqid}}">
             <h2 class="itemname h3 mb-0">
-                <span class="sr-only">
+                <span class="visually-hidden">
                     {{#str}}item_name, tool_mucatalog{{/str}}
                 </span>
                 {{itemname}}
             </h2>
             <div class="text-muted d-flex mb-3 flex-wrap">
-                <span class="sr-only">
+                <span class="visually-hidden">
                     {{#str}}item_type, tool_mucatalog{{/str}}
                 </span>
                 <small>{{itemtype}}</small>
