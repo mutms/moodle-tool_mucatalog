@@ -5,10 +5,9 @@
   "homepage": "https://github.com/mutms/moodle-tool_mucatalog",
   "license": "GPL-3.0-or-later",
   "require": {
-    "composer/installers": "*"
-  },
-  "extra": {
-    "installer-name": "mucatalog"
+    "moodle/composer-installer": "*",
+    "moodle/moodle": "5.3.*",
+    "mutms/moodle-tool_mulib": "*"
   },
   "support": {
     "issues": "https://github.com/mutms/moodle-tool_mucatalog/issues",
