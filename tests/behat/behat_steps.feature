@@ -49,6 +49,8 @@ Feature: tool_mucatalog navigation behat steps test
     And the following "tool_mucatalog > collection_items" exist:
       | collection        | item     |
       | Some collection 1 | Course 1 |
+    And the following config values are set as admin:
+      | enablemyhome    | 1 |
 
   Scenario: System viewer navigates to All sections management via behat step
     Given I log in as "viewer1"
