@@ -54,6 +54,8 @@ final class get_items_test extends \advanced_testcase {
         /** @var \tool_mucatalog_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('tool_mucatalog');
 
+        set_config('forcelogin', 0);
+
         $syscontext = \context_system::instance();
 
         $cohort1 = $this->getDataGenerator()->create_cohort();
