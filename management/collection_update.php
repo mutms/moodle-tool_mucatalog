@@ -28,11 +28,10 @@
 
 use core\url;
 use tool_mucatalog\local\collection;
+use tool_mulib\muform\handler;
 
 /** @var moodle_database $DB */
 /** @var moodle_page $PAGE */
-
-define('AJAX_SCRIPT', true);
 
 require('../../../../config.php');
 
@@ -49,19 +48,26 @@ $returnurl = new url('/admin/tool/mucatalog/management/collections.php', ['conte
 
 $PAGE->set_context($context);
 $PAGE->set_url($currenturl);
+$title = get_string('collection_update', 'tool_mucatalog');
+$PAGE->set_title($title);
+$PAGE->set_heading($title);
 
-$collection->cohortvisible = array_keys(collection::get_cohortvisible_menu($collection->id));
+$handler = handler::from_request();
 
-$form = new \tool_mucatalog\local\form\collection_update(
-    null,
-    ['currentdata' => $collection, 'context' => $context]
-);
+$current = (array)$collection;
+$current['frontpageshow'] = (int)($collection->frontpagepriority !== null);
+$current['cohortvisible'] = array_keys(collection::get_cohortvisible_menu($collection->id));
+
+$form = new \tool_mucatalog\local\form\collection_update($currenturl, $current, ['context' => $context]);
 
 if ($form->is_cancelled()) {
-    $form->ajax_form_cancelled($returnurl);
-} else if ($data = $form->get_data()) {
-    $collection = collection::update($data);
-    $form->ajax_form_submitted($returnurl);
+    $handler->cancelled($returnurl);
 }
 
-$form->ajax_form_render();
+if ($data = $form->get_data()) {
+    $data->id = $collection->id;
+    collection::update($data);
+    $handler->submitted($returnurl);
+}
+
+$handler->render($form);

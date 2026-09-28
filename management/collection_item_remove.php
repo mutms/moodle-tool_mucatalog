@@ -27,12 +27,11 @@
  */
 
 use core\url;
-use tool_mucatalog\local\util;
+use tool_mucatalog\local\collection;
+use tool_mulib\muform\handler;
 
 /** @var moodle_database $DB */
 /** @var moodle_page $PAGE */
-
-define('AJAX_SCRIPT', true);
 
 require('../../../../config.php');
 
@@ -42,27 +41,31 @@ $itemid = required_param('itemid', PARAM_INT);
 $ci = $DB->get_record('tool_mucatalog_collection_item', ['collectionid' => $collectionid, 'itemid' => $itemid], '*', MUST_EXIST);
 $collection = $DB->get_record('tool_mucatalog_collection', ['id' => $ci->collectionid], '*', MUST_EXIST);
 $item = $DB->get_record('tool_mucatalog_item', ['id' => $ci->itemid], '*', MUST_EXIST);
-
 $context = context::instance_by_id($collection->contextid);
 
 require_login();
 require_capability('tool/mucatalog:manage', $context);
 
-$currenturl = new url('/admin/tool/mucatalog/management/collection_item_remove.php', ['collectionid' => $collection->id]);
+$currenturl = new url('/admin/tool/mucatalog/management/collection_item_remove.php', ['collectionid' => $collection->id, 'itemid' => $item->id]);
 $returnurl = new url('/admin/tool/mucatalog/management/collection_items.php', ['id' => $collection->id]);
 
 $PAGE->set_context($context);
 $PAGE->set_url($currenturl);
+$title = get_string('collection_item_remove', 'tool_mucatalog');
+$PAGE->set_title($title);
+$PAGE->set_heading($title);
 
-$form = new \tool_mucatalog\local\form\collection_item_remove(
-    null,
-    ['collection' => $collection, 'context' => $context, 'item' => $item, 'currentdata' => $ci]
-);
+$handler = handler::from_request();
+
+$form = new \tool_mucatalog\local\form\collection_item_remove($currenturl, [], ['collection' => $collection, 'item' => $item]);
+
 if ($form->is_cancelled()) {
-    $form->ajax_form_cancelled($returnurl);
-} else if ($data = $form->get_data()) {
-    \tool_mucatalog\local\collection::remove_item($ci->collectionid, $ci->itemid);
-    $form->ajax_form_submitted($returnurl);
+    $handler->cancelled($returnurl);
 }
 
-$form->ajax_form_render();
+if ($data = $form->get_data()) {
+    collection::remove_item($collection->id, $item->id);
+    $handler->submitted($returnurl);
+}
+
+$handler->render($form);

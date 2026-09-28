@@ -56,7 +56,7 @@ class renderer extends \plugin_renderer_base {
         $categoryname = html_writer::link($url, $categoryname);
         if (has_capability('tool/mucatalog:manage', $context)) {
             $url = new url('/admin/tool/mucatalog/management/section_move.php', ['id' => $section->id]);
-            $link = new \tool_mulib\output\ajax_form\icon($url, get_string('section_move', 'tool_mucatalog'), 'i/edit');
+            $link = new \tool_mulib\output\muform\dialog\icon($url, get_string('section_move', 'tool_mucatalog'), 'i/edit');
             $categoryname .= $this->output->render($link);
         }
         $details->add(get_string('section_category', 'tool_mucatalog'), $categoryname);
@@ -88,15 +88,15 @@ class renderer extends \plugin_renderer_base {
             $action = null;
             if (section::is_activate_possible($section)) {
                 $url = new url('/admin/tool/mucatalog/management/section_activate.php', ['id' => $section->id]);
-                $action = new \tool_mulib\output\ajax_form\icon($url, get_string('section_activate', 'tool_mucatalog'), 'i/settings');
+                $action = new \tool_mulib\output\muform\dialog\icon($url, get_string('section_activate', 'tool_mucatalog'), 'i/settings');
             }
             if (section::is_restore_possible($section)) {
                 $url = new url('/admin/tool/mucatalog/management/section_restore.php', ['id' => $section->id]);
-                $action = new \tool_mulib\output\ajax_form\icon($url, get_string('section_restore', 'tool_mucatalog'), 'i/settings');
+                $action = new \tool_mulib\output\muform\dialog\icon($url, get_string('section_restore', 'tool_mucatalog'), 'i/settings');
             }
             if (section::is_archive_possible($section)) {
                 $url = new url('/admin/tool/mucatalog/management/section_archive.php', ['id' => $section->id]);
-                $action = new \tool_mulib\output\ajax_form\icon($url, get_string('section_archive', 'tool_mucatalog'), 'i/settings');
+                $action = new \tool_mulib\output\muform\dialog\icon($url, get_string('section_archive', 'tool_mucatalog'), 'i/settings');
             }
             if ($action) {
                 $action->set_form_size('sm');
@@ -133,7 +133,7 @@ class renderer extends \plugin_renderer_base {
         $categoryname = html_writer::link($url, $categoryname);
         if (has_capability('tool/mucatalog:manage', $context)) {
             $url = new url('/admin/tool/mucatalog/management/collection_move.php', ['id' => $collection->id]);
-            $link = new \tool_mulib\output\ajax_form\icon($url, get_string('collection_move', 'tool_mucatalog'), 'i/edit');
+            $link = new \tool_mulib\output\muform\dialog\icon($url, get_string('collection_move', 'tool_mucatalog'), 'i/edit');
             $categoryname .= $this->output->render($link);
         }
         $details->add(get_string('collection_category', 'tool_mucatalog'), $categoryname);
@@ -220,15 +220,15 @@ class renderer extends \plugin_renderer_base {
             $action = null;
             if ($classname::is_activate_possible($item)) {
                 $url = new url('/admin/tool/mucatalog/management/item_activate.php', ['id' => $item->id]);
-                $action = new \tool_mulib\output\ajax_form\icon($url, get_string('item_activate', 'tool_mucatalog'), 'i/settings');
+                $action = new \tool_mulib\output\muform\dialog\icon($url, get_string('item_activate', 'tool_mucatalog'), 'i/settings');
             }
             if ($classname::is_restore_possible($item)) {
                 $url = new url('/admin/tool/mucatalog/management/item_restore.php', ['id' => $item->id]);
-                $action = new \tool_mulib\output\ajax_form\icon($url, get_string('item_restore', 'tool_mucatalog'), 'i/settings');
+                $action = new \tool_mulib\output\muform\dialog\icon($url, get_string('item_restore', 'tool_mucatalog'), 'i/settings');
             }
             if ($classname::is_archive_possible($item)) {
                 $url = new url('/admin/tool/mucatalog/management/item_archive.php', ['id' => $item->id]);
-                $action = new \tool_mulib\output\ajax_form\icon($url, get_string('item_archive', 'tool_mucatalog'), 'i/settings');
+                $action = new \tool_mulib\output\muform\dialog\icon($url, get_string('item_archive', 'tool_mucatalog'), 'i/settings');
             }
             if ($action) {
                 $action->set_form_size('sm');

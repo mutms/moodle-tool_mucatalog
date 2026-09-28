@@ -27,12 +27,11 @@
  */
 
 use core\url;
-use tool_mucatalog\local\util;
+use tool_mucatalog\local\collection;
+use tool_mulib\muform\handler;
 
 /** @var moodle_database $DB */
 /** @var moodle_page $PAGE */
-
-define('AJAX_SCRIPT', true);
 
 require('../../../../config.php');
 
@@ -49,22 +48,23 @@ $returnurl = new url('/admin/tool/mucatalog/management/collection_items.php', ['
 
 $PAGE->set_context($context);
 $PAGE->set_url($currenturl);
+$title = get_string('collection_items_add', 'tool_mucatalog');
+$PAGE->set_title($title);
+$PAGE->set_heading($title);
 
-$currentdata = (object)[
-    'collectionid' => $collection->id,
-];
+$handler = handler::from_request();
 
-$form = new \tool_mucatalog\local\form\collection_items_add(null, ['collection' => $collection, 'context' => $context, 'currentdata' => $currentdata]);
+$form = new \tool_mucatalog\local\form\collection_items_add($currenturl, [], ['collection' => $collection]);
+
 if ($form->is_cancelled()) {
-    $form->ajax_form_cancelled($returnurl);
-} else if ($data = $form->get_data()) {
-    foreach ($data->itemids as $itemid) {
-        $itemdata = clone($data);
-        $itemdata->itemid = $itemid;
-        \tool_mucatalog\local\collection::add_item($data->collectionid, $itemid);
-    }
-
-    $form->ajax_form_submitted($returnurl);
+    $handler->cancelled($returnurl);
 }
 
-$form->ajax_form_render();
+if ($data = $form->get_data()) {
+    foreach ($data->itemids as $itemid) {
+        collection::add_item($collection->id, (int)$itemid);
+    }
+    $handler->submitted($returnurl);
+}
+
+$handler->render($form);

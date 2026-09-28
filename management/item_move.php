@@ -27,11 +27,10 @@
  */
 
 use core\url;
+use tool_mulib\muform\handler;
 
 /** @var moodle_database $DB */
 /** @var moodle_page $PAGE */
-
-define('AJAX_SCRIPT', true);
 
 require('../../../../config.php');
 
@@ -49,18 +48,26 @@ $returnurl = new url('/admin/tool/mucatalog/management/item.php', ['id' => $item
 
 $PAGE->set_context($context);
 $PAGE->set_url($currenturl);
+$title = get_string('item_move', 'tool_mucatalog');
+$PAGE->set_title($title);
+$PAGE->set_heading($title);
 
 $itemclass = \tool_mucatalog\local\item::get_type_classname($item->type);
 if (!$itemclass) {
     redirect($returnurl);
 }
 
-$form = new \tool_mucatalog\local\form\item_move(null, ['section' => $section, 'context' => $context, 'item' => $item]);
+$handler = handler::from_request();
+
+$form = new \tool_mucatalog\local\form\item_move($currenturl, [], ['item' => $item]);
+
 if ($form->is_cancelled()) {
-    $form->ajax_form_cancelled($returnurl);
-} else if ($data = $form->get_data()) {
-    $item = $itemclass::move($data->id, $data->sectionid);
-    $form->ajax_form_submitted($returnurl);
+    $handler->cancelled($returnurl);
 }
 
-$form->ajax_form_render();
+if ($data = $form->get_data()) {
+    $itemclass::move($item->id, (int)$data->sectionid);
+    $handler->submitted($returnurl);
+}
+
+$handler->render($form);

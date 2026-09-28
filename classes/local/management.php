@@ -21,7 +21,7 @@ namespace tool_mucatalog\local;
 
 use core\url;
 use tool_mulib\output\header_actions;
-use tool_mulib\output\ajax_form\button;
+use tool_mulib\output\muform\dialog\button;
 use tool_mulib\local\sql;
 use stdClass;
 
@@ -203,11 +203,11 @@ final class management {
         if ($secondarytab === 'section_general' && has_capability('tool/mucatalog:manage', $context)) {
             if (section::is_delete_possible($section)) {
                 $url = new \core\url('/admin/tool/mucatalog/management/section_delete.php', ['id' => $section->id]);
-                $link = new \tool_mulib\output\ajax_form\link($url, get_string('section_delete', 'tool_mucatalog'), 'i/delete');
+                $link = new \tool_mulib\output\muform\dialog\link($url, get_string('section_delete', 'tool_mucatalog'), 'i/delete');
                 $link->add_class('text-danger');
                 $link->set_form_size('sm');
-                $link->set_submitted_action($link::SUBMITTED_ACTION_REDIRECT);
-                $actions->get_dropdown()->add_ajax_form($link);
+                $link->set_submitted_action(\tool_mulib\muform\handler\dialog::ACTION_REDIRECT);
+                $actions->get_dropdown()->add_dialog($link);
             }
         }
 
@@ -318,11 +318,11 @@ final class management {
 
         if ($secondarytab === 'collection_general' && has_capability('tool/mucatalog:manage', $context)) {
             $url = new \core\url('/admin/tool/mucatalog/management/collection_delete.php', ['id' => $collection->id]);
-            $link = new \tool_mulib\output\ajax_form\link($url, get_string('collection_delete', 'tool_mucatalog'), 'i/delete');
+            $link = new \tool_mulib\output\muform\dialog\link($url, get_string('collection_delete', 'tool_mucatalog'), 'i/delete');
             $link->add_class('text-danger');
             $link->set_form_size('sm');
-            $link->set_submitted_action($link::SUBMITTED_ACTION_REDIRECT);
-            $actions->get_dropdown()->add_ajax_form($link);
+            $link->set_submitted_action(\tool_mulib\muform\handler\dialog::ACTION_REDIRECT);
+            $actions->get_dropdown()->add_dialog($link);
         }
 
         if ($actions->has_items()) {

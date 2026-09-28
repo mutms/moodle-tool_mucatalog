@@ -169,7 +169,7 @@ final class collection_items extends system_report {
         }
 
         $url = new url('/admin/tool/mucatalog/management/collection_item_remove.php', ['collectionid' => $this->collection->id, 'itemid' => ':itemid']);
-        $link = new \tool_mulib\output\ajax_form\link($url, get_string('collection_item_remove', 'tool_mucatalog'), 'i/delete');
+        $link = new \tool_mulib\output\muform\dialog\link($url, get_string('collection_item_remove', 'tool_mucatalog'), 'i/delete');
         $this->add_action($link->create_report_action(['class' => 'text-danger'])
             ->add_callback(static function (\stdclass $row): bool {
                 if (!$row->id) {

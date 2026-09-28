@@ -48,21 +48,21 @@ Feature: Management of sections in tool_mucatalog
     And I am on the "tool_mucatalog > All sections management" page
 
     When I press "Add section"
-    And the following fields in the ".modal-dialog" "css_element" match these values:
-      | Show on front page   | 0                  |
-      | Visible to guests    | 0                  |
-      | Visible to all users | 1                  |
-      | Active               | 1                  |
-    And I set the following fields in the ".modal-dialog" "css_element" to these values:
-      | Section name         | First section      |
-      | Short description    | First description  |
-    And I click on "Add section" "button" in the ".modal-dialog" "css_element"
+    And the following muform fields in the "dialog[open]" "css_element" match:
+      | Show on front page   | 0      |
+      | Visible to guests    | 0      |
+      | Visible to all users | 1      |
+      | status               | Active |
+    And I set the following muform fields in the "dialog[open]" "css_element":
+      | Section name      | First section     |
+      | Short description | First description |
+    And I click on "Add section" "button" in the "dialog[open]" "css_element"
     Then the following should exist in the "reportbuilder-table" table:
       | Section name      | Items | Management category | Show on front page | Front page priority | Visible to guests | Visible to all users | Visible to cohorts  | Section status |
       | First section     | 0     | System              | No                 | -                   | No                | Yes                  |                     | Active         |
 
     When I press "Add section"
-    And I set the following fields in the ".modal-dialog" "css_element" to these values:
+    And I set the following muform fields in the "dialog[open]" "css_element":
       | Section name         | Second section     |
       | Short description    | Second description |
       | Management category  | Cat 2              |
@@ -71,8 +71,8 @@ Feature: Management of sections in tool_mucatalog
       | Visible to guests    | 1                  |
       | Visible to all users | 0                  |
       | Visible to cohorts   | Cohort 1, Cohort 3 |
-      | Draft                | 1                  |
-    And I click on "Add section" "button" in the ".modal-dialog" "css_element"
+      | status               | Draft              |
+    And I click on "Add section" "button" in the "dialog[open]" "css_element"
     Then the following should exist in the "reportbuilder-table" table:
       | Section name      | Items | Management category | Show on front page | Front page priority | Visible to guests | Visible to all users | Visible to cohorts  | Section status |
       | First section     | 0     | System              | No                 | -                   | No                | Yes                  |                     | Active         |
@@ -80,13 +80,13 @@ Feature: Management of sections in tool_mucatalog
 
     When I click on "Actions" "link" in the "First section" "table_row"
     And I click on "Update section" "link" in the "First section" "table_row"
-    And the following fields in the ".modal-dialog" "css_element" match these values:
-      | Section name         | First section      |
-      | Short description    | First description  |
-      | Show on front page   | 0                  |
-      | Visible to guests    | 0                  |
-      | Visible to all users | 1                  |
-    And I set the following fields in the ".modal-dialog" "css_element" to these values:
+    And the following muform fields in the "dialog[open]" "css_element" match:
+      | Section name         | First section     |
+      | Short description    | First description |
+      | Show on front page   | 0                 |
+      | Visible to guests    | 0                 |
+      | Visible to all users | 1                 |
+    And I set the following muform fields in the "dialog[open]" "css_element":
       | Section name         | Prvni section      |
       | Short description    | Prvni description  |
       | Show on front page   | 1                  |
@@ -94,7 +94,7 @@ Feature: Management of sections in tool_mucatalog
       | Visible to guests    | 1                  |
       | Visible to all users | 0                  |
       | Visible to cohorts   | Cohort 2, Cohort 3 |
-    And I click on "Update section" "button" in the ".modal-dialog" "css_element"
+    And I click on "Update section" "button" in the "dialog[open]" "css_element"
     Then the following should exist in the "reportbuilder-table" table:
       | Section name      | Items | Management category | Show on front page | Front page priority | Visible to guests | Visible to all users | Visible to cohorts  | Section status |
       | Prvni section     | 0     | System              | Yes                | 88                  | Yes               | No                   | Cohort 2, Cohort 3  | Active         |
@@ -102,20 +102,20 @@ Feature: Management of sections in tool_mucatalog
 
     When I click on "Actions" "link" in the "Prvni section" "table_row"
     And I click on "Update section" "link" in the "Prvni section" "table_row"
-    And the following fields in the ".modal-dialog" "css_element" match these values:
-      | Section name         | Prvni section      |
-      | Short description    | Prvni description  |
-      | Show on front page   | 1                  |
-      | Front page priority  | 88                 |
-      | Visible to guests    | 1                  |
-      | Visible to all users | 0                  |
-    And I set the following fields in the ".modal-dialog" "css_element" to these values:
-      | Section name         | First section      |
-      | Short description    | First description  |
-      | Show on front page   | 0                  |
-      | Visible to guests    | 0                  |
-      | Visible to all users | 1                  |
-    And I click on "Update section" "button" in the ".modal-dialog" "css_element"
+    And the following muform fields in the "dialog[open]" "css_element" match:
+      | Section name         | Prvni section     |
+      | Short description    | Prvni description |
+      | Show on front page   | 1                 |
+      | Front page priority  | 88                |
+      | Visible to guests    | 1                 |
+      | Visible to all users | 0                 |
+    And I set the following muform fields in the "dialog[open]" "css_element":
+      | Section name         | First section     |
+      | Short description    | First description |
+      | Show on front page   | 0                 |
+      | Visible to guests    | 0                 |
+      | Visible to all users | 1                 |
+    And I click on "Update section" "button" in the "dialog[open]" "css_element"
     Then the following should exist in the "reportbuilder-table" table:
       | Section name      | Items | Management category | Show on front page | Front page priority | Visible to guests | Visible to all users | Visible to cohorts  | Section status |
       | First section     | 0     | System              | No                 | -                   | No                | Yes                  |                     | Active         |
@@ -126,21 +126,21 @@ Feature: Management of sections in tool_mucatalog
     And I am on the "Cat 2" "tool_mucatalog > Sections management" page
 
     When I press "Add section"
-    And the following fields in the ".modal-dialog" "css_element" match these values:
-      | Show on front page   | 0                  |
-      | Visible to guests    | 0                  |
-      | Visible to all users | 1                  |
-      | Active               | 1                  |
-    And I set the following fields in the ".modal-dialog" "css_element" to these values:
-      | Section name         | First section      |
-      | Short description    | First description  |
-    And I click on "Add section" "button" in the ".modal-dialog" "css_element"
+    And the following muform fields in the "dialog[open]" "css_element" match:
+      | Show on front page   | 0      |
+      | Visible to guests    | 0      |
+      | Visible to all users | 1      |
+      | status               | Active |
+    And I set the following muform fields in the "dialog[open]" "css_element":
+      | Section name      | First section     |
+      | Short description | First description |
+    And I click on "Add section" "button" in the "dialog[open]" "css_element"
     Then the following should exist in the "reportbuilder-table" table:
       | Section name      | Items | Management category | Show on front page | Front page priority | Visible to guests | Visible to all users | Visible to cohorts  | Section status |
       | First section     | 0     | Cat 2               | No                 | -                   | No                | Yes                  |                     | Active         |
 
     When I press "Add section"
-    And I set the following fields in the ".modal-dialog" "css_element" to these values:
+    And I set the following muform fields in the "dialog[open]" "css_element":
       | Section name         | Second section     |
       | Short description    | Second description |
       | Management category  | Cat 3              |
@@ -149,8 +149,8 @@ Feature: Management of sections in tool_mucatalog
       | Visible to guests    | 1                  |
       | Visible to all users | 0                  |
       | Visible to cohorts   | Cohort 1, Cohort 3 |
-      | Draft                | 1                  |
-    And I click on "Add section" "button" in the ".modal-dialog" "css_element"
+      | status               | Draft              |
+    And I click on "Add section" "button" in the "dialog[open]" "css_element"
     Then the following should exist in the "reportbuilder-table" table:
       | Section name      | Items | Management category | Show on front page | Front page priority | Visible to guests | Visible to all users | Visible to cohorts  | Section status |
       | First section     | 0     | Cat 2               | No                 | -                   | No                | Yes                  |                     | Active         |
@@ -158,13 +158,13 @@ Feature: Management of sections in tool_mucatalog
 
     When I click on "Actions" "link" in the "First section" "table_row"
     And I click on "Update section" "link" in the "First section" "table_row"
-    And the following fields in the ".modal-dialog" "css_element" match these values:
-      | Section name         | First section      |
-      | Short description    | First description  |
-      | Show on front page   | 0                  |
-      | Visible to guests    | 0                  |
-      | Visible to all users | 1                  |
-    And I set the following fields in the ".modal-dialog" "css_element" to these values:
+    And the following muform fields in the "dialog[open]" "css_element" match:
+      | Section name         | First section     |
+      | Short description    | First description |
+      | Show on front page   | 0                 |
+      | Visible to guests    | 0                 |
+      | Visible to all users | 1                 |
+    And I set the following muform fields in the "dialog[open]" "css_element":
       | Section name         | Prvni section      |
       | Short description    | Prvni description  |
       | Show on front page   | 1                  |
@@ -172,7 +172,7 @@ Feature: Management of sections in tool_mucatalog
       | Visible to guests    | 1                  |
       | Visible to all users | 0                  |
       | Visible to cohorts   | Cohort 2, Cohort 3 |
-    And I click on "Update section" "button" in the ".modal-dialog" "css_element"
+    And I click on "Update section" "button" in the "dialog[open]" "css_element"
     Then the following should exist in the "reportbuilder-table" table:
       | Section name      | Items | Management category | Show on front page | Front page priority | Visible to guests | Visible to all users | Visible to cohorts  | Section status |
       | Prvni section     | 0     | Cat 2               | Yes                | 88                  | Yes               | No                   | Cohort 2, Cohort 3  | Active         |
@@ -180,20 +180,20 @@ Feature: Management of sections in tool_mucatalog
 
     When I click on "Actions" "link" in the "Prvni section" "table_row"
     And I click on "Update section" "link" in the "Prvni section" "table_row"
-    And the following fields in the ".modal-dialog" "css_element" match these values:
-      | Section name         | Prvni section      |
-      | Short description    | Prvni description  |
-      | Show on front page   | 1                  |
-      | Front page priority  | 88                 |
-      | Visible to guests    | 1                  |
-      | Visible to all users | 0                  |
-    And I set the following fields in the ".modal-dialog" "css_element" to these values:
-      | Section name         | First section      |
-      | Short description    | First description  |
-      | Show on front page   | 0                  |
-      | Visible to guests    | 0                  |
-      | Visible to all users | 1                  |
-    And I click on "Update section" "button" in the ".modal-dialog" "css_element"
+    And the following muform fields in the "dialog[open]" "css_element" match:
+      | Section name         | Prvni section     |
+      | Short description    | Prvni description |
+      | Show on front page   | 1                 |
+      | Front page priority  | 88                |
+      | Visible to guests    | 1                 |
+      | Visible to all users | 0                 |
+    And I set the following muform fields in the "dialog[open]" "css_element":
+      | Section name         | First section     |
+      | Short description    | First description |
+      | Show on front page   | 0                 |
+      | Visible to guests    | 0                 |
+      | Visible to all users | 1                 |
+    And I click on "Update section" "button" in the "dialog[open]" "css_element"
     Then the following should exist in the "reportbuilder-table" table:
       | Section name      | Items | Management category | Show on front page | Front page priority | Visible to guests | Visible to all users | Visible to cohorts  | Section status |
       | First section     | 0     | Cat 2               | No                 | -                   | No                | Yes                  |                     | Active         |
@@ -211,13 +211,13 @@ Feature: Management of sections in tool_mucatalog
 
     When I click on "Actions" "link" in the "First section" "table_row"
     And I click on "Activate section" "link" in the "First section" "table_row"
-    And I click on "Activate section" "button" in the ".modal-dialog" "css_element"
+    And I click on "Activate section" "button" in the "dialog[open]" "css_element"
     And I click on "Actions" "link" in the "Second section" "table_row"
     And I click on "Archive section" "link" in the "Second section" "table_row"
-    And I click on "Archive section" "button" in the ".modal-dialog" "css_element"
+    And I click on "Archive section" "button" in the "dialog[open]" "css_element"
     And I click on "Actions" "link" in the "Third section" "table_row"
     And I click on "Restore section" "link" in the "Third section" "table_row"
-    And I click on "Restore section" "button" in the ".modal-dialog" "css_element"
+    And I click on "Restore section" "button" in the "dialog[open]" "css_element"
     Then the following should exist in the "reportbuilder-table" table:
       | Section name      | Section status |
       | First section     | Active         |
@@ -229,15 +229,15 @@ Feature: Management of sections in tool_mucatalog
     And I should see "Draft" in the "Section status" definition list item
 
     When I click on "Activate section" "link"
-    And I click on "Activate section" "button" in the ".modal-dialog" "css_element"
+    And I click on "Activate section" "button" in the "dialog[open]" "css_element"
     Then I should see "Active" in the "Section status" definition list item
 
     When I click on "Archive section" "link"
-    And I click on "Archive section" "button" in the ".modal-dialog" "css_element"
+    And I click on "Archive section" "button" in the "dialog[open]" "css_element"
     Then I should see "Archived" in the "Section status" definition list item
 
     When I click on "Restore section" "link"
-    And I click on "Restore section" "button" in the ".modal-dialog" "css_element"
+    And I click on "Restore section" "button" in the "dialog[open]" "css_element"
     Then I should see "Active" in the "Section status" definition list item
 
   Scenario: Category manager may change status of Universal catalogue sections
@@ -252,13 +252,13 @@ Feature: Management of sections in tool_mucatalog
 
     When I click on "Actions" "link" in the "First section" "table_row"
     And I click on "Activate section" "link" in the "First section" "table_row"
-    And I click on "Activate section" "button" in the ".modal-dialog" "css_element"
+    And I click on "Activate section" "button" in the "dialog[open]" "css_element"
     And I click on "Actions" "link" in the "Second section" "table_row"
     And I click on "Archive section" "link" in the "Second section" "table_row"
-    And I click on "Archive section" "button" in the ".modal-dialog" "css_element"
+    And I click on "Archive section" "button" in the "dialog[open]" "css_element"
     And I click on "Actions" "link" in the "Third section" "table_row"
     And I click on "Restore section" "link" in the "Third section" "table_row"
-    And I click on "Restore section" "button" in the ".modal-dialog" "css_element"
+    And I click on "Restore section" "button" in the "dialog[open]" "css_element"
     Then the following should exist in the "reportbuilder-table" table:
       | Section name      | Section status |
       | First section     | Active         |
@@ -270,15 +270,15 @@ Feature: Management of sections in tool_mucatalog
     And I should see "Draft" in the "Section status" definition list item
 
     When I click on "Activate section" "link"
-    And I click on "Activate section" "button" in the ".modal-dialog" "css_element"
+    And I click on "Activate section" "button" in the "dialog[open]" "css_element"
     Then I should see "Active" in the "Section status" definition list item
 
     When I click on "Archive section" "link"
-    And I click on "Archive section" "button" in the ".modal-dialog" "css_element"
+    And I click on "Archive section" "button" in the "dialog[open]" "css_element"
     Then I should see "Archived" in the "Section status" definition list item
 
     When I click on "Restore section" "link"
-    And I click on "Restore section" "button" in the ".modal-dialog" "css_element"
+    And I click on "Restore section" "button" in the "dialog[open]" "css_element"
     Then I should see "Active" in the "Section status" definition list item
 
   Scenario: System manager may move Universal catalogue sections
@@ -292,15 +292,15 @@ Feature: Management of sections in tool_mucatalog
     And I should see "System" in the "Management category" definition list item
 
     When I click on "Move section" "link"
-    And I set the following fields in the ".modal-dialog" "css_element" to these values:
-      | Management category  | Cat 3              |
-    And I click on "Move section" "button" in the ".modal-dialog" "css_element"
+    And I set the following muform fields in the "dialog[open]" "css_element":
+      | Management category | Cat 3 |
+    And I click on "Move section" "button" in the "dialog[open]" "css_element"
     Then I should see "Cat 3" in the "Management category" definition list item
 
     When I click on "Move section" "link"
-    And I set the following fields in the ".modal-dialog" "css_element" to these values:
-      | Management category  | System             |
-    And I click on "Move section" "button" in the ".modal-dialog" "css_element"
+    And I set the following muform fields in the "dialog[open]" "css_element":
+      | Management category | System |
+    And I click on "Move section" "button" in the "dialog[open]" "css_element"
     Then I should see "System" in the "Management category" definition list item
 
   Scenario: Category manager may move Universal catalogue sections
@@ -314,15 +314,15 @@ Feature: Management of sections in tool_mucatalog
     And I should see "Cat 2" in the "Management category" definition list item
 
     When I click on "Move section" "link"
-    And I set the following fields in the ".modal-dialog" "css_element" to these values:
-      | Management category  | Cat 3              |
-    And I click on "Move section" "button" in the ".modal-dialog" "css_element"
+    And I set the following muform fields in the "dialog[open]" "css_element":
+      | Management category | Cat 3 |
+    And I click on "Move section" "button" in the "dialog[open]" "css_element"
     Then I should see "Cat 3" in the "Management category" definition list item
 
     When I click on "Move section" "link"
-    And I set the following fields in the ".modal-dialog" "css_element" to these values:
-      | Management category  | Cat 2             |
-    And I click on "Move section" "button" in the ".modal-dialog" "css_element"
+    And I set the following muform fields in the "dialog[open]" "css_element":
+      | Management category | Cat 2 |
+    And I click on "Move section" "button" in the "dialog[open]" "css_element"
     Then I should see "Cat 2" in the "Management category" definition list item
 
   Scenario: System manager may delete Universal catalogue sections
@@ -338,10 +338,10 @@ Feature: Management of sections in tool_mucatalog
 
     When I click on "Actions" "link" in the "First section" "table_row"
     And I click on "Delete section" "link" in the "First section" "table_row"
-    And I click on "Delete section" "button" in the ".modal-dialog" "css_element"
+    And I click on "Delete section" "button" in the "dialog[open]" "css_element"
     And I click on "Actions" "link" in the "Third section" "table_row"
     And I click on "Delete section" "link" in the "Third section" "table_row"
-    And I click on "Delete section" "button" in the ".modal-dialog" "css_element"
+    And I click on "Delete section" "button" in the "dialog[open]" "css_element"
     Then I should not see "First section"
     And I should not see "Third section"
     And the following should exist in the "reportbuilder-table" table:
@@ -352,7 +352,7 @@ Feature: Management of sections in tool_mucatalog
 
     And I follow "Fourth section"
     When I click on "Delete" action from "Section actions" dropdown
-    And I click on "Delete section" "button" in the ".modal-dialog" "css_element"
+    And I click on "Delete section" "button" in the "dialog[open]" "css_element"
     Then I should not see "Fourth section"
     And the following should exist in the "reportbuilder-table" table:
       | Section name      | Section status |
@@ -361,7 +361,7 @@ Feature: Management of sections in tool_mucatalog
 
     And I follow "Fifth section"
     When I click on "Delete" action from "Section actions" dropdown
-    And I click on "Delete section" "button" in the ".modal-dialog" "css_element"
+    And I click on "Delete section" "button" in the "dialog[open]" "css_element"
     Then I should see "No sections found"
     And I am on the "tool_mucatalog > All sections management" page
     And I should not see "Fifth section"
@@ -382,10 +382,10 @@ Feature: Management of sections in tool_mucatalog
 
     When I click on "Actions" "link" in the "First section" "table_row"
     And I click on "Delete section" "link" in the "First section" "table_row"
-    And I click on "Delete section" "button" in the ".modal-dialog" "css_element"
+    And I click on "Delete section" "button" in the "dialog[open]" "css_element"
     And I click on "Actions" "link" in the "Third section" "table_row"
     And I click on "Delete section" "link" in the "Third section" "table_row"
-    And I click on "Delete section" "button" in the ".modal-dialog" "css_element"
+    And I click on "Delete section" "button" in the "dialog[open]" "css_element"
     Then I should not see "First section"
     And I should not see "Third section"
     And the following should exist in the "reportbuilder-table" table:
@@ -396,7 +396,7 @@ Feature: Management of sections in tool_mucatalog
 
     And I follow "Fourth section"
     When I click on "Delete" action from "Section actions" dropdown
-    And I click on "Delete section" "button" in the ".modal-dialog" "css_element"
+    And I click on "Delete section" "button" in the "dialog[open]" "css_element"
     Then I should not see "Fourth section"
     And the following should exist in the "reportbuilder-table" table:
       | Section name      | Section status |
@@ -405,7 +405,7 @@ Feature: Management of sections in tool_mucatalog
 
     And I follow "Fifth section"
     When I click on "Delete" action from "Section actions" dropdown
-    And I click on "Delete section" "button" in the ".modal-dialog" "css_element"
+    And I click on "Delete section" "button" in the "dialog[open]" "css_element"
     And I am on the "Cat 2" "tool_mucatalog > Sections management" page
     Then I should not see "Fifth section"
     And the following should exist in the "reportbuilder-table" table:
@@ -422,37 +422,27 @@ Feature: Management of sections in tool_mucatalog
     And I click on "Items" "link" in the ".secondary-navigation" "css_element"
 
     When I press "Add items"
-    And I set the following fields in the ".modal-dialog" "css_element" to these values:
-      | Course | 1 |
-    And I click on "Continue" "button" in the ".modal-dialog" "css_element"
-    And I set the following fields to these values:
+    And I set the following muform fields in the "dialog[open]" "css_element":
+      | type | course |
+    And I click on "Continue" "button" in the "dialog[open]" "css_element"
+    And I set the following muform fields in the "dialog[open]" "css_element":
       | Courses | Course 1, Course 2 |
-    And I click on "Add items" "button" in the ".modal-dialog" "css_element"
+    And I click on "Add items" "button" in the "dialog[open]" "css_element"
     Then the following should exist in the "reportbuilder-table" table:
       | Item name | Item type | Hidden before  | Hidden after   | Item status |
       | Course 1  | Course    | -              | -              | Active      |
       | Course 2  | Course    | -              | -              | Active      |
 
     When I press "Add items"
-    And I set the following fields in the ".modal-dialog" "css_element" to these values:
-      | Course | 1 |
-    And I click on "Continue" "button" in the ".modal-dialog" "css_element"
-    And I set the following fields to these values:
-      | Courses               | Course 3 |
-      | hiddenbefore[enabled] | 1        |
-      | hiddenbefore[day]     | 5        |
-      | hiddenbefore[month]   | 11       |
-      | hiddenbefore[year]    | 2020     |
-      | hiddenbefore[hour]    | 09       |
-      | hiddenbefore[minute]  | 00       |
-      | hiddenafter[enabled]  | 1        |
-      | hiddenafter[day]      | 6        |
-      | hiddenafter[month]    | 10       |
-      | hiddenafter[year]     | 2035     |
-      | hiddenafter[hour]     | 08       |
-      | hiddenafter[minute]   | 00       |
-      | Draft                 | 1        |
-    And I click on "Add items" "button" in the ".modal-dialog" "css_element"
+    And I set the following muform fields in the "dialog[open]" "css_element":
+      | type | course |
+    And I click on "Continue" "button" in the "dialog[open]" "css_element"
+    And I set the following muform fields in the "dialog[open]" "css_element":
+      | Courses      | Course 3         |
+      | hiddenbefore | 2020-11-05 09:00 |
+      | hiddenafter  | 2035-10-06 08:00 |
+      | status       | Draft            |
+    And I click on "Add items" "button" in the "dialog[open]" "css_element"
     Then the following should exist in the "reportbuilder-table" table:
       | Item name | Item type | Hidden before  | Hidden after   | Item status |
       | Course 1  | Course    | -              | -              | Active      |
@@ -461,26 +451,21 @@ Feature: Management of sections in tool_mucatalog
 
     When I click on "Actions" "link" in the "Course 1" "table_row"
     And I click on "Update item" "link" in the "Course 1" "table_row"
-    And the following fields in the ".modal-dialog" "css_element" match these values:
-      | Sync item name        | 1        |
-      | hiddenbefore[enabled] | 0        |
-      | hiddenafter[enabled]  | 0        |
-    And I set the following fields in the ".modal-dialog" "css_element" to these values:
-      | Sync item name        | 0        |
-      | Item name             | Course X |
-      | hiddenbefore[enabled] | 1        |
-      | hiddenbefore[day]     | 5        |
-      | hiddenbefore[month]   | 11       |
-      | hiddenbefore[year]    | 2021     |
-      | hiddenbefore[hour]    | 09       |
-      | hiddenbefore[minute]  | 00       |
-      | hiddenafter[enabled]  | 1        |
-      | hiddenafter[day]      | 6        |
-      | hiddenafter[month]    | 10       |
-      | hiddenafter[year]     | 2034     |
-      | hiddenafter[hour]     | 08       |
-      | hiddenafter[minute]   | 00       |
-    And I click on "Update item" "button" in the ".modal-dialog" "css_element"
+    And the following muform fields in the "dialog[open]" "css_element" match:
+      | Sync item name | 1 |
+      | hiddenbefore   |   |
+      | hiddenafter    |   |
+    And I set the following muform fields in the "dialog[open]" "css_element":
+      | Sync item name | 0 |
+      | Item name      |   |
+    And I click on "Update item" "button" in the "dialog[open]" "css_element"
+    And I should see "Required" in the "dialog[open]" "css_element"
+    And I set the following muform fields in the "dialog[open]" "css_element":
+      | Sync item name | 0                |
+      | Item name      | Course X         |
+      | hiddenbefore   | 2021-11-05 09:00 |
+      | hiddenafter    | 2034-10-06 08:00 |
+    And I click on "Update item" "button" in the "dialog[open]" "css_element"
     Then the following should exist in the "reportbuilder-table" table:
       | Item name | Item type | Hidden before  | Hidden after   | Item status |
       | Course X  | Course    | 5/11/21, 09:00 | 6/10/34, 08:00 | Active      |
@@ -489,16 +474,16 @@ Feature: Management of sections in tool_mucatalog
 
     When I click on "Actions" "link" in the "Course X" "table_row"
     And I click on "Update item" "link" in the "Course X" "table_row"
-    And the following fields in the ".modal-dialog" "css_element" match these values:
-      | Sync item name        | 0        |
-      | Item name             | Course X |
-      | hiddenbefore[enabled] | 1        |
-      | hiddenafter[enabled]  | 1        |
-    And I set the following fields in the ".modal-dialog" "css_element" to these values:
-      | Sync item name        | 1        |
-      | hiddenbefore[enabled] | 0        |
-      | hiddenafter[enabled]  | 0        |
-    And I click on "Update item" "button" in the ".modal-dialog" "css_element"
+    And the following muform fields in the "dialog[open]" "css_element" match:
+      | Sync item name | 0                |
+      | Item name      | Course X         |
+      | hiddenbefore   | 2021-11-05 09:00 |
+      | hiddenafter    | 2034-10-06 08:00 |
+    And I set the following muform fields in the "dialog[open]" "css_element":
+      | Sync item name | 1 |
+      | hiddenbefore   |   |
+      | hiddenafter    |   |
+    And I click on "Update item" "button" in the "dialog[open]" "css_element"
     Then the following should exist in the "reportbuilder-table" table:
       | Item name | Item type | Hidden before  | Hidden after   | Item status |
       | Course 1  | Course    | -              | -              | Active      |
@@ -514,22 +499,12 @@ Feature: Management of sections in tool_mucatalog
     And I should see "Active" in the "Item status" definition list item
 
     When I press "Update item"
-    And I set the following fields in the ".modal-dialog" "css_element" to these values:
-      | Sync item name        | 0        |
-      | Item name             | Course X |
-      | hiddenbefore[enabled] | 1        |
-      | hiddenbefore[day]     | 5        |
-      | hiddenbefore[month]   | 11       |
-      | hiddenbefore[year]    | 2021     |
-      | hiddenbefore[hour]    | 09       |
-      | hiddenbefore[minute]  | 00       |
-      | hiddenafter[enabled]  | 1        |
-      | hiddenafter[day]      | 6        |
-      | hiddenafter[month]    | 10       |
-      | hiddenafter[year]     | 2034     |
-      | hiddenafter[hour]     | 08       |
-      | hiddenafter[minute]   | 00       |
-    And I click on "Update item" "button" in the ".modal-dialog" "css_element"
+    And I set the following muform fields in the "dialog[open]" "css_element":
+      | Sync item name | 0                |
+      | Item name      | Course X         |
+      | hiddenbefore   | 2021-11-05 09:00 |
+      | hiddenafter    | 2034-10-06 08:00 |
+    And I click on "Update item" "button" in the "dialog[open]" "css_element"
     Then I should see "Course X"
     And I should see "Course 1" in the "Course" definition list item
     And I should see "No" in the "Sync item name" definition list item
@@ -538,11 +513,11 @@ Feature: Management of sections in tool_mucatalog
     And I should see "Active" in the "Item status" definition list item
 
     When I press "Update item"
-    And I set the following fields in the ".modal-dialog" "css_element" to these values:
-      | Sync item name        | 1        |
-      | hiddenbefore[enabled] | 0        |
-      | hiddenafter[enabled]  | 0        |
-    And I click on "Update item" "button" in the ".modal-dialog" "css_element"
+    And I set the following muform fields in the "dialog[open]" "css_element":
+      | Sync item name | 1 |
+      | hiddenbefore   |   |
+      | hiddenafter    |   |
+    And I click on "Update item" "button" in the "dialog[open]" "css_element"
     Then I should not see "Course X"
     And I should see "Course 1" in the "Course" definition list item
     And I should see "Yes" in the "Sync item name" definition list item
@@ -573,13 +548,13 @@ Feature: Management of sections in tool_mucatalog
 
     When I click on "Actions" "link" in the "Course 1" "table_row"
     And I click on "Activate item" "link" in the "Course 1" "table_row"
-    And I click on "Activate item" "button" in the ".modal-dialog" "css_element"
+    And I click on "Activate item" "button" in the "dialog[open]" "css_element"
     And I click on "Actions" "link" in the "Course 2" "table_row"
     And I click on "Archive item" "link" in the "Course 2" "table_row"
-    And I click on "Archive item" "button" in the ".modal-dialog" "css_element"
+    And I click on "Archive item" "button" in the "dialog[open]" "css_element"
     And I click on "Actions" "link" in the "Course 3" "table_row"
     And I click on "Restore item" "link" in the "Course 3" "table_row"
-    And I click on "Restore item" "button" in the ".modal-dialog" "css_element"
+    And I click on "Restore item" "button" in the "dialog[open]" "css_element"
     Then the following should exist in the "reportbuilder-table" table:
       | Item name | Item type | Hidden before  | Hidden after   | Item status |
       | Course 1  | Course    | -              | -              | Active      |
@@ -592,17 +567,17 @@ Feature: Management of sections in tool_mucatalog
     And I should see "Draft" in the "Item status" definition list item
 
     When I click on "Activate item" "link"
-    And I click on "Activate item" "button" in the ".modal-dialog" "css_element"
+    And I click on "Activate item" "button" in the "dialog[open]" "css_element"
     Then I should see "Course 4" in the "Course" definition list item
     And I should see "Active" in the "Item status" definition list item
 
     When I click on "Archive item" "link"
-    And I click on "Archive item" "button" in the ".modal-dialog" "css_element"
+    And I click on "Archive item" "button" in the "dialog[open]" "css_element"
     Then I should see "Course 4" in the "Course" definition list item
     And I should see "Archived" in the "Item status" definition list item
 
     When I click on "Restore item" "link"
-    And I click on "Restore item" "button" in the ".modal-dialog" "css_element"
+    And I click on "Restore item" "button" in the "dialog[open]" "css_element"
     Then I should see "Course 4" in the "Course" definition list item
     And I should see "Active" in the "Item status" definition list item
 
@@ -621,9 +596,9 @@ Feature: Management of sections in tool_mucatalog
 
     When I click on "Actions" "link" in the "Course 1" "table_row"
     And I click on "Move item" "link" in the "Course 1" "table_row"
-    And I set the following fields in the ".modal-dialog" "css_element" to these values:
+    And I set the following muform fields in the "dialog[open]" "css_element":
       | Section | Second section |
-    And I click on "Move item" "button" in the ".modal-dialog" "css_element"
+    And I click on "Move item" "button" in the "dialog[open]" "css_element"
     Then I should not see "Course 1"
     And the following should exist in the "reportbuilder-table" table:
       | Item name | Item type |
@@ -638,9 +613,9 @@ Feature: Management of sections in tool_mucatalog
     And I should see "Course 1" in the "Course" definition list item
 
     When I click on "Move item" action from "Item actions" dropdown
-    And I set the following fields in the ".modal-dialog" "css_element" to these values:
+    And I set the following muform fields in the "dialog[open]" "css_element":
       | Section | First section |
-    And I click on "Move item" "button" in the ".modal-dialog" "css_element"
+    And I click on "Move item" "button" in the "dialog[open]" "css_element"
     Then I should see "First section" in the "Section" definition list item
     And I should see "Course 1" in the "Course" definition list item
 
@@ -661,12 +636,12 @@ Feature: Management of sections in tool_mucatalog
 
     When I click on "Actions" "link" in the "Course 1" "table_row"
     And I click on "Delete item" "link" in the "Course 1" "table_row"
-    And I click on "Delete item" "button" in the ".modal-dialog" "css_element"
+    And I click on "Delete item" "button" in the "dialog[open]" "css_element"
     Then I should not see "Course 1"
 
     When I click on "Actions" "link" in the "Course 3" "table_row"
     And I click on "Delete item" "link" in the "Course 3" "table_row"
-    And I click on "Delete item" "button" in the ".modal-dialog" "css_element"
+    And I click on "Delete item" "button" in the "dialog[open]" "css_element"
     Then I should not see "Course 3"
     And the following should exist in the "reportbuilder-table" table:
       | Item name | Item type |
@@ -675,7 +650,7 @@ Feature: Management of sections in tool_mucatalog
     And I follow "Course 4"
 
     When I click on "Delete item" action from "Item actions" dropdown
-    And I click on "Delete item" "button" in the ".modal-dialog" "css_element"
+    And I click on "Delete item" "button" in the "dialog[open]" "css_element"
     Then I should not see "Course 4"
     And the following should exist in the "reportbuilder-table" table:
       | Item name | Item type |

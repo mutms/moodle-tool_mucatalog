@@ -95,20 +95,20 @@ abstract class item {
     /**
      * Return item creation form class name.
      *
-     * @return class-string<\tool_mulib\local\ajax_form>
+     * @return class-string<\tool_mulib\muform\form>
      */
     public static function get_create_form_class(): string {
         return "tool_mucatalog\\local\\form\\items_create";
     }
 
     /**
-     * Return item creation form autocmplete referenceids class name.
+     * Return item creation form referenceids autocomplete source class name.
      *
-     * @return class-string<\tool_mulib\external\form_autocomplete\base>
+     * @return class-string<\tool_mulib\muform\autocompletemany\base>
      */
     public static function get_create_form_referenceids_class(): string {
         $type = static::get_type();
-        return "tool_mucatalog\\external\\form_autocomplete\\items_create_{$type}ids";
+        return "tool_mucatalog\\muform\\autocompletemany\\items_create_{$type}ids";
     }
 
     /**

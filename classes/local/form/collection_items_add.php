@@ -19,7 +19,13 @@
 
 namespace tool_mucatalog\local\form;
 
-use tool_mucatalog\external\form_autocomplete\collection_items_add_itemids;
+use tool_mucatalog\muform\autocompletemany\collection_items_add_itemids;
+use tool_mulib\muform\element\autocompletemany;
+use tool_mulib\muform\element\buttons;
+use tool_mulib\muform\element\cancel;
+use tool_mulib\muform\element\info;
+use tool_mulib\muform\element\submit;
+use tool_mulib\muform\form;
 
 /**
  * Add existing item to collection.
@@ -28,53 +34,19 @@ use tool_mucatalog\external\form_autocomplete\collection_items_add_itemids;
  * @copyright  2026 Petr Skoda
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-final class collection_items_add extends \tool_mulib\local\ajax_form {
+final class collection_items_add extends form {
     #[\Override]
-    protected function definition() {
-        $mform = $this->_form;
-        $collection = $this->_customdata['collection'];
-        $context = $this->_customdata['context'];
-        $currentdata = $this->_customdata['currentdata'];
+    protected function definition(): void {
+        $collection = $this->get_extra_data()['collection'];
 
-        $mform->addElement('static', 'staticcollectionname', get_string('collection_name', 'tool_mucatalog'), format_string($collection->name));
+        $this->add(new info('collectionname', get_string('collection_name', 'tool_mucatalog'), $collection->name));
 
-        $args = ['collectionid' => $collection->id];
-        collection_items_add_itemids::add_element(
-            $mform,
-            $args,
-            'itemids',
-            get_string('items', 'tool_mucatalog'),
-            $context
-        );
-        $mform->addRule('itemids', get_string('required'), 'required', null, 'client');
+        $itemids = new autocompletemany('itemids', get_string('items', 'tool_mucatalog'), new collection_items_add_itemids((int)$collection->id));
+        $itemids->set_required(true);
+        $this->add($itemids);
 
-        $mform->addElement('hidden', 'collectionid');
-        $mform->setType('collectionid', PARAM_INT);
-
-        $this->add_action_buttons(true, get_string('collection_items_add', 'tool_mucatalog'));
-
-        $this->set_data($currentdata);
-    }
-
-    #[\Override]
-    public function validation($data, $files) {
-        $errors = parent::validation($data, $files);
-
-        $collection = $this->_customdata['collection'];
-        $context = $this->_customdata['context'];
-
-        if ($data['itemids']) {
-            foreach ($data['itemids'] as $itemid) {
-                $error = collection_items_add_itemids::validate_value($itemid, ['collectionid' => $collection->id], $context);
-                if ($error !== null) {
-                    $errors['itemids'] = $error;
-                    break;
-                }
-            }
-        } else {
-            $errors['itemids'] = get_string('required');
-        }
-
-        return $errors;
+        $this->add(new buttons('buttons'));
+        $this->add(new submit('submit', get_string('collection_items_add', 'tool_mucatalog')), 'buttons');
+        $this->add(new cancel(), 'buttons');
     }
 }

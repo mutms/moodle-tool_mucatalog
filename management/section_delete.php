@@ -28,11 +28,10 @@
 
 use core\url;
 use tool_mucatalog\local\section;
+use tool_mulib\muform\handler;
 
 /** @var moodle_database $DB */
 /** @var moodle_page $PAGE */
-
-define('AJAX_SCRIPT', true);
 
 require('../../../../config.php');
 
@@ -52,15 +51,21 @@ $returnurl = new url('/admin/tool/mucatalog/management/sections.php', ['contexti
 
 $PAGE->set_context($context);
 $PAGE->set_url($currenturl);
+$title = get_string('section_delete', 'tool_mucatalog');
+$PAGE->set_title($title);
+$PAGE->set_heading($title);
 
-$section->cohortids = array_keys(section::get_cohortvisible_menu($section->id));
+$handler = handler::from_request();
 
-$form = new \tool_mucatalog\local\form\section_delete(null, ['currentdata' => $section, 'context' => $context]);
+$form = new \tool_mucatalog\local\form\section_delete($currenturl, $section);
+
 if ($form->is_cancelled()) {
-    $form->ajax_form_cancelled($returnurl);
-} else if ($data = $form->get_data()) {
-    section::delete($section->id);
-    $form->ajax_form_submitted($returnurl);
+    $handler->cancelled($returnurl);
 }
 
-$form->ajax_form_render();
+if ($data = $form->get_data()) {
+    section::delete($section->id);
+    $handler->submitted($returnurl);
+}
+
+$handler->render($form);

@@ -19,7 +19,13 @@
 
 namespace tool_mucatalog\local\form;
 
-use tool_mucatalog\external\form_autocomplete\item_move_sectionid;
+use tool_mucatalog\muform\autocomplete\item_move_sectionid;
+use tool_mulib\muform\element\autocomplete;
+use tool_mulib\muform\element\buttons;
+use tool_mulib\muform\element\cancel;
+use tool_mulib\muform\element\info;
+use tool_mulib\muform\element\submit;
+use tool_mulib\muform\form;
 
 /**
  * Move item to a different section.
@@ -28,51 +34,22 @@ use tool_mucatalog\external\form_autocomplete\item_move_sectionid;
  * @copyright  2026 Petr Skoda
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-final class item_move extends \tool_mulib\local\ajax_form {
+final class item_move extends form {
     #[\Override]
-    protected function definition() {
-        $mform = $this->_form;
-        $item = $this->_customdata['item'];
-        $context = $this->_customdata['context'];
+    protected function definition(): void {
+        $item = $this->get_extra_data()['item'];
         $classname = \tool_mucatalog\local\item::get_type_classname($item->type);
 
-        $mform->addElement('static', 'statictype', get_string('item_type', 'tool_mucatalog'), $classname ? $classname::get_type() : get_string('error'));
+        $this->add(new info('typename', get_string('item_type', 'tool_mucatalog'), $classname ? $classname::get_type_name() : get_string('error')));
 
-        $mform->addElement('static', 'staticname', get_string('item_name', 'tool_mucatalog'), format_string($item->name));
+        $this->add(new info('name', get_string('item_name', 'tool_mucatalog'), $item->name));
 
-        $args = ['itemid' => $item->id];
-        item_move_sectionid::add_element(
-            $mform,
-            $args,
-            'sectionid',
-            get_string('section', 'tool_mucatalog'),
-            $context
-        );
-        $mform->addRule('sectionid', get_string('required'), 'required', null, 'client');
+        $sectionid = new autocomplete('sectionid', get_string('section', 'tool_mucatalog'), new item_move_sectionid((int)$item->id));
+        $sectionid->set_required(true);
+        $this->add($sectionid);
 
-        $mform->addElement('hidden', 'id');
-        $mform->setType('id', PARAM_INT);
-        $mform->setDefault('id', $item->id);
-
-        $this->add_action_buttons(true, get_string('item_move', 'tool_mucatalog'));
-    }
-
-    #[\Override]
-    public function validation($data, $files) {
-        $errors = parent::validation($data, $files);
-
-        $item = $this->_customdata['item'];
-        $context = $this->_customdata['context'];
-
-        if (!$data['sectionid']) {
-            $errors['sectionid'] = get_string('required');
-        } else {
-            $error = item_move_sectionid::validate_value($data['sectionid'], ['itemid' => $item->id], $context);
-            if ($error !== null) {
-                $errors['sectionid'] = $error;
-            }
-        }
-
-        return $errors;
+        $this->add(new buttons('buttons'));
+        $this->add(new submit('submit', get_string('item_move', 'tool_mucatalog')), 'buttons');
+        $this->add(new cancel(), 'buttons');
     }
 }

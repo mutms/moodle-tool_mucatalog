@@ -20,6 +20,14 @@
 namespace tool_mucatalog\local\form;
 
 use tool_mucatalog\local\util;
+use tool_mulib\muform\element\autocompletemany;
+use tool_mulib\muform\element\buttons;
+use tool_mulib\muform\element\cancel;
+use tool_mulib\muform\element\datetime;
+use tool_mulib\muform\element\info;
+use tool_mulib\muform\element\radios;
+use tool_mulib\muform\element\submit;
+use tool_mulib\muform\form;
 
 /**
  * Add items to catalogue.
@@ -28,77 +36,38 @@ use tool_mucatalog\local\util;
  * @copyright  2026 Petr Skoda
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-final class items_create extends \tool_mulib\local\ajax_form {
+final class items_create extends form {
     #[\Override]
-    protected function definition() {
-        $mform = $this->_form;
-        $section = $this->_customdata['section'];
-        $context = $this->_customdata['context'];
-        $currentdata = $this->_customdata['currentdata'];
+    protected function definition(): void {
+        $section = $this->get_extra_data()['section'];
+        /** @var class-string<\tool_mucatalog\local\item> $typeclass */
+        $typeclass = $this->get_extra_data()['typeclass'];
+        $sourceclass = $typeclass::get_create_form_referenceids_class();
 
-        $typeclass = \tool_mucatalog\local\item::get_type_classname($currentdata->type);
-        $referencesclass = $typeclass::get_create_form_referenceids_class();
+        $this->add(new info('sectionname', get_string('section_name', 'tool_mucatalog'), $section->name));
 
-        $mform->addElement('static', 'staticname', get_string('section_name', 'tool_mucatalog'), format_string($section->name));
+        $label = match ($typeclass::get_type()) {
+            'course' => get_string('courses'),
+            'program' => get_string('programs', 'tool_muprog'),
+            'certification' => get_string('certifications', 'tool_mucertify'),
+            default => $typeclass::get_type_name(),
+        };
+        $referenceids = new autocompletemany('referenceids', $label, new $sourceclass((int)$section->id));
+        $referenceids->set_required(true);
+        $this->add($referenceids);
 
-        $args = ['sectionid' => $section->id];
-        $referencesclass::add_element(
-            $mform,
-            $args,
-            'referenceids',
-            $referencesclass::get_form_field_name(),
-            $context
-        );
-        $mform->addRule('referenceids', get_string('required'), 'required', null, 'client');
+        $this->add(new datetime('hiddenbefore', get_string('hiddenbefore', 'tool_mucatalog')));
 
-        $mform->addElement('date_time_selector', 'hiddenbefore', get_string('hiddenbefore', 'tool_mucatalog'), ['optional' => true]);
+        $this->add(new datetime('hiddenafter', get_string('hiddenafter', 'tool_mucatalog')));
 
-        $mform->addElement('date_time_selector', 'hiddenafter', get_string('hiddenafter', 'tool_mucatalog'), ['optional' => true]);
+        $statuses = util::get_statuses_menu();
+        unset($statuses[util::STATUS_ARCHIVED]);
+        $status = new radios('status', get_string('item_status', 'tool_mucatalog'), $statuses);
+        $status->set_required(true);
+        $this->add($status);
 
-        $options = util::get_statuses_menu();
-        $radios = [];
-        foreach ($options as $k => $v) {
-            if ($k == util::STATUS_ARCHIVED) {
-                continue;
-            }
-            $radios[] = $mform->createElement('radio', 'status', '', $v, $k);
-        }
-        $mform->addElement('group', 'statusgroup', get_string('item_status', 'tool_mucatalog'), $radios, '<div class="w-100" />', false);
-
-        $mform->addElement('hidden', 'sectionid');
-        $mform->setType('sectionid', PARAM_INT);
-
-        $mform->addElement('hidden', 'type');
-        $mform->setType('type', PARAM_ALPHANUM);
-
-        $this->add_action_buttons(true, get_string('items_create', 'tool_mucatalog'));
-
-        $this->set_data($currentdata);
-    }
-
-    #[\Override]
-    public function validation($data, $files) {
-        $errors = parent::validation($data, $files);
-
-        $section = $this->_customdata['section'];
-        $context = $this->_customdata['context'];
-        $currentdata = $this->_customdata['currentdata'];
-
-        $typeclass = \tool_mucatalog\local\item::get_type_classname($currentdata->type);
-        $referencesclass = $typeclass::get_create_form_referenceids_class();
-
-        if ($data['referenceids']) {
-            foreach ($data['referenceids'] as $referenceid) {
-                $error = $referencesclass::validate_value($referenceid, ['sectionid' => $section->id], $context);
-                if ($error !== null) {
-                    $errors['referenceids'] = $error;
-                    break;
-                }
-            }
-        } else {
-            $errors['referenceids'] = get_string('required');
-        }
-
-        return $errors;
+        $this->add(new buttons('buttons'));
+        $this->add(new submit('submit', get_string('items_create', 'tool_mucatalog')), 'buttons');
+        $this->add(new cancel(), 'buttons');
     }
 }

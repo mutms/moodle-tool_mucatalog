@@ -29,7 +29,7 @@
 use tool_mucatalog\local\management;
 use tool_mucatalog\local\collection;
 use core\url;
-use tool_mulib\output\ajax_form\button;
+use tool_mulib\output\muform\dialog\button;
 
 /** @var moodle_database $DB */
 /** @var moodle_page $PAGE */

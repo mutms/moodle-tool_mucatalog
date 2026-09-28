@@ -131,7 +131,7 @@ final class collections extends system_report {
         }
 
         $url = new url('/admin/tool/mucatalog/management/collection_update.php', ['id' => ':id']);
-        $link = new \tool_mulib\output\ajax_form\link($url, get_string('collection_update', 'tool_mucatalog'), 'i/edit');
+        $link = new \tool_mulib\output\muform\dialog\link($url, get_string('collection_update', 'tool_mucatalog'), 'i/edit');
         $this->add_action($link->create_report_action()
             ->add_callback(static function (\stdclass $row): bool {
                 if (!$row->id) {
@@ -146,7 +146,7 @@ final class collections extends system_report {
             }));
 
         $url = new url('/admin/tool/mucatalog/management/collection_delete.php', ['id' => ':id']);
-        $link = new \tool_mulib\output\ajax_form\link($url, get_string('collection_delete', 'tool_mucatalog'), 'i/delete');
+        $link = new \tool_mulib\output\muform\dialog\link($url, get_string('collection_delete', 'tool_mucatalog'), 'i/delete');
         $this->add_action($link->create_report_action(['class' => 'text-danger'])
             ->add_callback(static function (\stdclass $row): bool {
                 if (!$row->id) {

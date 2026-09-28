@@ -28,7 +28,7 @@
 
 use tool_mucatalog\local\management;
 use core\url;
-use tool_mulib\output\ajax_form\button;
+use tool_mulib\output\muform\dialog\button;
 use tool_mulib\output\header_actions;
 use tool_mucatalog\local\item;
 
@@ -67,18 +67,18 @@ if (has_capability('tool/mucatalog:manage', $context)) {
     $actions->add_button($button);
 
     $url = new url('/admin/tool/mucatalog/management/item_move.php', ['id' => $item->id]);
-    $link = new \tool_mulib\output\ajax_form\link($url, get_string('item_move', 'tool_mucatalog'), 'i/move_2d');
+    $link = new \tool_mulib\output\muform\dialog\link($url, get_string('item_move', 'tool_mucatalog'), 'i/move_2d');
     $link->set_form_size('sm');
-    $link->set_submitted_action($link::SUBMITTED_ACTION_REDIRECT);
-    $actions->get_dropdown()->add_ajax_form($link);
+    $link->set_submitted_action(\tool_mulib\muform\handler\dialog::ACTION_REDIRECT);
+    $actions->get_dropdown()->add_dialog($link);
 
     if (item::is_delete_possible($section)) {
         $url = new url('/admin/tool/mucatalog/management/item_delete.php', ['id' => $item->id]);
-        $link = new \tool_mulib\output\ajax_form\link($url, get_string('item_delete', 'tool_mucatalog'), 'i/delete');
+        $link = new \tool_mulib\output\muform\dialog\link($url, get_string('item_delete', 'tool_mucatalog'), 'i/delete');
         $link->add_class('text-danger');
         $link->set_form_size('sm');
-        $link->set_submitted_action($link::SUBMITTED_ACTION_REDIRECT);
-        $actions->get_dropdown()->add_ajax_form($link);
+        $link->set_submitted_action(\tool_mulib\muform\handler\dialog::ACTION_REDIRECT);
+        $actions->get_dropdown()->add_dialog($link);
     }
 }
 

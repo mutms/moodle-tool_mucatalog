@@ -48,21 +48,21 @@ Feature: Management of collections in tool_mucatalog
     And I am on the "tool_mucatalog > All collections management" page
 
     When I press "Add collection"
-    And the following fields in the ".modal-dialog" "css_element" match these values:
-      | Show on front page   | 0                  |
-      | Visible to guests    | 0                  |
-      | Visible to all users | 1                  |
-    And I set the following fields in the ".modal-dialog" "css_element" to these values:
-      | Collection name         | First collection      |
-      | Short description    | First description  |
-    And I click on "Add collection" "button" in the ".modal-dialog" "css_element"
+    And the following muform fields in the "dialog[open]" "css_element" match:
+      | Show on front page   | 0 |
+      | Visible to guests    | 0 |
+      | Visible to all users | 1 |
+    And I set the following muform fields in the "dialog[open]" "css_element":
+      | Collection name   | First collection  |
+      | Short description | First description |
+    And I click on "Add collection" "button" in the "dialog[open]" "css_element"
     Then the following should exist in the "reportbuilder-table" table:
       | Collection name      | Items | Management category | Show on front page | Front page priority | Visible to guests | Visible to all users | Visible to cohorts  |
       | First collection     | 0     | System              | No                 | -                   | No                | Yes                  |                     |
 
     When I press "Add collection"
-    And I set the following fields in the ".modal-dialog" "css_element" to these values:
-      | Collection name         | Second collection     |
+    And I set the following muform fields in the "dialog[open]" "css_element":
+      | Collection name      | Second collection  |
       | Short description    | Second description |
       | Management category  | Cat 2              |
       | Show on front page   | 1                  |
@@ -70,7 +70,7 @@ Feature: Management of collections in tool_mucatalog
       | Visible to guests    | 1                  |
       | Visible to all users | 0                  |
       | Visible to cohorts   | Cohort 1, Cohort 3 |
-    And I click on "Add collection" "button" in the ".modal-dialog" "css_element"
+    And I click on "Add collection" "button" in the "dialog[open]" "css_element"
     Then the following should exist in the "reportbuilder-table" table:
       | Collection name      | Items | Management category | Show on front page | Front page priority | Visible to guests | Visible to all users | Visible to cohorts  |
       | First collection     | 0     | System              | No                 | -                   | No                | Yes                  |                     |
@@ -78,21 +78,21 @@ Feature: Management of collections in tool_mucatalog
 
     When I click on "Actions" "link" in the "First collection" "table_row"
     And I click on "Update collection" "link" in the "First collection" "table_row"
-    And the following fields in the ".modal-dialog" "css_element" match these values:
-      | Collection name         | First collection      |
-      | Short description    | First description  |
-      | Show on front page   | 0                  |
-      | Visible to guests    | 0                  |
-      | Visible to all users | 1                  |
-    And I set the following fields in the ".modal-dialog" "css_element" to these values:
-      | Collection name         | Prvni collection      |
+    And the following muform fields in the "dialog[open]" "css_element" match:
+      | Collection name      | First collection  |
+      | Short description    | First description |
+      | Show on front page   | 0                 |
+      | Visible to guests    | 0                 |
+      | Visible to all users | 1                 |
+    And I set the following muform fields in the "dialog[open]" "css_element":
+      | Collection name      | Prvni collection   |
       | Short description    | Prvni description  |
       | Show on front page   | 1                  |
       | Front page priority  | 88                 |
       | Visible to guests    | 1                  |
       | Visible to all users | 0                  |
       | Visible to cohorts   | Cohort 2, Cohort 3 |
-    And I click on "Update collection" "button" in the ".modal-dialog" "css_element"
+    And I click on "Update collection" "button" in the "dialog[open]" "css_element"
     Then the following should exist in the "reportbuilder-table" table:
       | Collection name      | Items | Management category | Show on front page | Front page priority | Visible to guests | Visible to all users | Visible to cohorts  |
       | Prvni collection     | 0     | System              | Yes                | 88                  | Yes               | No                   | Cohort 2, Cohort 3  |
@@ -100,20 +100,20 @@ Feature: Management of collections in tool_mucatalog
 
     When I click on "Actions" "link" in the "Prvni collection" "table_row"
     And I click on "Update collection" "link" in the "Prvni collection" "table_row"
-    And the following fields in the ".modal-dialog" "css_element" match these values:
-      | Collection name         | Prvni collection      |
-      | Short description    | Prvni description  |
-      | Show on front page   | 1                  |
-      | Front page priority  | 88                 |
-      | Visible to guests    | 1                  |
-      | Visible to all users | 0                  |
-    And I set the following fields in the ".modal-dialog" "css_element" to these values:
-      | Collection name         | First collection      |
-      | Short description    | First description  |
-      | Show on front page   | 0                  |
-      | Visible to guests    | 0                  |
-      | Visible to all users | 1                  |
-    And I click on "Update collection" "button" in the ".modal-dialog" "css_element"
+    And the following muform fields in the "dialog[open]" "css_element" match:
+      | Collection name      | Prvni collection  |
+      | Short description    | Prvni description |
+      | Show on front page   | 1                 |
+      | Front page priority  | 88                |
+      | Visible to guests    | 1                 |
+      | Visible to all users | 0                 |
+    And I set the following muform fields in the "dialog[open]" "css_element":
+      | Collection name      | First collection  |
+      | Short description    | First description |
+      | Show on front page   | 0                 |
+      | Visible to guests    | 0                 |
+      | Visible to all users | 1                 |
+    And I click on "Update collection" "button" in the "dialog[open]" "css_element"
     Then the following should exist in the "reportbuilder-table" table:
       | Collection name      | Items | Management category | Show on front page | Front page priority | Visible to guests | Visible to all users | Visible to cohorts  |
       | First collection     | 0     | System              | No                 | -                   | No                | Yes                  |                     |
@@ -124,21 +124,21 @@ Feature: Management of collections in tool_mucatalog
     And I am on the "Cat 2" "tool_mucatalog > Collections management" page
 
     When I press "Add collection"
-    And the following fields in the ".modal-dialog" "css_element" match these values:
-      | Show on front page   | 0                  |
-      | Visible to guests    | 0                  |
-      | Visible to all users | 1                  |
-    And I set the following fields in the ".modal-dialog" "css_element" to these values:
-      | Collection name         | First collection      |
-      | Short description    | First description  |
-    And I click on "Add collection" "button" in the ".modal-dialog" "css_element"
+    And the following muform fields in the "dialog[open]" "css_element" match:
+      | Show on front page   | 0 |
+      | Visible to guests    | 0 |
+      | Visible to all users | 1 |
+    And I set the following muform fields in the "dialog[open]" "css_element":
+      | Collection name   | First collection  |
+      | Short description | First description |
+    And I click on "Add collection" "button" in the "dialog[open]" "css_element"
     Then the following should exist in the "reportbuilder-table" table:
       | Collection name      | Items | Management category | Show on front page | Front page priority | Visible to guests | Visible to all users | Visible to cohorts  |
       | First collection     | 0     | Cat 2               | No                 | -                   | No                | Yes                  |                     |
 
     When I press "Add collection"
-    And I set the following fields in the ".modal-dialog" "css_element" to these values:
-      | Collection name         | Second collection     |
+    And I set the following muform fields in the "dialog[open]" "css_element":
+      | Collection name      | Second collection  |
       | Short description    | Second description |
       | Management category  | Cat 3              |
       | Show on front page   | 1                  |
@@ -146,7 +146,7 @@ Feature: Management of collections in tool_mucatalog
       | Visible to guests    | 1                  |
       | Visible to all users | 0                  |
       | Visible to cohorts   | Cohort 1, Cohort 3 |
-    And I click on "Add collection" "button" in the ".modal-dialog" "css_element"
+    And I click on "Add collection" "button" in the "dialog[open]" "css_element"
     Then the following should exist in the "reportbuilder-table" table:
       | Collection name      | Items | Management category | Show on front page | Front page priority | Visible to guests | Visible to all users | Visible to cohorts  |
       | First collection     | 0     | Cat 2               | No                 | -                   | No                | Yes                  |                     |
@@ -154,21 +154,21 @@ Feature: Management of collections in tool_mucatalog
 
     When I click on "Actions" "link" in the "First collection" "table_row"
     And I click on "Update collection" "link" in the "First collection" "table_row"
-    And the following fields in the ".modal-dialog" "css_element" match these values:
-      | Collection name         | First collection      |
-      | Short description    | First description  |
-      | Show on front page   | 0                  |
-      | Visible to guests    | 0                  |
-      | Visible to all users | 1                  |
-    And I set the following fields in the ".modal-dialog" "css_element" to these values:
-      | Collection name         | Prvni collection      |
+    And the following muform fields in the "dialog[open]" "css_element" match:
+      | Collection name      | First collection  |
+      | Short description    | First description |
+      | Show on front page   | 0                 |
+      | Visible to guests    | 0                 |
+      | Visible to all users | 1                 |
+    And I set the following muform fields in the "dialog[open]" "css_element":
+      | Collection name      | Prvni collection   |
       | Short description    | Prvni description  |
       | Show on front page   | 1                  |
       | Front page priority  | 88                 |
       | Visible to guests    | 1                  |
       | Visible to all users | 0                  |
       | Visible to cohorts   | Cohort 2, Cohort 3 |
-    And I click on "Update collection" "button" in the ".modal-dialog" "css_element"
+    And I click on "Update collection" "button" in the "dialog[open]" "css_element"
     Then the following should exist in the "reportbuilder-table" table:
       | Collection name      | Items | Management category | Show on front page | Front page priority | Visible to guests | Visible to all users | Visible to cohorts  |
       | Prvni collection     | 0     | Cat 2               | Yes                | 88                  | Yes               | No                   | Cohort 2, Cohort 3  |
@@ -176,20 +176,20 @@ Feature: Management of collections in tool_mucatalog
 
     When I click on "Actions" "link" in the "Prvni collection" "table_row"
     And I click on "Update collection" "link" in the "Prvni collection" "table_row"
-    And the following fields in the ".modal-dialog" "css_element" match these values:
-      | Collection name         | Prvni collection      |
-      | Short description    | Prvni description  |
-      | Show on front page   | 1                  |
-      | Front page priority  | 88                 |
-      | Visible to guests    | 1                  |
-      | Visible to all users | 0                  |
-    And I set the following fields in the ".modal-dialog" "css_element" to these values:
-      | Collection name         | First collection      |
-      | Short description    | First description  |
-      | Show on front page   | 0                  |
-      | Visible to guests    | 0                  |
-      | Visible to all users | 1                  |
-    And I click on "Update collection" "button" in the ".modal-dialog" "css_element"
+    And the following muform fields in the "dialog[open]" "css_element" match:
+      | Collection name      | Prvni collection  |
+      | Short description    | Prvni description |
+      | Show on front page   | 1                 |
+      | Front page priority  | 88                |
+      | Visible to guests    | 1                 |
+      | Visible to all users | 0                 |
+    And I set the following muform fields in the "dialog[open]" "css_element":
+      | Collection name      | First collection  |
+      | Short description    | First description |
+      | Show on front page   | 0                 |
+      | Visible to guests    | 0                 |
+      | Visible to all users | 1                 |
+    And I click on "Update collection" "button" in the "dialog[open]" "css_element"
     Then the following should exist in the "reportbuilder-table" table:
       | Collection name      | Items | Management category | Show on front page | Front page priority | Visible to guests | Visible to all users | Visible to cohorts  |
       | First collection     | 0     | Cat 2               | No                 | -                   | No                | Yes                  |                     |
@@ -206,15 +206,15 @@ Feature: Management of collections in tool_mucatalog
     And I should see "System" in the "Management category" definition list item
 
     When I click on "Move collection" "link"
-    And I set the following fields in the ".modal-dialog" "css_element" to these values:
-      | Management category  | Cat 3              |
-    And I click on "Move collection" "button" in the ".modal-dialog" "css_element"
+    And I set the following muform fields in the "dialog[open]" "css_element":
+      | Management category | Cat 3 |
+    And I click on "Move collection" "button" in the "dialog[open]" "css_element"
     Then I should see "Cat 3" in the "Management category" definition list item
 
     When I click on "Move collection" "link"
-    And I set the following fields in the ".modal-dialog" "css_element" to these values:
-      | Management category  | System             |
-    And I click on "Move collection" "button" in the ".modal-dialog" "css_element"
+    And I set the following muform fields in the "dialog[open]" "css_element":
+      | Management category | System |
+    And I click on "Move collection" "button" in the "dialog[open]" "css_element"
     Then I should see "System" in the "Management category" definition list item
 
   Scenario: Category manager may move Universal catalogue collections
@@ -228,15 +228,15 @@ Feature: Management of collections in tool_mucatalog
     And I should see "Cat 2" in the "Management category" definition list item
 
     When I click on "Move collection" "link"
-    And I set the following fields in the ".modal-dialog" "css_element" to these values:
-      | Management category  | Cat 3              |
-    And I click on "Move collection" "button" in the ".modal-dialog" "css_element"
+    And I set the following muform fields in the "dialog[open]" "css_element":
+      | Management category | Cat 3 |
+    And I click on "Move collection" "button" in the "dialog[open]" "css_element"
     Then I should see "Cat 3" in the "Management category" definition list item
 
     When I click on "Move collection" "link"
-    And I set the following fields in the ".modal-dialog" "css_element" to these values:
-      | Management category  | Cat 2             |
-    And I click on "Move collection" "button" in the ".modal-dialog" "css_element"
+    And I set the following muform fields in the "dialog[open]" "css_element":
+      | Management category | Cat 2 |
+    And I click on "Move collection" "button" in the "dialog[open]" "css_element"
     Then I should see "Cat 2" in the "Management category" definition list item
 
   Scenario: System manager may delete Universal catalogue collections
@@ -252,10 +252,10 @@ Feature: Management of collections in tool_mucatalog
 
     When I click on "Actions" "link" in the "First collection" "table_row"
     And I click on "Delete collection" "link" in the "First collection" "table_row"
-    And I click on "Delete collection" "button" in the ".modal-dialog" "css_element"
+    And I click on "Delete collection" "button" in the "dialog[open]" "css_element"
     And I click on "Actions" "link" in the "Third collection" "table_row"
     And I click on "Delete collection" "link" in the "Third collection" "table_row"
-    And I click on "Delete collection" "button" in the ".modal-dialog" "css_element"
+    And I click on "Delete collection" "button" in the "dialog[open]" "css_element"
     Then I should not see "First collection"
     And I should not see "Third collection"
     And the following should exist in the "reportbuilder-table" table:
@@ -266,7 +266,7 @@ Feature: Management of collections in tool_mucatalog
 
     And I follow "Fourth collection"
     When I click on "Delete" action from "Collection actions" dropdown
-    And I click on "Delete collection" "button" in the ".modal-dialog" "css_element"
+    And I click on "Delete collection" "button" in the "dialog[open]" "css_element"
     Then I should not see "Fourth collection"
     And the following should exist in the "reportbuilder-table" table:
       | Collection name      |
@@ -275,7 +275,7 @@ Feature: Management of collections in tool_mucatalog
 
     And I follow "Fifth collection"
     When I click on "Delete" action from "Collection actions" dropdown
-    And I click on "Delete collection" "button" in the ".modal-dialog" "css_element"
+    And I click on "Delete collection" "button" in the "dialog[open]" "css_element"
     Then I should see "No collections found"
     And I am on the "tool_mucatalog > All collections management" page
     And I should not see "Fifth collection"
@@ -296,10 +296,10 @@ Feature: Management of collections in tool_mucatalog
 
     When I click on "Actions" "link" in the "First collection" "table_row"
     And I click on "Delete collection" "link" in the "First collection" "table_row"
-    And I click on "Delete collection" "button" in the ".modal-dialog" "css_element"
+    And I click on "Delete collection" "button" in the "dialog[open]" "css_element"
     And I click on "Actions" "link" in the "Third collection" "table_row"
     And I click on "Delete collection" "link" in the "Third collection" "table_row"
-    And I click on "Delete collection" "button" in the ".modal-dialog" "css_element"
+    And I click on "Delete collection" "button" in the "dialog[open]" "css_element"
     Then I should not see "First collection"
     And I should not see "Third collection"
     And the following should exist in the "reportbuilder-table" table:
@@ -310,7 +310,7 @@ Feature: Management of collections in tool_mucatalog
 
     And I follow "Fourth collection"
     When I click on "Delete" action from "Collection actions" dropdown
-    And I click on "Delete collection" "button" in the ".modal-dialog" "css_element"
+    And I click on "Delete collection" "button" in the "dialog[open]" "css_element"
     Then I should not see "Fourth collection"
     And the following should exist in the "reportbuilder-table" table:
       | Collection name      |
@@ -319,7 +319,7 @@ Feature: Management of collections in tool_mucatalog
 
     And I follow "Fifth collection"
     When I click on "Delete" action from "Collection actions" dropdown
-    And I click on "Delete collection" "button" in the ".modal-dialog" "css_element"
+    And I click on "Delete collection" "button" in the "dialog[open]" "css_element"
     And I am on the "Cat 2" "tool_mucatalog > Collections management" page
     Then I should not see "Fifth collection"
     And the following should exist in the "reportbuilder-table" table:
@@ -346,9 +346,9 @@ Feature: Management of collections in tool_mucatalog
     And I click on "Items" "link" in the ".secondary-navigation" "css_element"
 
     When I press "Add items"
-    And I set the following fields in the ".modal-dialog" "css_element" to these values:
+    And I set the following muform fields in the "dialog[open]" "css_element":
       | Items | Course 2, Course 4 |
-    And I click on "Add items" "button" in the ".modal-dialog" "css_element"
+    And I click on "Add items" "button" in the "dialog[open]" "css_element"
     Then the following should exist in the "reportbuilder-table" table:
       | Item name | Item type | Hidden before | Hidden after | Item status | Section name   | Section status |
       | Course 2  | Course    | -             | -            | Active      | First section  | Active         |
@@ -356,7 +356,7 @@ Feature: Management of collections in tool_mucatalog
 
     When I click on "Actions" "link" in the "Course 2" "table_row"
     And I click on "Remove item" "link" in the "Course 2" "table_row"
-    And I click on "Remove item" "button" in the ".modal-dialog" "css_element"
+    And I click on "Remove item" "button" in the "dialog[open]" "css_element"
     Then I should not see "Course 2"
     And the following should exist in the "reportbuilder-table" table:
       | Item name | Item type | Hidden before | Hidden after | Item status | Section name   | Section status |

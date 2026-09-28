@@ -28,11 +28,10 @@
 
 use core\url;
 use tool_mucatalog\local\section;
+use tool_mulib\muform\handler;
 
 /** @var moodle_database $DB */
 /** @var moodle_page $PAGE */
-
-define('AJAX_SCRIPT', true);
 
 require('../../../../config.php');
 
@@ -51,20 +50,25 @@ $returnurl = new url('/admin/tool/mucatalog/management/sections.php');
 
 $PAGE->set_context($context);
 $PAGE->set_url($currenturl);
+$title = get_string('section_create', 'tool_mucatalog');
+$PAGE->set_title($title);
+$PAGE->set_heading($title);
 
-$section = section::get_defaults($context->id);
+$handler = handler::from_request();
 
-$form = new \tool_mucatalog\local\form\section_create(
-    null,
-    ['currentdata' => $section, 'context' => $context]
-);
+$current = (array)section::get_defaults($context->id);
+$current['frontpageshow'] = (int)($current['frontpagepriority'] !== null);
+
+$form = new \tool_mucatalog\local\form\section_create($currenturl, $current, ['context' => $context]);
 
 if ($form->is_cancelled()) {
-    $form->ajax_form_cancelled($returnurl);
-} else if ($data = $form->get_data()) {
-    $section = section::create($data);
-    $returnurl = new url('/admin/tool/mucatalog/management/sections.php', ['contextid' => $context->id]);
-    $form->ajax_form_submitted($returnurl);
+    $handler->cancelled($returnurl);
 }
 
-$form->ajax_form_render();
+if ($data = $form->get_data()) {
+    section::create($data);
+    $returnurl = new url('/admin/tool/mucatalog/management/sections.php', ['contextid' => $context->id]);
+    $handler->submitted($returnurl);
+}
+
+$handler->render($form);

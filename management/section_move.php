@@ -28,11 +28,10 @@
 
 use core\url;
 use tool_mucatalog\local\section;
+use tool_mulib\muform\handler;
 
 /** @var moodle_database $DB */
 /** @var moodle_page $PAGE */
-
-define('AJAX_SCRIPT', true);
 
 require('../../../../config.php');
 
@@ -49,17 +48,21 @@ $returnurl = new url('/admin/tool/mucatalog/management/sections.php', ['contexti
 
 $PAGE->set_context($context);
 $PAGE->set_url($currenturl);
+$title = get_string('section_move', 'tool_mucatalog');
+$PAGE->set_title($title);
+$PAGE->set_heading($title);
 
-$form = new \tool_mucatalog\local\form\section_move(
-    null,
-    ['currentdata' => $section, 'context' => $context]
-);
+$handler = handler::from_request();
+
+$form = new \tool_mucatalog\local\form\section_move($currenturl, $section, ['context' => $context]);
 
 if ($form->is_cancelled()) {
-    $form->ajax_form_cancelled($returnurl);
-} else if ($data = $form->get_data()) {
-    $section = section::move($data->id, $data->contextid);
-    $form->ajax_form_submitted($returnurl);
+    $handler->cancelled($returnurl);
 }
 
-$form->ajax_form_render();
+if ($data = $form->get_data()) {
+    section::move($section->id, (int)$data->contextid);
+    $handler->submitted($returnurl);
+}
+
+$handler->render($form);

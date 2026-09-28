@@ -19,6 +19,12 @@
 
 namespace tool_mucatalog\local\form;
 
+use tool_mulib\muform\element\buttons;
+use tool_mulib\muform\element\cancel;
+use tool_mulib\muform\element\info;
+use tool_mulib\muform\element\submit;
+use tool_mulib\muform\form;
+
 /**
  * Remove item from collection.
  *
@@ -26,33 +32,21 @@ namespace tool_mucatalog\local\form;
  * @copyright  2026 Petr Skoda
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-final class collection_item_remove extends \tool_mulib\local\ajax_form {
+final class collection_item_remove extends form {
     #[\Override]
-    protected function definition() {
-        $mform = $this->_form;
-        $collection = $this->_customdata['collection'];
-        $item = $this->_customdata['item'];
-        $context = $this->_customdata['context'];
-        $currentdata = $this->_customdata['currentdata'];
+    protected function definition(): void {
+        $collection = $this->get_extra_data()['collection'];
+        $item = $this->get_extra_data()['item'];
+        $classname = \tool_mucatalog\local\item::get_type_classname($item->type);
 
-        $mform->addElement('static', 'staticcollectionname', get_string('collection_name', 'tool_mucatalog'), format_string($collection->name));
+        $this->add(new info('collectionname', get_string('collection_name', 'tool_mucatalog'), $collection->name));
 
-        if ($item) {
-            $classname = \tool_mucatalog\local\item::get_type_classname($item->type);
+        $this->add(new info('name', get_string('item_name', 'tool_mucatalog'), $item->name));
 
-            $mform->addElement('static', 'staticname', get_string('item_name', 'tool_mucatalog'), format_string($item->name));
+        $this->add(new info('typename', get_string('item_type', 'tool_mucatalog'), $classname ? $classname::get_type_name() : get_string('error')));
 
-            $mform->addElement('static', 'statictype', get_string('item_type', 'tool_mucatalog'), $classname ? $classname::get_type() : get_string('error'));
-        }
-
-        $mform->addElement('hidden', 'collectionid');
-        $mform->setType('collectionid', PARAM_INT);
-
-        $mform->addElement('hidden', 'itemid');
-        $mform->setType('itemid', PARAM_INT);
-
-        $this->add_action_buttons(true, get_string('collection_item_remove', 'tool_mucatalog'));
-
-        $this->set_data($currentdata);
+        $this->add(new buttons('buttons'));
+        $this->add(new submit('submit', get_string('collection_item_remove', 'tool_mucatalog')), 'buttons');
+        $this->add(new cancel(), 'buttons');
     }
 }

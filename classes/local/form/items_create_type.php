@@ -19,6 +19,13 @@
 
 namespace tool_mucatalog\local\form;
 
+use tool_mulib\muform\element\buttons;
+use tool_mulib\muform\element\cancel;
+use tool_mulib\muform\element\info;
+use tool_mulib\muform\element\radios;
+use tool_mulib\muform\element\submit;
+use tool_mulib\muform\form;
+
 /**
  * Select item type to add to catalogue.
  *
@@ -26,38 +33,25 @@ namespace tool_mucatalog\local\form;
  * @copyright  2026 Petr Skoda
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-final class items_create_type extends \tool_mulib\local\ajax_form {
+final class items_create_type extends form {
     #[\Override]
-    protected function definition() {
-        $mform = $this->_form;
-        $section = $this->_customdata['section'];
+    protected function definition(): void {
+        $section = $this->get_extra_data()['section'];
         /** @var class-string<\tool_mucatalog\local\item>[] $types */
-        $types = $this->_customdata['types'];
+        $types = $this->get_extra_data()['types'];
 
-        $mform->addElement('static', 'staticname', get_string('section_name', 'tool_mucatalog'), format_string($section->name));
+        $this->add(new info('sectionname', get_string('section_name', 'tool_mucatalog'), $section->name));
 
-        $radios = [];
+        $options = [];
         foreach ($types as $type => $typeclassname) {
-            $radios[] = $mform->createElement('radio', 'type', '', $typeclassname::get_type_name(), $type);
+            $options[$type] = $typeclassname::get_type_name();
         }
-        $mform->addElement('group', 'type_group', get_string('item_type', 'tool_mucatalog'), $radios, '<div class="w-100" />', false);
-        $mform->addRule('type_group', get_string('required'), 'required', null, 'client');
+        $type = new radios('type', get_string('item_type', 'tool_mucatalog'), $options);
+        $type->set_required(true);
+        $this->add($type);
 
-        $mform->addElement('hidden', 'sectionid');
-        $mform->setType('sectionid', PARAM_INT);
-        $mform->setDefault('sectionid', $section->id);
-
-        $this->add_action_buttons(true, get_string('continue'));
-    }
-
-    #[\Override]
-    public function validation($data, $files) {
-        $errors = parent::validation($data, $files);
-
-        if (empty($data['type'])) {
-            $errors['type_group'] = get_string('required');
-        }
-
-        return $errors;
+        $this->add(new buttons('buttons'));
+        $this->add(new submit('submit', get_string('continue')), 'buttons');
+        $this->add(new cancel(), 'buttons');
     }
 }

@@ -19,8 +19,13 @@
 
 namespace tool_mucatalog\local\form;
 
-use tool_mucatalog\external\form_autocomplete\section_contextid;
-use tool_mucatalog\local\util;
+use tool_mucatalog\muform\autocomplete\section_contextid;
+use tool_mulib\muform\element\autocomplete;
+use tool_mulib\muform\element\buttons;
+use tool_mulib\muform\element\cancel;
+use tool_mulib\muform\element\info;
+use tool_mulib\muform\element\submit;
+use tool_mulib\muform\form;
 
 /**
  * Move a section.
@@ -29,36 +34,19 @@ use tool_mucatalog\local\util;
  * @copyright  2026 Petr Skoda
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-final class section_move extends \tool_mulib\local\ajax_form {
+final class section_move extends form {
     #[\Override]
-    protected function definition() {
-        $mform = $this->_form;
-        $currentdata = $this->_customdata['currentdata'];
-        $context = $this->_customdata['context'];
+    protected function definition(): void {
+        $context = $this->get_extra_data()['context'];
 
-        $mform->addElement('static', 'staticname', get_string('section_name', 'tool_mucatalog'), format_string($currentdata->name));
+        $this->add(new info('name', get_string('section_name', 'tool_mucatalog')));
 
-        section_contextid::add_element($mform, [], 'contextid', get_string('section_category', 'tool_mucatalog'), $context);
+        $contextid = new autocomplete('contextid', get_string('section_category', 'tool_mucatalog'), new section_contextid((int)$context->id));
+        $contextid->set_required(true);
+        $this->add($contextid);
 
-        $mform->addElement('hidden', 'id');
-        $mform->setType('id', PARAM_INT);
-
-        $this->add_action_buttons(true, get_string('section_move', 'tool_mucatalog'));
-
-        $this->set_data($currentdata);
-    }
-
-    #[\Override]
-    public function validation($data, $files) {
-        $context = $this->_customdata['context'];
-
-        $errors = parent::validation($data, $files);
-
-        $error = section_contextid::validate_value($data['contextid'], [], $context);
-        if ($error !== null) {
-            $errors['contextid'] = $error;
-        }
-
-        return $errors;
+        $this->add(new buttons('buttons'));
+        $this->add(new submit('submit', get_string('section_move', 'tool_mucatalog')), 'buttons');
+        $this->add(new cancel(), 'buttons');
     }
 }

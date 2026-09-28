@@ -19,6 +19,12 @@
 
 namespace tool_mucatalog\local\form;
 
+use tool_mulib\muform\element\buttons;
+use tool_mulib\muform\element\cancel;
+use tool_mulib\muform\element\info;
+use tool_mulib\muform\element\submit;
+use tool_mulib\muform\form;
+
 /**
  * Activate draft section.
  *
@@ -26,19 +32,13 @@ namespace tool_mucatalog\local\form;
  * @copyright  2026 Petr Skoda
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-final class section_activate extends \tool_mulib\local\ajax_form {
+final class section_activate extends form {
     #[\Override]
-    protected function definition() {
-        $mform = $this->_form;
-        $currentdata = $this->_customdata['currentdata'];
+    protected function definition(): void {
+        $this->add(new info('name', get_string('section_name', 'tool_mucatalog')));
 
-        $mform->addElement('static', 'staticname', get_string('section_name', 'tool_mucatalog'), format_string($currentdata->name));
-
-        $mform->addElement('hidden', 'id');
-        $mform->setType('id', PARAM_INT);
-
-        $this->add_action_buttons(true, get_string('section_activate', 'tool_mucatalog'));
-
-        $this->set_data($currentdata);
+        $this->add(new buttons('buttons'));
+        $this->add(new submit('submit', get_string('section_activate', 'tool_mucatalog')), 'buttons');
+        $this->add(new cancel(), 'buttons');
     }
 }

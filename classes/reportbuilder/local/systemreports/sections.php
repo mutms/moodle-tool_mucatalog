@@ -143,7 +143,7 @@ final class sections extends system_report {
         }
 
         $url = new url('/admin/tool/mucatalog/management/section_update.php', ['id' => ':id']);
-        $link = new \tool_mulib\output\ajax_form\link($url, get_string('section_update', 'tool_mucatalog'), 'i/edit');
+        $link = new \tool_mulib\output\muform\dialog\link($url, get_string('section_update', 'tool_mucatalog'), 'i/edit');
         $this->add_action($link->create_report_action()
             ->add_callback(static function (\stdclass $row): bool {
                 if (!$row->id) {
@@ -158,7 +158,7 @@ final class sections extends system_report {
             }));
 
         $url = new url('/admin/tool/mucatalog/management/section_activate.php', ['id' => ':id']);
-        $link = new \tool_mulib\output\ajax_form\link($url, get_string('section_activate', 'tool_mucatalog'), 'i/settings');
+        $link = new \tool_mulib\output\muform\dialog\link($url, get_string('section_activate', 'tool_mucatalog'), 'i/settings');
         $this->add_action($link->create_report_action()
             ->add_callback(static function (\stdclass $row): bool {
                 if (!$row->id) {
@@ -176,7 +176,7 @@ final class sections extends system_report {
             }));
 
         $url = new url('/admin/tool/mucatalog/management/section_archive.php', ['id' => ':id']);
-        $link = new \tool_mulib\output\ajax_form\link($url, get_string('section_archive', 'tool_mucatalog'), 'i/settings');
+        $link = new \tool_mulib\output\muform\dialog\link($url, get_string('section_archive', 'tool_mucatalog'), 'i/settings');
         $this->add_action($link->create_report_action()
             ->add_callback(static function (\stdclass $row): bool {
                 if (!$row->id) {
@@ -194,7 +194,7 @@ final class sections extends system_report {
             }));
 
         $url = new url('/admin/tool/mucatalog/management/section_restore.php', ['id' => ':id']);
-        $link = new \tool_mulib\output\ajax_form\link($url, get_string('section_restore', 'tool_mucatalog'), 'i/settings');
+        $link = new \tool_mulib\output\muform\dialog\link($url, get_string('section_restore', 'tool_mucatalog'), 'i/settings');
         $this->add_action($link->create_report_action()
             ->add_callback(static function (\stdclass $row): bool {
                 if (!$row->id) {
@@ -212,7 +212,7 @@ final class sections extends system_report {
             }));
 
         $url = new url('/admin/tool/mucatalog/management/section_delete.php', ['id' => ':id']);
-        $link = new \tool_mulib\output\ajax_form\link($url, get_string('section_delete', 'tool_mucatalog'), 'i/delete');
+        $link = new \tool_mulib\output\muform\dialog\link($url, get_string('section_delete', 'tool_mucatalog'), 'i/delete');
         $this->add_action($link->create_report_action(['class' => 'text-danger'])
             ->add_callback(static function (\stdclass $row): bool {
                 if (!$row->id) {

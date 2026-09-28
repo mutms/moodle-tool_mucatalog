@@ -19,9 +19,22 @@
 
 namespace tool_mucatalog\local\form;
 
-use tool_mucatalog\external\form_autocomplete\section_contextid;
-use tool_mucatalog\external\form_autocomplete\section_cohortvisible;
 use tool_mucatalog\local\util;
+use tool_mucatalog\muform\autocomplete\section_contextid;
+use tool_mucatalog\muform\autocompletemany\section_cohortvisible;
+use tool_mulib\local\mulib;
+use tool_mulib\muform\element\autocomplete;
+use tool_mulib\muform\element\autocompletemany;
+use tool_mulib\muform\element\buttons;
+use tool_mulib\muform\element\cancel;
+use tool_mulib\muform\element\checkbox;
+use tool_mulib\muform\element\number;
+use tool_mulib\muform\element\radios;
+use tool_mulib\muform\element\submit;
+use tool_mulib\muform\element\text;
+use tool_mulib\muform\element\textarea;
+use tool_mulib\muform\form;
+use tool_mulib\muform\validator\required_if_visible;
 
 /**
  * Add a section.
@@ -30,105 +43,69 @@ use tool_mucatalog\local\util;
  * @copyright  2026 Petr Skoda
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-final class section_create extends \tool_mulib\local\ajax_form {
+final class section_create extends form {
     #[\Override]
-    protected function definition() {
-        $mform = $this->_form;
-        $currentdata = $this->_customdata['currentdata'];
-        $context = $this->_customdata['context'];
+    protected function definition(): void {
+        $context = $this->get_extra_data()['context'];
 
-        $mform->addElement('text', 'name', get_string('section_name', 'tool_mucatalog'), 'maxlength="254" size="100"');
-        $mform->addRule('name', get_string('required'), 'required', null, 'client');
-        $mform->setType('name', PARAM_TEXT);
+        $name = new text('name', get_string('section_name', 'tool_mucatalog'), ['maxlength' => 254]);
+        $name->set_required(true);
+        $this->add($name);
 
-        $mform->addElement('textarea', 'shortdescription', get_string('shortdescription', 'tool_mucatalog'), ['rows' => '3', 'cols' => '50']);
-        $mform->addRule('shortdescription', get_string('required'), 'required', null, 'client');
-        $mform->setType('shortdescription', PARAM_RAW);
+        $shortdescription = new textarea('shortdescription', get_string('shortdescription', 'tool_mucatalog'), ['type' => 'rawtext', 'rows' => 3]);
+        $shortdescription->set_required(true);
+        $this->add($shortdescription);
 
-        section_contextid::add_element($mform, [], 'contextid', get_string('section_category', 'tool_mucatalog'), $context);
+        $contextid = new autocomplete('contextid', get_string('section_category', 'tool_mucatalog'), new section_contextid((int)$context->id));
+        $contextid->set_required(true);
+        $this->add($contextid);
 
-        $mform->addElement('advcheckbox', 'frontpageshow', get_string('frontpageshow', 'tool_mucatalog'), ' ');
-        if (!empty($currentdata->frontpagepriority)) {
-            $mform->setDefault('frontpageshow', 1);
+        $this->add(new checkbox('frontpageshow', get_string('frontpageshow', 'tool_mucatalog')));
+
+        $frontpagepriority = new number('frontpagepriority', get_string('frontpagepriority', 'tool_mucatalog'));
+        $frontpagepriority->set_required_marker(true);
+        $frontpagepriority->add_validator(new required_if_visible());
+        $this->add($frontpagepriority);
+        $this->get_display_manager()->hide_if('frontpagepriority', 'frontpageshow', 'notchecked');
+
+        $this->add(new checkbox('guestvisible', get_string('guestvisible', 'tool_mucatalog')));
+
+        $this->add(new checkbox('uservisible', get_string('uservisible', 'tool_mucatalog')));
+
+        $source = new section_cohortvisible(0, (int)$context->id);
+        $this->add(new autocompletemany('cohortvisible', get_string('cohortvisible', 'tool_mucatalog'), $source));
+        $this->get_display_manager()->hide_if('cohortvisible', 'uservisible', 'checked');
+
+        if (mulib::is_mutenancy_active()) {
+            $this->add(new checkbox('hiddenfromtenants', get_string('hiddenfromtenants', 'tool_mucatalog')));
         }
 
-        $mform->addElement('text', 'frontpagepriority', get_string('frontpagepriority', 'tool_mucatalog'));
-        $mform->setType('frontpagepriority', PARAM_RAW);
-        $mform->hideIf('frontpagepriority', 'frontpageshow', 'noteq', '1');
+        $statuses = util::get_statuses_menu();
+        unset($statuses[util::STATUS_ARCHIVED]);
+        $status = new radios('status', get_string('section_status', 'tool_mucatalog'), $statuses);
+        $status->set_required(true);
+        $this->add($status);
 
-        $mform->addElement('advcheckbox', 'guestvisible', get_string('guestvisible', 'tool_mucatalog'), ' ');
-
-        $mform->addElement('advcheckbox', 'uservisible', get_string('uservisible', 'tool_mucatalog'), ' ');
-
-        section_cohortvisible::add_element(
-            $mform,
-            ['sectionid' => null, 'contextid' => $context->id],
-            'cohortvisible',
-            get_string('cohortvisible', 'tool_mucatalog'),
-            $context
-        );
-        $mform->hideIf('cohortvisible', 'uservisible', 'eq', 1);
-
-        if (\tool_mulib\local\mulib::is_mutenancy_active()) {
-            $mform->addElement('advcheckbox', 'hiddenfromtenants', get_string('hiddenfromtenants', 'tool_mucatalog'), ' ');
-        }
-
-        $options = util::get_statuses_menu();
-        $radios = [];
-        foreach ($options as $k => $v) {
-            if ($k == util::STATUS_ARCHIVED) {
-                continue;
-            }
-            $radios[] = $mform->createElement('radio', 'status', '', $v, $k);
-        }
-        $mform->addElement('group', 'statusgroup', get_string('section_status', 'tool_mucatalog'), $radios, '<div class="w-100" />', false);
-
-        $this->add_action_buttons(true, get_string('section_create', 'tool_mucatalog'));
-
-        $this->set_data($currentdata);
+        $this->add(new buttons('buttons'));
+        $this->add(new submit('submit', get_string('section_create', 'tool_mucatalog')), 'buttons');
+        $this->add(new cancel(), 'buttons');
     }
 
     #[\Override]
-    public function validation($data, $files) {
-        $errors = parent::validation($data, $files);
+    protected function validation(array $data, array &$allerrors): void {
+        $context = $this->get_extra_data()['context'];
 
-        $context = $this->_customdata['context'];
-
-        if (trim($data['name']) === '') {
-            $errors['name'] = get_string('required');
+        // Priority 0 is reserved for "All items".
+        if (!empty($data['frontpageshow']) && $data['frontpagepriority'] === 0) {
+            $allerrors['frontpagepriority'][] = get_string('error');
         }
 
-        if (trim($data['shortdescription']) === '') {
-            $errors['shortdescription'] = get_string('required');
-        }
-
-        if ($data['frontpageshow']) {
-            if (trim($data['frontpagepriority']) === '' || !$data['frontpagepriority']) {
-                $errors['frontpagepriority'] = get_string('required');
-            } else if (!is_number($data['frontpagepriority'])) {
-                $errors['frontpagepriority'] = get_string('error');
+        // Cohorts must fit the selected category, the autocomplete source validated them for the current category only.
+        if (!empty($data['cohortvisible']) && empty($allerrors['contextid']) && $data['contextid'] != $context->id) {
+            $source = new section_cohortvisible(0, (int)$data['contextid']);
+            if ($source->validate($data['cohortvisible'])) {
+                $allerrors['cohortvisible'][] = get_string('error');
             }
         }
-
-        $error = section_contextid::validate_value($data['contextid'], [], $context);
-        if ($error !== null) {
-            $errors['contextid'] = $error;
-            $validatecontext = null;
-        } else {
-            $validatecontext = \context::instance_by_id($data['contextid']);
-        }
-
-        if ($validatecontext && $data['cohortvisible']) {
-            $args = ['sectionid' => null, 'contextid' => $context->id];
-            foreach ($data['cohortvisible'] as $cohortid) {
-                $error = section_cohortvisible::validate_value($cohortid, $args, $validatecontext);
-                if ($error !== null) {
-                    $errors['cohortvisible'] = $error;
-                    break;
-                }
-            }
-        }
-
-        return $errors;
     }
 }

@@ -28,11 +28,10 @@
 
 use core\url;
 use tool_mucatalog\local\collection;
+use tool_mulib\muform\handler;
 
 /** @var moodle_database $DB */
 /** @var moodle_page $PAGE */
-
-define('AJAX_SCRIPT', true);
 
 require('../../../../config.php');
 
@@ -51,20 +50,25 @@ $returnurl = new url('/admin/tool/mucatalog/management/collections.php');
 
 $PAGE->set_context($context);
 $PAGE->set_url($currenturl);
+$title = get_string('collection_create', 'tool_mucatalog');
+$PAGE->set_title($title);
+$PAGE->set_heading($title);
 
-$collection = collection::get_defaults($context->id);
+$handler = handler::from_request();
 
-$form = new \tool_mucatalog\local\form\collection_create(
-    null,
-    ['currentdata' => $collection, 'context' => $context]
-);
+$current = (array)collection::get_defaults($context->id);
+$current['frontpageshow'] = (int)($current['frontpagepriority'] !== null);
+
+$form = new \tool_mucatalog\local\form\collection_create($currenturl, $current, ['context' => $context]);
 
 if ($form->is_cancelled()) {
-    $form->ajax_form_cancelled($returnurl);
-} else if ($data = $form->get_data()) {
-    $collection = collection::create($data);
-    $returnurl = new url('/admin/tool/mucatalog/management/collections.php', ['contextid' => $context->id]);
-    $form->ajax_form_submitted($returnurl);
+    $handler->cancelled($returnurl);
 }
 
-$form->ajax_form_render();
+if ($data = $form->get_data()) {
+    collection::create($data);
+    $returnurl = new url('/admin/tool/mucatalog/management/collections.php', ['contextid' => $context->id]);
+    $handler->submitted($returnurl);
+}
+
+$handler->render($form);

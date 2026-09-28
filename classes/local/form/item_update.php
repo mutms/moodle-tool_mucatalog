@@ -19,6 +19,16 @@
 
 namespace tool_mucatalog\local\form;
 
+use tool_mulib\muform\element\buttons;
+use tool_mulib\muform\element\cancel;
+use tool_mulib\muform\element\checkbox;
+use tool_mulib\muform\element\datetime;
+use tool_mulib\muform\element\info;
+use tool_mulib\muform\element\submit;
+use tool_mulib\muform\element\text;
+use tool_mulib\muform\form;
+use tool_mulib\muform\validator\required_if_visible;
+
 /**
  * Update item.
  *
@@ -26,47 +36,30 @@ namespace tool_mucatalog\local\form;
  * @copyright  2026 Petr Skoda
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-final class item_update extends \tool_mulib\local\ajax_form {
+final class item_update extends form {
     #[\Override]
-    protected function definition() {
-        $mform = $this->_form;
-        $section = $this->_customdata['section'];
-        $context = $this->_customdata['context'];
-        $item = $this->_customdata['item'];
-        $itemclass = \tool_mucatalog\local\item::get_type_classname($item->type);
+    protected function definition(): void {
+        $section = $this->get_extra_data()['section'];
+        $classname = \tool_mucatalog\local\item::get_type_classname($this->get_current_data()['type']);
 
-        $mform->addElement('static', 'staticname', get_string('section_name', 'tool_mucatalog'), format_string($section->name));
+        $this->add(new info('sectionname', get_string('section_name', 'tool_mucatalog'), $section->name));
 
-        $mform->addElement('static', 'statictype', get_string('item_type', 'tool_mucatalog'), $itemclass::get_type_name());
+        $this->add(new info('typename', get_string('item_type', 'tool_mucatalog'), $classname::get_type_name()));
 
-        $mform->addElement('advcheckbox', 'syncname', get_string('item_syncname', 'tool_mucatalog'), ' ');
+        $this->add(new checkbox('syncname', get_string('item_syncname', 'tool_mucatalog')));
 
-        $mform->addElement('text', 'name', get_string('item_name', 'tool_mucatalog'), 'maxlength="254" size="100"');
-        $mform->setType('name', PARAM_TEXT);
-        $mform->hideIf('name', 'syncname', 'eq', 1);
+        $name = new text('name', get_string('item_name', 'tool_mucatalog'), ['maxlength' => 254]);
+        $name->set_required_marker(true);
+        $name->add_validator(new required_if_visible());
+        $this->add($name);
+        $this->get_display_manager()->hide_if('name', 'syncname', 'checked');
 
-        $mform->addElement('date_time_selector', 'hiddenbefore', get_string('hiddenbefore', 'tool_mucatalog'), ['optional' => true]);
+        $this->add(new datetime('hiddenbefore', get_string('hiddenbefore', 'tool_mucatalog')));
 
-        $mform->addElement('date_time_selector', 'hiddenafter', get_string('hiddenafter', 'tool_mucatalog'), ['optional' => true]);
+        $this->add(new datetime('hiddenafter', get_string('hiddenafter', 'tool_mucatalog')));
 
-        $mform->addElement('hidden', 'id');
-        $mform->setType('id', PARAM_INT);
-
-        $this->add_action_buttons(true, get_string('item_update', 'tool_mucatalog'));
-
-        $this->set_data($item);
-    }
-
-    #[\Override]
-    public function validation($data, $files) {
-        $errors = parent::validation($data, $files);
-
-        if ($data['syncname']) {
-            if (trim($data['name']) === '') {
-                $errors['name'] = get_string('required');
-            }
-        }
-
-        return $errors;
+        $this->add(new buttons('buttons'));
+        $this->add(new submit('submit', get_string('item_update', 'tool_mucatalog')), 'buttons');
+        $this->add(new cancel(), 'buttons');
     }
 }

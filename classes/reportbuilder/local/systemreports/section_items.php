@@ -152,7 +152,7 @@ final class section_items extends system_report {
         }
 
         $url = new url('/admin/tool/mucatalog/management/item_update.php', ['id' => ':id']);
-        $link = new \tool_mulib\output\ajax_form\link($url, get_string('item_update', 'tool_mucatalog'), 'i/settings');
+        $link = new \tool_mulib\output\muform\dialog\link($url, get_string('item_update', 'tool_mucatalog'), 'i/settings');
         $this->add_action($link->create_report_action()
             ->add_callback(static function (\stdclass $row): bool {
                 if (!$row->id) {
@@ -167,7 +167,7 @@ final class section_items extends system_report {
             }));
 
         $url = new url('/admin/tool/mucatalog/management/item_move.php', ['id' => ':id']);
-        $link = new \tool_mulib\output\ajax_form\link($url, get_string('item_move', 'tool_mucatalog'), 'i/move_2d');
+        $link = new \tool_mulib\output\muform\dialog\link($url, get_string('item_move', 'tool_mucatalog'), 'i/move_2d');
         $this->add_action($link->create_report_action()
             ->add_callback(static function (\stdclass $row): bool {
                 if (!$row->id) {
@@ -182,7 +182,7 @@ final class section_items extends system_report {
             }));
 
         $url = new url('/admin/tool/mucatalog/management/item_activate.php', ['id' => ':id']);
-        $link = new \tool_mulib\output\ajax_form\link($url, get_string('item_activate', 'tool_mucatalog'), 'i/settings');
+        $link = new \tool_mulib\output\muform\dialog\link($url, get_string('item_activate', 'tool_mucatalog'), 'i/settings');
         $this->add_action($link->create_report_action()
             ->add_callback(static function (\stdclass $row): bool {
                 if (!$row->id) {
@@ -201,7 +201,7 @@ final class section_items extends system_report {
             }));
 
         $url = new url('/admin/tool/mucatalog/management/item_archive.php', ['id' => ':id']);
-        $link = new \tool_mulib\output\ajax_form\link($url, get_string('item_archive', 'tool_mucatalog'), 'i/settings');
+        $link = new \tool_mulib\output\muform\dialog\link($url, get_string('item_archive', 'tool_mucatalog'), 'i/settings');
         $this->add_action($link->create_report_action()
             ->add_callback(static function (\stdclass $row): bool {
                 if (!$row->id) {
@@ -220,7 +220,7 @@ final class section_items extends system_report {
             }));
 
         $url = new url('/admin/tool/mucatalog/management/item_restore.php', ['id' => ':id']);
-        $link = new \tool_mulib\output\ajax_form\link($url, get_string('item_restore', 'tool_mucatalog'), 'i/settings');
+        $link = new \tool_mulib\output\muform\dialog\link($url, get_string('item_restore', 'tool_mucatalog'), 'i/settings');
         $this->add_action($link->create_report_action()
             ->add_callback(static function (\stdclass $row): bool {
                 if (!$row->id) {
@@ -239,7 +239,7 @@ final class section_items extends system_report {
             }));
 
         $url = new url('/admin/tool/mucatalog/management/item_delete.php', ['id' => ':id']);
-        $link = new \tool_mulib\output\ajax_form\link($url, get_string('item_delete', 'tool_mucatalog'), 'i/delete');
+        $link = new \tool_mulib\output\muform\dialog\link($url, get_string('item_delete', 'tool_mucatalog'), 'i/delete');
         $this->add_action($link->create_report_action(['class' => 'text-danger'])
             ->add_callback(static function (\stdclass $row): bool {
                 if (!$row->id) {
