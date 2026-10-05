@@ -131,8 +131,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
         </div>
     </div>
 </div>
-{{#js}}
-require(['tool_mucatalog/browse'], function(Browse) {
-    Browse.init();
-});
-{{/js}}
+<script type="module">
+import {init} from '@moodle/lms/tool_mucatalog/browse';
+init();
+</script>

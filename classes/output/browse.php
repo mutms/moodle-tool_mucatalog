@@ -76,6 +76,8 @@ final class browse implements \core\output\named_templatable, \core\output\rende
             'hastypeselect' => false,
             'items' => [],
             'hasmore' => false,
+            'itemsurl' => \core\router\util::get_path_for_callable([\tool_mucatalog\route\controller\browse::class, 'items']),
+            'browseurl' => (new url('/admin/tool/mucatalog/index.php'))->out(false),
         ];
 
         $collections = catalogue::get_visible_collections($USER->id, false, $tenantid);
