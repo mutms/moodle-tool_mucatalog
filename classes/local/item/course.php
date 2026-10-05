@@ -359,4 +359,16 @@ final class course extends item {
 
         return new url('/course/view.php', ['id' => $course->id]);
     }
+
+    #[\Override]
+    public static function get_reference_context(int $referenceid): ?\context {
+        return \context_course::instance($referenceid, IGNORE_MISSING) ?: null;
+    }
+
+    #[\Override]
+    public static function get_reference_name(int $referenceid): string {
+        global $DB;
+
+        return (string)$DB->get_field('course', 'fullname', ['id' => $referenceid]);
+    }
 }

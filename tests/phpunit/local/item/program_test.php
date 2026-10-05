@@ -940,4 +940,108 @@ final class program_test extends \advanced_testcase {
         \tool_muprog\local\program::delete($program2->id);
         $this->assertSame(null, program::get_open_url($item2));
     }
+
+    public function test_get_actions(): void {
+        global $DB;
+
+        if (!mulib::is_muprog_available()) {
+            $this->markTestSkipped('tool_muprog not available');
+        }
+
+        /** @var \tool_muprog_generator $programgenerator */
+        $programgenerator = $this->getDataGenerator()->get_plugin_generator('tool_muprog');
+        /** @var \tool_mucatalog_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('tool_mucatalog');
+
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+
+        $cohort1 = $this->getDataGenerator()->create_cohort();
+        cohort_add_member($cohort1->id, $user1->id);
+
+        $program1 = $programgenerator->create_program();
+        $program2 = $programgenerator->create_program(['sources' => ['manual' => []]]);
+        $program3 = $programgenerator->create_program(['sources' => ['manual' => [], 'selfallocation' => []]]);
+        $source3 = $DB->get_record('tool_muprog_source', ['programid' => $program3->id, 'type' => 'selfallocation'], '*', MUST_EXIST);
+        $program4 = $programgenerator->create_program(['sources' => ['selfallocation' => []]]);
+
+        $section = $generator->create_section([
+            'status' => util::STATUS_ACTIVE,
+            'uservisible' => 0,
+            'cohortvisible' => [$cohort1->id],
+        ]);
+
+        $item1 = $generator->create_item(['sectionid' => $section->id, 'type' => 'program', 'referenceid' => $program1->id]);
+        $item2 = $generator->create_item(['sectionid' => $section->id, 'type' => 'program', 'referenceid' => $program2->id]);
+        $item3 = $generator->create_item(['sectionid' => $section->id, 'type' => 'program', 'referenceid' => $program3->id]);
+        $item4 = $generator->create_item([
+            'sectionid' => $section->id,
+            'type' => 'program',
+            'referenceid' => $program4->id,
+            'status' => util::STATUS_DRAFT,
+        ]);
+
+        $this->setUser($user1);
+        $this->assertSame([], program::get_actions($item1));
+        $this->assertSame([], program::get_actions($item2));
+        $actions = program::get_actions($item3);
+        $this->assertCount(1, $actions);
+        $this->assertStringContainsString(
+            "https://www.example.com/moodle/admin/tool/muprog/my/source_selfallocation.php?sourceid=$source3->id",
+            $actions[0]
+        );
+        $this->assertStringContainsString(get_string('source_selfallocation_allocate', 'tool_muprog'), $actions[0]);
+        $this->assertSame([], program::get_actions($item4));
+
+        // No actions if user cannot see the item in catalogue.
+        $this->setUser($user2);
+        $this->assertSame([], program::get_actions($item1));
+        $this->assertSame([], program::get_actions($item2));
+        $this->assertSame([], program::get_actions($item3));
+        $this->assertSame([], program::get_actions($item4));
+
+        $this->setUser(guest_user());
+        $this->assertSame([], program::get_actions($item3));
+
+        $this->setUser(null);
+        $this->assertSame([], program::get_actions($item3));
+
+        // No actions after self registration.
+        $this->setUser($user1);
+        \tool_muprog\local\source\selfallocation::signup($program3->id, $source3->id);
+        $this->assertSame([], program::get_actions($item3));
+
+        // Deleted reference.
+        $this->setUser($user1);
+        $item1->referenceid = null;
+        $this->assertSame([], program::get_actions($item1));
+
+        // Invalid item type.
+        $item2->type = 'course';
+        try {
+            program::get_actions($item2);
+            $this->fail('Exception expected');
+        } catch (moodle_exception $ex) {
+            $this->assertInstanceOf(coding_exception::class, $ex);
+            $this->assertSame(
+                'Coding error detected, it must be fixed by a programmer: incorrect type class used',
+                $ex->getMessage()
+            );
+        }
+    }
+
+    public function test_reference_helpers(): void {
+        $category = $this->getDataGenerator()->create_category();
+        $catcontext = \context_coursecat::instance($category->id);
+        $record = $this->getDataGenerator()->get_plugin_generator('tool_muprog')->create_program(['fullname' => 'Some name', 'contextid' => $catcontext->id]);
+
+        $this->assertSame('tool/mucatalog:addprogram', \tool_mucatalog\local\item\program::get_add_capability());
+
+        $context = \tool_mucatalog\local\item\program::get_reference_context($record->id);
+        $this->assertSame($catcontext->id, $context->id);
+        $this->assertNull(\tool_mucatalog\local\item\program::get_reference_context($record->id + 100));
+
+        $this->assertSame('Some name', \tool_mucatalog\local\item\program::get_reference_name($record->id));
+        $this->assertSame('', \tool_mucatalog\local\item\program::get_reference_name($record->id + 100));
+    }
 }

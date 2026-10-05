@@ -460,10 +460,10 @@ final class section {
         set_config('active', $active, 'tool_mucatalog');
 
         if ($active) {
-            $guestvisible = (int)$DB->record_exists('tool_mucatalog_section', ['status' => util::STATUS_ACTIVE, 'guestvisible' => 1]);
-            set_config('guestvisible', $guestvisible, 'tool_mucatalog');
+            $hasguestsection = (int)$DB->record_exists('tool_mucatalog_section', ['status' => util::STATUS_ACTIVE, 'guestvisible' => 1]);
+            set_config('hasguestsection', $hasguestsection, 'tool_mucatalog');
         } else {
-            set_config('guestvisible', 0, 'tool_mucatalog');
+            set_config('hasguestsection', 0, 'tool_mucatalog');
         }
     }
 

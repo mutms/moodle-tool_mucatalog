@@ -502,4 +502,57 @@ final class catalogue {
 
         return true;
     }
+
+    /**
+     * Returns first catalogue item with given reference that user may see.
+     *
+     * NOTE: this is intended for plugins that need to know if their program,
+     *       certification, etc. is available to user in the catalogue.
+     *
+     * @param string $type item type
+     * @param int $referenceid
+     * @param int $userid
+     * @param int|null $tenantid
+     * @return stdClass|null item record
+     */
+    public static function get_visible_reference_item(string $type, int $referenceid, int $userid, ?int $tenantid): ?stdClass {
+        global $DB;
+
+        if (!\tool_mulib\local\mulib::is_mucatalog_active()) {
+            return null;
+        }
+
+        $items = $DB->get_records(
+            'tool_mucatalog_item',
+            ['type' => $type, 'referenceid' => $referenceid, 'status' => util::STATUS_ACTIVE],
+            'id ASC'
+        );
+        foreach ($items as $item) {
+            if (self::is_item_visible($item, (int)$item->sectionid, $userid, $tenantid)) {
+                return $item;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Returns catalogue URL if current user may browse it.
+     *
+     * @return url|null
+     */
+    public static function get_catalogue_url(): ?url {
+        if (!\tool_mulib\local\mulib::is_mucatalog_active()) {
+            return null;
+        }
+        if (!isloggedin() || isguestuser()) {
+            if (!get_config('tool_mucatalog', 'hasguestsection')) {
+                return null;
+            }
+        }
+        if (!has_capability('tool/mucatalog:browse', \context_system::instance())) {
+            return null;
+        }
+        return new url('/admin/tool/mucatalog/index.php');
+    }
 }

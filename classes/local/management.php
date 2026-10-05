@@ -329,4 +329,76 @@ final class management {
             $PAGE->add_header_action($OUTPUT->render($actions));
         }
     }
+
+    /**
+     * Returns all catalogue items with given reference together with their sections.
+     *
+     * NOTE: this is intended for management pages of plugins that are referenced from catalogue.
+     *
+     * @param string $type item type
+     * @param int $referenceid
+     * @return stdClass[] item records with extra section properties, indexed with item id
+     */
+    public static function get_reference_sections(string $type, int $referenceid): array {
+        global $DB;
+
+        $sql = new sql(
+            "SELECT i.id, i.name, i.status, i.hiddenbefore, i.hiddenafter, i.sectionid,
+                    s.name AS sectionname, s.contextid AS sectioncontextid, s.status AS sectionstatus,
+                    s.guestvisible AS sectionguestvisible, s.uservisible AS sectionuservisible
+               FROM {tool_mucatalog_item} i
+               JOIN {tool_mucatalog_section} s ON s.id = i.sectionid
+              WHERE i.type = :type AND i.referenceid = :referenceid
+           ORDER BY s.name ASC, i.id ASC",
+            ['type' => $type, 'referenceid' => $referenceid]
+        );
+
+        return $DB->get_records_sql($sql->sql, $sql->params);
+    }
+
+    /**
+     * Returns button that opens dialog for adding of course, program or certification to a catalogue section.
+     *
+     * NOTE: this is intended for management pages of plugins that are referenced from catalogue.
+     *
+     * @param string $type item type
+     * @param int $referenceid
+     * @param url $returnurl
+     * @return button|null null if current user cannot add the reference to catalogue
+     */
+    public static function get_reference_add_button(string $type, int $referenceid, url $returnurl): ?button {
+        $typeclass = item::get_type_classname($type);
+        if (!$typeclass || !$typeclass::is_available()) {
+            return null;
+        }
+        $context = $typeclass::get_reference_context($referenceid);
+        if (!$context || !has_capability($typeclass::get_add_capability(), $context)) {
+            return null;
+        }
+
+        $url = new url(
+            '/admin/tool/mucatalog/management/reference_add.php',
+            ['type' => $type, 'referenceid' => $referenceid, 'returnurl' => $returnurl->out_as_local_url(false)]
+        );
+        return new button($url, get_string('reference_add', 'tool_mucatalog'));
+    }
+
+    /**
+     * Returns URL of section management in given context if current user may manage sections there.
+     *
+     * NOTE: this is intended for management pages of plugins that are referenced from catalogue.
+     *
+     * @param \context $context system or course category context
+     * @return url|null
+     */
+    public static function get_sections_management_url(\context $context): ?url {
+        if ($context->contextlevel != CONTEXT_SYSTEM && $context->contextlevel != CONTEXT_COURSECAT) {
+            return null;
+        }
+        // NOTE: the section management page itself requires the view capability.
+        if (!has_capability('tool/mucatalog:manage', $context) || !has_capability('tool/mucatalog:view', $context)) {
+            return null;
+        }
+        return new url('/admin/tool/mucatalog/management/sections.php', ['contextid' => $context->id]);
+    }
 }

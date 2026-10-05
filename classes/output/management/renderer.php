@@ -239,4 +239,76 @@ class renderer extends \plugin_renderer_base {
 
         return $this->output->render($details);
     }
+
+    /**
+     * Render list of catalogue sections that include given reference.
+     *
+     * NOTE: this is intended for management pages of plugins that are referenced from catalogue.
+     *
+     * @param string $type item type
+     * @param int $referenceid
+     * @return string
+     */
+    public function render_reference_sections(string $type, int $referenceid): string {
+        $records = \tool_mucatalog\local\management::get_reference_sections($type, $referenceid);
+        if (!$records) {
+            return $this->output->notification(get_string('reference_sections_none', 'tool_mucatalog'), 'info', false);
+        }
+
+        $statuses = util::get_statuses_menu();
+        $dateformat = get_string('strftimedatetimeshort', 'langconfig');
+
+        $table = new \html_table();
+        $table->id = 'tool_mucatalog_reference_sections';
+        $table->attributes['class'] = 'table table-striped table-hover table-bordered';
+        $table->head = [
+            get_string('section', 'tool_mucatalog'),
+            get_string('section_category', 'tool_mucatalog'),
+            get_string('section_status', 'tool_mucatalog'),
+            get_string('audience', 'tool_mucatalog'),
+            get_string('item_status', 'tool_mucatalog'),
+            get_string('hiddenbefore', 'tool_mucatalog'),
+            get_string('hiddenafter', 'tool_mucatalog'),
+        ];
+        $table->data = [];
+
+        foreach ($records as $record) {
+            $context = \context::instance_by_id($record->sectioncontextid, IGNORE_MISSING);
+            $canview = ($context && has_capability('tool/mucatalog:view', $context));
+
+            $sectionname = format_string($record->sectionname);
+            $itemstatus = $statuses[$record->status];
+            if ($canview) {
+                $url = new url('/admin/tool/mucatalog/management/section.php', ['id' => $record->sectionid]);
+                $sectionname = html_writer::link($url, $sectionname);
+                $url = new url('/admin/tool/mucatalog/management/item.php', ['id' => $record->id]);
+                $itemstatus = html_writer::link($url, $itemstatus);
+            }
+
+            $audience = [];
+            if ($record->sectionguestvisible) {
+                $audience[] = get_string('audience_guests', 'tool_mucatalog');
+            }
+            if ($record->sectionuservisible) {
+                $audience[] = get_string('audience_allusers', 'tool_mucatalog');
+            } else {
+                $cohorts = section::get_cohortvisible_menu($record->sectionid);
+                foreach ($cohorts as $cohortname) {
+                    $audience[] = format_string($cohortname);
+                }
+            }
+
+            $table->data[] = [
+                $sectionname,
+                $context ? $context->get_context_name(false) : '',
+                $statuses[$record->sectionstatus],
+                $audience ? implode(', ', $audience) : '-',
+                $itemstatus,
+                $record->hiddenbefore ? userdate($record->hiddenbefore, $dateformat) : '-',
+                $record->hiddenafter ? userdate($record->hiddenafter, $dateformat) : '-',
+            ];
+        }
+
+        return html_writer::table($table);
+    }
 }

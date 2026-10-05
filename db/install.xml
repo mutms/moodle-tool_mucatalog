@@ -113,7 +113,7 @@
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
         <KEY NAME="collectionid" TYPE="foreign" FIELDS="collectionid" REFTABLE="tool_mucatalog_collection" REFFIELDS="id"/>
-        <KEY NAME="itemid" TYPE="foreign" FIELDS="itemid" REFTABLE="cohort" REFFIELDS="id"/>
+        <KEY NAME="itemid" TYPE="foreign" FIELDS="itemid" REFTABLE="tool_mucatalog_item" REFFIELDS="id"/>
       </KEYS>
       <INDEXES>
         <INDEX NAME="collectionid-itemid" UNIQUE="true" FIELDS="collectionid, itemid" COMMENT="Prevent duplicates"/>

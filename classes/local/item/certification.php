@@ -405,8 +405,49 @@ final class certification extends item {
             return new url('/admin/tool/mucertify/management/certification.php', ['id' => $certification->id]);
         }
 
-        // Ignore old catalog for now, no self-assignment either.
-
         return null;
+    }
+
+    /**
+     * Returns html fragments with actions available to current user
+     * on the item page, such as registration buttons.
+     *
+     * @param stdClass $item
+     * @return string[]
+     */
+    public static function get_actions(stdClass $item): array {
+        global $DB;
+
+        if ($item->type !== self::TYPE) {
+            throw new coding_exception('incorrect type class used');
+        }
+
+        if (!$item->referenceid) {
+            return [];
+        }
+        $certification = $DB->get_record('tool_mucertify_certification', ['id' => $item->referenceid]);
+        if (!$certification) {
+            return [];
+        }
+
+        return \tool_mucertify\local\certification::get_catalogue_actions($certification);
+    }
+
+    #[\Override]
+    public static function get_reference_context(int $referenceid): ?\context {
+        global $DB;
+
+        $contextid = $DB->get_field('tool_mucertify_certification', 'contextid', ['id' => $referenceid]);
+        if (!$contextid) {
+            return null;
+        }
+        return \context::instance_by_id($contextid, IGNORE_MISSING) ?: null;
+    }
+
+    #[\Override]
+    public static function get_reference_name(int $referenceid): string {
+        global $DB;
+
+        return (string)$DB->get_field('tool_mucertify_certification', 'fullname', ['id' => $referenceid]);
     }
 }

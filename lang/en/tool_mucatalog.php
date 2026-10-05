@@ -24,6 +24,9 @@
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['audience'] = 'Visible to';
+$string['audience_allusers'] = 'All users';
+$string['audience_guests'] = 'Guests';
 $string['catalogue'] = 'Catalogue';
 $string['catalogue_title'] = 'Catalogue';
 $string['cohortvisible'] = 'Visible to cohorts';
@@ -78,6 +81,12 @@ $string['management_actions'] = 'Catalogue actions';
 $string['management_collections'] = 'Collection management';
 $string['management_item'] = 'Manage item';
 $string['management_sections'] = 'Section management';
+$string['migration_certifications_cohorts'] = 'Certifications: {$a}';
+$string['migration_certifications_desc'] = 'Section created during migration from the old certification catalogue.';
+$string['migration_certifications_public'] = 'Certifications: public';
+$string['migration_programs_cohorts'] = 'Programs: {$a}';
+$string['migration_programs_desc'] = 'Section created during migration from the old program catalogue.';
+$string['migration_programs_public'] = 'Programs: public';
 $string['mucatalog:addcertification'] = 'Add certification to catalogue sections';
 $string['mucatalog:addcourse'] = 'Add course to catalogue sections';
 $string['mucatalog:addprogram'] = 'Add program to catalogue sections';
@@ -87,6 +96,8 @@ $string['mucatalog:manage'] = 'Manage Universal catalogue';
 $string['mucatalog:view'] = 'View Universal catalogue sections';
 $string['pluginname'] = 'Universal catalogue';
 $string['privacy:metadata'] = 'Universal catalogue plugin does not store any personal information';
+$string['reference_add'] = 'Add to catalogue section';
+$string['reference_sections_none'] = 'Not included in any catalogue section';
 $string['search'] = 'Search';
 $string['search_placeholder'] = 'Search...';
 $string['section'] = 'Section';

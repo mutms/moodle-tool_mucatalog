@@ -31,7 +31,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
          data-region="item-content"
          data-item-id="{{itemid}}">
         <div class="card-img-top" style='background-image: url("{{imageurl}}");'>
-            <span class="visually-hidden">{{name}}</span>
+            <span class="visually-hidden">{{itemname}}</span>
         </div>
         <div class="card-body item-info-container" id="item-info-container-{{itemid}}-{{uniqid}}">
             <h2 class="itemname h3 mb-0">
@@ -52,6 +52,9 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
                 </div>
             {{/description}}
             <div class="item-detail-actions pt-4 mt-3 border-top">
+                {{#actions}}
+                    <span class="item-detail-action me-2">{{{.}}}</span>
+                {{/actions}}
                 {{#openurl}}
                     <a href="{{openurl}}" class="btn btn-primary">
                         {{#str}}item_open, tool_mucatalog{{/str}}

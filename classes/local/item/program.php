@@ -405,8 +405,49 @@ final class program extends item {
             return new url('/admin/tool/muprog/management/program.php', ['id' => $program->id]);
         }
 
-        // Ignore old catalog for now, no self-allocation either.
-
         return null;
+    }
+
+    /**
+     * Returns html fragments with actions available to current user
+     * on the item page, such as registration buttons.
+     *
+     * @param stdClass $item
+     * @return string[]
+     */
+    public static function get_actions(stdClass $item): array {
+        global $DB;
+
+        if ($item->type !== self::TYPE) {
+            throw new coding_exception('incorrect type class used');
+        }
+
+        if (!$item->referenceid) {
+            return [];
+        }
+        $program = $DB->get_record('tool_muprog_program', ['id' => $item->referenceid]);
+        if (!$program) {
+            return [];
+        }
+
+        return \tool_muprog\local\program::get_catalogue_actions($program);
+    }
+
+    #[\Override]
+    public static function get_reference_context(int $referenceid): ?\context {
+        global $DB;
+
+        $contextid = $DB->get_field('tool_muprog_program', 'contextid', ['id' => $referenceid]);
+        if (!$contextid) {
+            return null;
+        }
+        return \context::instance_by_id($contextid, IGNORE_MISSING) ?: null;
+    }
+
+    #[\Override]
+    public static function get_reference_name(int $referenceid): string {
+        global $DB;
+
+        return (string)$DB->get_field('tool_muprog_program', 'fullname', ['id' => $referenceid]);
     }
 }

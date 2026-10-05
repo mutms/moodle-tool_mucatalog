@@ -508,4 +508,252 @@ final class catalogue_test extends \advanced_testcase {
             catalogue::format_short_description("test *bold*\n\nnext <em>itealic</em>em> <javascript>alert('xss')</javascript>")
         );
     }
+
+    public function test_get_visible_reference_item(): void {
+        /** @var \tool_mucatalog_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('tool_mucatalog');
+
+        $guest = guest_user();
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+
+        $cohort1 = $this->getDataGenerator()->create_cohort();
+        cohort_add_member($cohort1->id, $user2->id);
+
+        $course1 = $this->getDataGenerator()->create_course();
+        $course2 = $this->getDataGenerator()->create_course();
+        $course3 = $this->getDataGenerator()->create_course();
+        $course4 = $this->getDataGenerator()->create_course();
+
+        // Catalogue is not active without active sections.
+
+        $section1 = $generator->create_section([
+            'status' => util::STATUS_DRAFT,
+            'guestvisible' => 1,
+            'uservisible' => 1,
+        ]);
+        $item1 = $generator->create_item(['sectionid' => $section1->id, 'type' => 'course', 'referenceid' => $course1->id]);
+        $this->assertFalse(\tool_mulib\local\mulib::is_mucatalog_active());
+        $this->assertNull(catalogue::get_visible_reference_item('course', $course1->id, $user1->id, null));
+        $this->assertNull(catalogue::get_visible_reference_item('course', $course1->id, $guest->id, null));
+        $this->assertNull(catalogue::get_visible_reference_item('course', $course1->id, 0, null));
+
+        // Draft sections are ignored.
+
+        $section2 = $generator->create_section([
+            'status' => util::STATUS_ACTIVE,
+            'guestvisible' => 0,
+            'uservisible' => 1,
+        ]);
+        $this->assertTrue(\tool_mulib\local\mulib::is_mucatalog_active());
+        $this->assertNull(catalogue::get_visible_reference_item('course', $course1->id, $user1->id, null));
+        $this->assertNull(catalogue::get_visible_reference_item('course', $course1->id, $guest->id, null));
+        $this->assertNull(catalogue::get_visible_reference_item('course', $course1->id, 0, null));
+
+        // Active section visible to all users.
+
+        $item2 = $generator->create_item(['sectionid' => $section2->id, 'type' => 'course', 'referenceid' => $course1->id]);
+        $this->assertEquals($item2, catalogue::get_visible_reference_item('course', $course1->id, $user1->id, null));
+        $this->assertEquals($item2, catalogue::get_visible_reference_item('course', $course1->id, $user2->id, null));
+        $this->assertNull(catalogue::get_visible_reference_item('course', $course1->id, $guest->id, null));
+        $this->assertNull(catalogue::get_visible_reference_item('course', $course1->id, 0, null));
+        $this->assertNull(catalogue::get_visible_reference_item('course', $course2->id, $user1->id, null));
+        $this->assertNull(catalogue::get_visible_reference_item('program', $course1->id, $user1->id, null));
+        $this->assertNull(catalogue::get_visible_reference_item('xyz', $course1->id, $user1->id, null));
+
+        // Guest access.
+
+        $section1 = \tool_mucatalog\local\section::activate($section1->id);
+        $this->assertEquals($item1, catalogue::get_visible_reference_item('course', $course1->id, $user1->id, null));
+        $this->assertEquals($item1, catalogue::get_visible_reference_item('course', $course1->id, $guest->id, null));
+        $this->assertEquals($item1, catalogue::get_visible_reference_item('course', $course1->id, 0, null));
+
+        // Archived sections are ignored.
+
+        $section1 = \tool_mucatalog\local\section::archive($section1->id);
+        $this->assertEquals($item2, catalogue::get_visible_reference_item('course', $course1->id, $user1->id, null));
+        $this->assertNull(catalogue::get_visible_reference_item('course', $course1->id, $guest->id, null));
+        $this->assertNull(catalogue::get_visible_reference_item('course', $course1->id, 0, null));
+
+        // Section visible to cohort members only.
+
+        $section3 = $generator->create_section([
+            'status' => util::STATUS_ACTIVE,
+            'guestvisible' => 0,
+            'uservisible' => 0,
+            'cohortvisible' => [$cohort1->id],
+        ]);
+        $item3 = $generator->create_item(['sectionid' => $section3->id, 'type' => 'course', 'referenceid' => $course2->id]);
+        $this->assertNull(catalogue::get_visible_reference_item('course', $course2->id, $user1->id, null));
+        $this->assertEquals($item3, catalogue::get_visible_reference_item('course', $course2->id, $user2->id, null));
+        $this->assertNull(catalogue::get_visible_reference_item('course', $course2->id, $guest->id, null));
+        $this->assertNull(catalogue::get_visible_reference_item('course', $course2->id, 0, null));
+
+        // Draft and archived items are ignored.
+
+        $item4 = $generator->create_item([
+            'sectionid' => $section2->id,
+            'type' => 'course',
+            'referenceid' => $course3->id,
+            'status' => util::STATUS_DRAFT,
+        ]);
+        $this->assertNull(catalogue::get_visible_reference_item('course', $course3->id, $user1->id, null));
+        $item4 = \tool_mucatalog\local\item\course::activate($item4->id);
+        $this->assertEquals($item4, catalogue::get_visible_reference_item('course', $course3->id, $user1->id, null));
+        $item4 = \tool_mucatalog\local\item\course::archive($item4->id);
+        $this->assertNull(catalogue::get_visible_reference_item('course', $course3->id, $user1->id, null));
+        $item4 = \tool_mucatalog\local\item\course::restore($item4->id);
+        $this->assertEquals($item4, catalogue::get_visible_reference_item('course', $course3->id, $user1->id, null));
+
+        // Item visibility dates.
+
+        $now = time();
+        $item4 = \tool_mucatalog\local\item\course::update((object)[
+            'id' => $item4->id,
+            'hiddenbefore' => $now + 100,
+        ]);
+        $this->assertNull(catalogue::get_visible_reference_item('course', $course3->id, $user1->id, null));
+        $item4 = \tool_mucatalog\local\item\course::update((object)[
+            'id' => $item4->id,
+            'hiddenbefore' => $now - 100,
+        ]);
+        $this->assertEquals($item4, catalogue::get_visible_reference_item('course', $course3->id, $user1->id, null));
+        $item4 = \tool_mucatalog\local\item\course::update((object)[
+            'id' => $item4->id,
+            'hiddenafter' => $now - 50,
+        ]);
+        $this->assertNull(catalogue::get_visible_reference_item('course', $course3->id, $user1->id, null));
+        $item4 = \tool_mucatalog\local\item\course::update((object)[
+            'id' => $item4->id,
+            'hiddenafter' => $now + 100,
+        ]);
+        $this->assertEquals($item4, catalogue::get_visible_reference_item('course', $course3->id, $user1->id, null));
+
+        // Multiple items in different sections, first visible is returned.
+
+        $item5 = $generator->create_item(['sectionid' => $section3->id, 'type' => 'course', 'referenceid' => $course4->id]);
+        $item6 = $generator->create_item(['sectionid' => $section2->id, 'type' => 'course', 'referenceid' => $course4->id]);
+        $this->assertEquals($item6, catalogue::get_visible_reference_item('course', $course4->id, $user1->id, null));
+        $this->assertEquals($item5, catalogue::get_visible_reference_item('course', $course4->id, $user2->id, null));
+        $item5 = \tool_mucatalog\local\item\course::archive($item5->id);
+        $this->assertEquals($item6, catalogue::get_visible_reference_item('course', $course4->id, $user1->id, null));
+        $this->assertEquals($item6, catalogue::get_visible_reference_item('course', $course4->id, $user2->id, null));
+        $item6 = \tool_mucatalog\local\item\course::archive($item6->id);
+        $this->assertNull(catalogue::get_visible_reference_item('course', $course4->id, $user1->id, null));
+        $this->assertNull(catalogue::get_visible_reference_item('course', $course4->id, $user2->id, null));
+
+        // Catalogue deactivated when there are no active sections.
+
+        $this->assertEquals($item2, catalogue::get_visible_reference_item('course', $course1->id, $user1->id, null));
+        $section2 = \tool_mucatalog\local\section::archive($section2->id);
+        $section3 = \tool_mucatalog\local\section::archive($section3->id);
+        $this->assertFalse(\tool_mulib\local\mulib::is_mucatalog_active());
+        $this->assertNull(catalogue::get_visible_reference_item('course', $course1->id, $user1->id, null));
+    }
+
+    public function test_get_visible_reference_item_tenant(): void {
+        if (!\tool_mulib\local\mulib::is_mutenancy_available()) {
+            $this->markTestSkipped('tenant support not available');
+        }
+
+        \tool_mutenancy\local\tenancy::activate();
+
+        /** @var \tool_mutenancy_generator $tenantgenerator */
+        $tenantgenerator = $this->getDataGenerator()->get_plugin_generator('tool_mutenancy');
+        /** @var \tool_mucatalog_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('tool_mucatalog');
+
+        $tenant1 = $tenantgenerator->create_tenant();
+        $tenant2 = $tenantgenerator->create_tenant();
+        $catcontext1 = \context_coursecat::instance($tenant1->categoryid);
+
+        $user1 = $this->getDataGenerator()->create_user(['tenantid' => $tenant1->id]);
+        $user2 = $this->getDataGenerator()->create_user(['tenantid' => $tenant2->id]);
+        $user3 = $this->getDataGenerator()->create_user();
+
+        $course1 = $this->getDataGenerator()->create_course();
+        $course2 = $this->getDataGenerator()->create_course();
+        $course3 = $this->getDataGenerator()->create_course();
+
+        $section1 = $generator->create_section(['status' => util::STATUS_ACTIVE, 'uservisible' => 1]);
+        $section2 = $generator->create_section(['status' => util::STATUS_ACTIVE, 'uservisible' => 1, 'hiddenfromtenants' => 1]);
+        $section3 = $generator->create_section(['status' => util::STATUS_ACTIVE, 'uservisible' => 1, 'contextid' => $catcontext1->id]);
+        $item1 = $generator->create_item(['sectionid' => $section1->id, 'type' => 'course', 'referenceid' => $course1->id]);
+        $item2 = $generator->create_item(['sectionid' => $section2->id, 'type' => 'course', 'referenceid' => $course2->id]);
+        $item3 = $generator->create_item(['sectionid' => $section3->id, 'type' => 'course', 'referenceid' => $course3->id]);
+
+        $this->assertEquals($item1, catalogue::get_visible_reference_item('course', $course1->id, $user1->id, $tenant1->id));
+        $this->assertEquals($item1, catalogue::get_visible_reference_item('course', $course1->id, $user2->id, $tenant2->id));
+        $this->assertEquals($item1, catalogue::get_visible_reference_item('course', $course1->id, $user3->id, null));
+
+        $this->assertNull(catalogue::get_visible_reference_item('course', $course2->id, $user1->id, $tenant1->id));
+        $this->assertNull(catalogue::get_visible_reference_item('course', $course2->id, $user2->id, $tenant2->id));
+        $this->assertEquals($item2, catalogue::get_visible_reference_item('course', $course2->id, $user3->id, null));
+
+        $this->assertEquals($item3, catalogue::get_visible_reference_item('course', $course3->id, $user1->id, $tenant1->id));
+        $this->assertNull(catalogue::get_visible_reference_item('course', $course3->id, $user2->id, $tenant2->id));
+        $this->assertNull(catalogue::get_visible_reference_item('course', $course3->id, $user3->id, null));
+    }
+
+    public function test_get_catalogue_url(): void {
+        /** @var \tool_mucatalog_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('tool_mucatalog');
+
+        $syscontext = \context_system::instance();
+        $guest = guest_user();
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+        $expected = 'https://www.example.com/moodle/admin/tool/mucatalog/index.php';
+
+        // Use the same role for not-logged-in users as normal sites.
+        $guestrole = get_guest_role();
+        set_config('notloggedinroleid', $guestrole->id);
+
+        // Catalogue is not active without active sections.
+
+        $section1 = $generator->create_section(['status' => util::STATUS_DRAFT, 'guestvisible' => 1, 'uservisible' => 1]);
+        $this->setUser($user1);
+        $this->assertNull(catalogue::get_catalogue_url());
+        $this->setUser($guest);
+        $this->assertNull(catalogue::get_catalogue_url());
+        $this->setUser(null);
+        $this->assertNull(catalogue::get_catalogue_url());
+
+        // No section visible to guests.
+
+        $section2 = $generator->create_section(['status' => util::STATUS_ACTIVE, 'guestvisible' => 0, 'uservisible' => 1]);
+        $this->setUser($user1);
+        $url = catalogue::get_catalogue_url();
+        $this->assertInstanceOf(\core\url::class, $url);
+        $this->assertSame($expected, $url->out(false));
+        $this->setAdminUser();
+        $this->assertSame($expected, catalogue::get_catalogue_url()->out(false));
+        $this->setUser($guest);
+        $this->assertNull(catalogue::get_catalogue_url());
+        $this->setUser(null);
+        $this->assertNull(catalogue::get_catalogue_url());
+
+        // Some section visible to guests.
+
+        $section1 = \tool_mucatalog\local\section::activate($section1->id);
+        $this->setUser($user1);
+        $this->assertSame($expected, catalogue::get_catalogue_url()->out(false));
+        $this->setUser($guest);
+        $this->assertSame($expected, catalogue::get_catalogue_url()->out(false));
+        $this->setUser(null);
+        set_config('forcelogin', 1);
+        $this->assertNull(catalogue::get_catalogue_url());
+        set_config('forcelogin', 0);
+        $this->assertSame($expected, catalogue::get_catalogue_url()->out(false));
+
+        // Browse capability is required.
+
+        $roleid = $this->getDataGenerator()->create_role();
+        assign_capability('tool/mucatalog:browse', CAP_PROHIBIT, $roleid, $syscontext);
+        role_assign($roleid, $user2->id, $syscontext->id);
+        $this->setUser($user2);
+        $this->assertNull(catalogue::get_catalogue_url());
+        $this->setUser($user1);
+        $this->assertSame($expected, catalogue::get_catalogue_url()->out(false));
+    }
 }

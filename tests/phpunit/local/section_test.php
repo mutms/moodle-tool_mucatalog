@@ -651,12 +651,12 @@ final class section_test extends \advanced_testcase {
         $syscontext = \context_system::instance();
 
         $this->assertSame(false, get_config('tool_mucatalog', 'active'));
-        $this->assertSame(false, get_config('tool_mucatalog', 'guestvisible'));
+        $this->assertSame(false, get_config('tool_mucatalog', 'hasguestsection'));
 
         section::fix_mucatalog_active();
 
         $this->assertSame('0', get_config('tool_mucatalog', 'active'));
-        $this->assertSame('0', get_config('tool_mucatalog', 'guestvisible'));
+        $this->assertSame('0', get_config('tool_mucatalog', 'hasguestsection'));
 
         $section1 = section::create((object)[
             'contextid' => $syscontext->id,
@@ -666,7 +666,7 @@ final class section_test extends \advanced_testcase {
         ]);
 
         $this->assertSame('0', get_config('tool_mucatalog', 'active'));
-        $this->assertSame('0', get_config('tool_mucatalog', 'guestvisible'));
+        $this->assertSame('0', get_config('tool_mucatalog', 'hasguestsection'));
 
         $section2 = section::create((object)[
             'contextid' => $syscontext->id,
@@ -676,7 +676,7 @@ final class section_test extends \advanced_testcase {
         ]);
 
         $this->assertSame('0', get_config('tool_mucatalog', 'active'));
-        $this->assertSame('0', get_config('tool_mucatalog', 'guestvisible'));
+        $this->assertSame('0', get_config('tool_mucatalog', 'hasguestsection'));
 
         $section3 = section::create((object)[
             'contextid' => $syscontext->id,
@@ -686,7 +686,7 @@ final class section_test extends \advanced_testcase {
         ]);
 
         $this->assertSame('1', get_config('tool_mucatalog', 'active'));
-        $this->assertSame('0', get_config('tool_mucatalog', 'guestvisible'));
+        $this->assertSame('0', get_config('tool_mucatalog', 'hasguestsection'));
 
         $section4 = section::create((object)[
             'contextid' => $syscontext->id,
@@ -696,7 +696,7 @@ final class section_test extends \advanced_testcase {
         ]);
 
         $this->assertSame('1', get_config('tool_mucatalog', 'active'));
-        $this->assertSame('1', get_config('tool_mucatalog', 'guestvisible'));
+        $this->assertSame('1', get_config('tool_mucatalog', 'hasguestsection'));
 
         $section4 = section::update((object)[
             'id' => $section4->id,
@@ -704,17 +704,17 @@ final class section_test extends \advanced_testcase {
         ]);
 
         $this->assertSame('1', get_config('tool_mucatalog', 'active'));
-        $this->assertSame('0', get_config('tool_mucatalog', 'guestvisible'));
+        $this->assertSame('0', get_config('tool_mucatalog', 'hasguestsection'));
 
         $section4 = section::archive($section4->id);
 
         $this->assertSame('1', get_config('tool_mucatalog', 'active'));
-        $this->assertSame('0', get_config('tool_mucatalog', 'guestvisible'));
+        $this->assertSame('0', get_config('tool_mucatalog', 'hasguestsection'));
 
         $section3 = section::archive($section3->id);
 
         $this->assertSame('0', get_config('tool_mucatalog', 'active'));
-        $this->assertSame('0', get_config('tool_mucatalog', 'guestvisible'));
+        $this->assertSame('0', get_config('tool_mucatalog', 'hasguestsection'));
     }
 
     public function test_pre_course_category_delete(): void {

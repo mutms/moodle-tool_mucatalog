@@ -802,4 +802,34 @@ final class course_test extends \advanced_testcase {
         delete_course($course2->id, false);
         $this->assertSame(null, course::get_open_url($item2));
     }
+
+    public function test_get_actions(): void {
+        /** @var \tool_mucatalog_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('tool_mucatalog');
+
+        $course1 = $this->getDataGenerator()->create_course();
+        $user1 = $this->getDataGenerator()->create_user();
+
+        $section = $generator->create_section(['status' => util::STATUS_ACTIVE, 'uservisible' => 1]);
+        $item1 = $generator->create_item(['sectionid' => $section->id, 'type' => 'course', 'referenceid' => $course1->id]);
+
+        // There are no course actions.
+        $this->setUser($user1);
+        $this->assertSame([], course::get_actions($item1));
+    }
+
+    public function test_reference_helpers(): void {
+        $category = $this->getDataGenerator()->create_category();
+        $catcontext = \context_coursecat::instance($category->id);
+        $record = $this->getDataGenerator()->create_course(['fullname' => 'Some name', 'category' => $category->id]);
+
+        $this->assertSame('tool/mucatalog:addcourse', \tool_mucatalog\local\item\course::get_add_capability());
+
+        $context = \tool_mucatalog\local\item\course::get_reference_context($record->id);
+        $this->assertSame(\context_course::instance($record->id)->id, $context->id);
+        $this->assertNull(\tool_mucatalog\local\item\course::get_reference_context($record->id + 100));
+
+        $this->assertSame('Some name', \tool_mucatalog\local\item\course::get_reference_name($record->id));
+        $this->assertSame('', \tool_mucatalog\local\item\course::get_reference_name($record->id + 100));
+    }
 }

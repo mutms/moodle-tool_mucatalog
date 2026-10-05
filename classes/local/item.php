@@ -93,6 +93,31 @@ abstract class item {
     }
 
     /**
+     * Returns capability required in the reference context to add the reference to a catalogue section.
+     *
+     * @return string
+     */
+    final public static function get_add_capability(): string {
+        return 'tool/mucatalog:add' . static::get_type();
+    }
+
+    /**
+     * Returns context of course, program, etc.
+     *
+     * @param int $referenceid
+     * @return \context|null null if reference does not exist
+     */
+    abstract public static function get_reference_context(int $referenceid): ?\context;
+
+    /**
+     * Returns name of course, program, etc.
+     *
+     * @param int $referenceid
+     * @return string unformatted name, empty string if reference does not exist
+     */
+    abstract public static function get_reference_name(int $referenceid): string;
+
+    /**
      * Return item creation form class name.
      *
      * @return class-string<\tool_mulib\muform\form>
@@ -538,6 +563,17 @@ abstract class item {
      */
     public static function get_open_url(stdClass $item): ?url {
         return null;
+    }
+
+    /**
+     * Returns html fragments with actions available to current user
+     * on the item page, such as registration buttons.
+     *
+     * @param stdClass $item
+     * @return string[]
+     */
+    public static function get_actions(stdClass $item): array {
+        return [];
     }
 
     /**

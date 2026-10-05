@@ -86,6 +86,7 @@ final class item implements \core\output\named_templatable, \core\output\rendera
             'imageurl' => $classname::get_image_url($item),
             'registered' => $classname::is_user_registered($item, $USER->id),
             'description' => $classname::get_description($item),
+            'actions' => $classname::get_actions($item),
         ];
     }
 

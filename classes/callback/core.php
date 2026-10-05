@@ -49,7 +49,7 @@ final class core {
         }
 
         if (!isloggedin() || isguestuser()) {
-            if (!get_config('tool_mucatalog', 'guestvisible')) {
+            if (!get_config('tool_mucatalog', 'hasguestsection')) {
                 return;
             }
         }
