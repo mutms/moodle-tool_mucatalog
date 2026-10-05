@@ -264,7 +264,7 @@ final class section {
             'contextid' => $context->id,
             'timemodified' => time(),
         ];
-        if ($context->tenantid) {
+        if (\tool_mulib\local\mulib::is_mutenancy_active() && $context->tenantid) {
             // Hiding from tenants is supported outside of tenants only.
             $record['hiddenfromtenants'] = 0;
         }
