@@ -32,4 +32,8 @@ $callbacks = [
         'callback' => [\tool_mucatalog\callback\core::class, 'hook_primary_extend'],
         'priority' => 0,
     ],
+    [
+        'hook' => \tool_mutenancy\hook\tenant_management_menu::class,
+        'callback' => [\tool_mucatalog\callback\tool_mutenancy::class, 'hook_tenant_management_menu'],
+    ],
 ];

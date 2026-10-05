@@ -78,6 +78,7 @@ $string['items_all_desc'] = 'List of all items available in catalogue.';
 $string['items_create'] = 'Add items';
 $string['items_more'] = 'Show more items';
 $string['management_actions'] = 'Catalogue actions';
+$string['management_catalogue'] = 'Catalogue management';
 $string['management_collections'] = 'Collection management';
 $string['management_item'] = 'Manage item';
 $string['management_sections'] = 'Section management';

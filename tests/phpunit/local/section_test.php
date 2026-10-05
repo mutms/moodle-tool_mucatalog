@@ -791,4 +791,53 @@ final class section_test extends \advanced_testcase {
         $menu = section::get_cohortvisible_menu($section2->id);
         $this->assertSame([$cohort2->id => $cohort2->name], $menu);
     }
+
+    public function test_hiddenfromtenants_tenant(): void {
+        if (!\tool_mulib\local\mulib::is_mutenancy_available()) {
+            $this->markTestSkipped('tenant support not available');
+        }
+
+        $syscontext = \context_system::instance();
+
+        // Flag is ignored when tenants are not active.
+        $section = section::create((object)['contextid' => $syscontext->id, 'name' => 'No tenants', 'hiddenfromtenants' => 1]);
+        $this->assertSame('0', $section->hiddenfromtenants);
+
+        \tool_mutenancy\local\tenancy::activate();
+
+        /** @var \tool_mutenancy_generator $tenantgenerator */
+        $tenantgenerator = $this->getDataGenerator()->get_plugin_generator('tool_mutenancy');
+        $tenant1 = $tenantgenerator->create_tenant();
+        $catcontext1 = \context_coursecat::instance($tenant1->categoryid);
+        $category = $this->getDataGenerator()->create_category();
+        $catcontext = \context_coursecat::instance($category->id);
+
+        // Hiding from tenants is possible outside of tenants only.
+        $section0 = section::create((object)['contextid' => $syscontext->id, 'name' => 'First', 'hiddenfromtenants' => 1]);
+        $this->assertSame('1', $section0->hiddenfromtenants);
+        $section1 = section::create((object)['contextid' => $catcontext1->id, 'name' => 'Second', 'hiddenfromtenants' => 1]);
+        $this->assertSame('0', $section1->hiddenfromtenants);
+
+        $section0 = section::update((object)['id' => $section0->id, 'hiddenfromtenants' => 0]);
+        $this->assertSame('0', $section0->hiddenfromtenants);
+        $section0 = section::update((object)['id' => $section0->id, 'hiddenfromtenants' => 1]);
+        $this->assertSame('1', $section0->hiddenfromtenants);
+        $section0 = section::update((object)['id' => $section0->id, 'name' => 'Renamed']);
+        $this->assertSame('1', $section0->hiddenfromtenants);
+        $section1 = section::update((object)['id' => $section1->id, 'hiddenfromtenants' => 1]);
+        $this->assertSame('0', $section1->hiddenfromtenants);
+
+        // Flag is kept when moving outside of tenants.
+        $section0 = section::move($section0->id, $catcontext->id);
+        $this->assertSame((string)$catcontext->id, $section0->contextid);
+        $this->assertSame('1', $section0->hiddenfromtenants);
+
+        // Flag is removed when moving into tenant, otherwise it would be hidden from own tenant.
+        $section0 = section::move($section0->id, $catcontext1->id);
+        $this->assertSame((string)$catcontext1->id, $section0->contextid);
+        $this->assertSame('0', $section0->hiddenfromtenants);
+
+        $section0 = section::move($section0->id, $syscontext->id);
+        $this->assertSame('0', $section0->hiddenfromtenants);
+    }
 }

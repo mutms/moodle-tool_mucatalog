@@ -264,6 +264,10 @@ final class section {
             'contextid' => $context->id,
             'timemodified' => time(),
         ];
+        if ($context->tenantid) {
+            // Hiding from tenants is supported outside of tenants only.
+            $record['hiddenfromtenants'] = 0;
+        }
         $DB->update_record('tool_mucatalog_section', $record);
         self::fix_mucatalog_active();
 

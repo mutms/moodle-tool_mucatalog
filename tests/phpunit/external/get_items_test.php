@@ -263,4 +263,86 @@ final class get_items_test extends \advanced_testcase {
         );
         $this->assertSame(true, $item['registered']);
     }
+
+    public function test_execute_tenant(): void {
+        if (!\tool_mulib\local\mulib::is_mutenancy_available()) {
+            $this->markTestSkipped('tenant support not available');
+        }
+
+        \tool_mutenancy\local\tenancy::activate();
+
+        /** @var \tool_mutenancy_generator $tenantgenerator */
+        $tenantgenerator = $this->getDataGenerator()->get_plugin_generator('tool_mutenancy');
+        /** @var \tool_mucatalog_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('tool_mucatalog');
+
+        $tenant1 = $tenantgenerator->create_tenant();
+        $tenant2 = $tenantgenerator->create_tenant();
+        $catcontext1 = \context_coursecat::instance($tenant1->categoryid);
+
+        $user0 = $this->getDataGenerator()->create_user();
+        $user1 = $this->getDataGenerator()->create_user(['tenantid' => $tenant1->id]);
+        $user2 = $this->getDataGenerator()->create_user(['tenantid' => $tenant2->id]);
+
+        $course0 = $this->getDataGenerator()->create_course(['fullname' => 'Course 0']);
+        $course0h = $this->getDataGenerator()->create_course(['fullname' => 'Course 0 hidden']);
+        $course1 = $this->getDataGenerator()->create_course(['fullname' => 'Course 1']);
+
+        $section0 = $generator->create_section(['status' => util::STATUS_ACTIVE, 'uservisible' => 1]);
+        $section0h = $generator->create_section(['status' => util::STATUS_ACTIVE, 'uservisible' => 1, 'hiddenfromtenants' => 1]);
+        $section1 = $generator->create_section(['status' => util::STATUS_ACTIVE, 'uservisible' => 1, 'contextid' => $catcontext1->id]);
+        $item0 = $generator->create_item(['sectionid' => $section0->id, 'type' => 'course', 'referenceid' => $course0->id]);
+        $item0h = $generator->create_item(['sectionid' => $section0h->id, 'type' => 'course', 'referenceid' => $course0h->id]);
+        $item1 = $generator->create_item(['sectionid' => $section1->id, 'type' => 'course', 'referenceid' => $course1->id]);
+
+        $collection = $generator->create_collection(['uservisible' => 1]);
+        $collection1 = $generator->create_collection(['uservisible' => 1, 'contextid' => $catcontext1->id]);
+        foreach ([$item0, $item0h, $item1] as $item) {
+            $generator->create_collection_item(['collectionid' => $collection->id, 'itemid' => $item->id]);
+            $generator->create_collection_item(['collectionid' => $collection1->id, 'itemid' => $item->id]);
+        }
+
+        $itemids = function (string $sectionid): array {
+            $result = get_items::execute($sectionid, 'name', 0, 0, []);
+            $result = get_items::clean_returnvalue(get_items::execute_returns(), $result);
+            return array_column($result['items'], 'itemid');
+        };
+
+        $this->setUser($user0);
+        $this->assertEquals([$item0->id, $item0h->id], $itemids('0'));
+        $this->assertEquals([$item0h->id], $itemids((string)$section0h->id));
+        $this->assertEquals([$item0->id, $item0h->id], $itemids('-' . $collection->id));
+        foreach ([(string)$section1->id, '-' . $collection1->id] as $sectionid) {
+            try {
+                $itemids($sectionid);
+                $this->fail('Exception expected');
+            } catch (\core\exception\moodle_exception $ex) {
+                $this->assertInstanceOf(\core\exception\invalid_parameter_exception::class, $ex);
+            }
+        }
+
+        $this->setUser($user1);
+        $this->assertEquals([$item0->id, $item1->id], $itemids('0'));
+        $this->assertEquals([$item1->id], $itemids((string)$section1->id));
+        $this->assertEquals([$item0->id, $item1->id], $itemids('-' . $collection->id));
+        $this->assertEquals([$item0->id, $item1->id], $itemids('-' . $collection1->id));
+        try {
+            $itemids((string)$section0h->id);
+            $this->fail('Exception expected');
+        } catch (\core\exception\moodle_exception $ex) {
+            $this->assertInstanceOf(\core\exception\invalid_parameter_exception::class, $ex);
+        }
+
+        $this->setUser($user2);
+        $this->assertEquals([$item0->id], $itemids('0'));
+        $this->assertEquals([$item0->id], $itemids('-' . $collection->id));
+        foreach ([(string)$section0h->id, (string)$section1->id, '-' . $collection1->id] as $sectionid) {
+            try {
+                $itemids($sectionid);
+                $this->fail('Exception expected');
+            } catch (\core\exception\moodle_exception $ex) {
+                $this->assertInstanceOf(\core\exception\invalid_parameter_exception::class, $ex);
+            }
+        }
+    }
 }

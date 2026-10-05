@@ -756,4 +756,232 @@ final class catalogue_test extends \advanced_testcase {
         $this->setUser($user1);
         $this->assertSame($expected, catalogue::get_catalogue_url()->out(false));
     }
+
+    public function test_get_visible_sections_tenant(): void {
+        if (!\tool_mulib\local\mulib::is_mutenancy_available()) {
+            $this->markTestSkipped('tenant support not available');
+        }
+
+        \tool_mutenancy\local\tenancy::activate();
+
+        /** @var \tool_mutenancy_generator $tenantgenerator */
+        $tenantgenerator = $this->getDataGenerator()->get_plugin_generator('tool_mutenancy');
+        /** @var \tool_mucatalog_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('tool_mucatalog');
+
+        $tenant1 = $tenantgenerator->create_tenant();
+        $tenant2 = $tenantgenerator->create_tenant();
+        $catcontext1 = \context_coursecat::instance($tenant1->categoryid);
+        $catcontext2 = \context_coursecat::instance($tenant2->categoryid);
+
+        $guest = guest_user();
+        $user0 = $this->getDataGenerator()->create_user();
+        $user1 = $this->getDataGenerator()->create_user(['tenantid' => $tenant1->id]);
+        $user2 = $this->getDataGenerator()->create_user(['tenantid' => $tenant2->id]);
+
+        $section0 = $generator->create_section(['name' => 'Section 0', 'status' => util::STATUS_ACTIVE, 'guestvisible' => 1, 'uservisible' => 1, 'frontpagepriority' => 10]);
+        $section0h = $generator->create_section(['name' => 'Section 0 hidden', 'status' => util::STATUS_ACTIVE, 'guestvisible' => 1, 'uservisible' => 1, 'hiddenfromtenants' => 1]);
+        $section1 = $generator->create_section(['name' => 'Section 1', 'status' => util::STATUS_ACTIVE, 'guestvisible' => 1, 'uservisible' => 1, 'contextid' => $catcontext1->id, 'frontpagepriority' => 10]);
+        $section2 = $generator->create_section(['name' => 'Section 2', 'status' => util::STATUS_ACTIVE, 'guestvisible' => 0, 'uservisible' => 1, 'contextid' => $catcontext2->id]);
+        $this->assertSame('1', $section0h->hiddenfromtenants);
+        $this->assertSame('0', $section1->hiddenfromtenants);
+
+        $all = [$section0, $section0h, $section1, $section2];
+        $check = function (array $expected, int $userid, ?int $tenantid, bool $frontpageonly = false) use ($all): void {
+            $sections = catalogue::get_visible_sections($userid, $frontpageonly, $tenantid);
+            $this->assertEquals(array_column($expected, 'id'), array_keys($sections));
+            if ($frontpageonly) {
+                return;
+            }
+            // Individual check must match the list.
+            foreach ($all as $section) {
+                $this->assertSame(
+                    isset($sections[$section->id]),
+                    catalogue::is_section_visible($section, $userid, $tenantid),
+                    $section->name
+                );
+                $this->assertSame(
+                    isset($sections[$section->id]),
+                    catalogue::is_section_visible((int)$section->id, $userid, $tenantid),
+                    $section->name
+                );
+            }
+        };
+
+        // No tenant.
+        $check([$section0, $section0h], $user0->id, null);
+        $check([$section0], $user0->id, null, true);
+        $check([$section0, $section0h], $guest->id, null);
+        $check([$section0, $section0h], 0, null);
+
+        // Tenant members see sections of own tenant and sections without tenant that are not hidden from tenants.
+        $check([$section0, $section1], $user1->id, $tenant1->id);
+        $check([$section0, $section1], $user1->id, $tenant1->id, true);
+        $check([$section0, $section2], $user2->id, $tenant2->id);
+        $check([$section0], $user2->id, $tenant2->id, true);
+
+        // Guests in tenant.
+        $check([$section0, $section1], $guest->id, $tenant1->id);
+        $check([$section0], $guest->id, $tenant2->id);
+
+        // Other users switched to tenant.
+        $check([$section0, $section1], $user0->id, $tenant1->id);
+        $check([$section0, $section2], $user1->id, $tenant2->id);
+    }
+
+    public function test_get_visible_collections_tenant(): void {
+        if (!\tool_mulib\local\mulib::is_mutenancy_available()) {
+            $this->markTestSkipped('tenant support not available');
+        }
+
+        \tool_mutenancy\local\tenancy::activate();
+
+        /** @var \tool_mutenancy_generator $tenantgenerator */
+        $tenantgenerator = $this->getDataGenerator()->get_plugin_generator('tool_mutenancy');
+        /** @var \tool_mucatalog_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('tool_mucatalog');
+
+        $tenant1 = $tenantgenerator->create_tenant();
+        $tenant2 = $tenantgenerator->create_tenant();
+        $catcontext1 = \context_coursecat::instance($tenant1->categoryid);
+        $catcontext2 = \context_coursecat::instance($tenant2->categoryid);
+
+        $guest = guest_user();
+        $user0 = $this->getDataGenerator()->create_user();
+        $user1 = $this->getDataGenerator()->create_user(['tenantid' => $tenant1->id]);
+        $user2 = $this->getDataGenerator()->create_user(['tenantid' => $tenant2->id]);
+
+        $collection0 = $generator->create_collection(['name' => 'Collection 0', 'guestvisible' => 1, 'uservisible' => 1, 'frontpagepriority' => 10]);
+        $collection0h = $generator->create_collection(['name' => 'Collection 0 hidden', 'guestvisible' => 1, 'uservisible' => 1, 'hiddenfromtenants' => 1]);
+        $collection1 = $generator->create_collection(['name' => 'Collection 1', 'guestvisible' => 1, 'uservisible' => 1, 'contextid' => $catcontext1->id, 'frontpagepriority' => 10]);
+        $collection2 = $generator->create_collection(['name' => 'Collection 2', 'guestvisible' => 0, 'uservisible' => 1, 'contextid' => $catcontext2->id]);
+        $this->assertSame('1', $collection0h->hiddenfromtenants);
+        $this->assertSame('0', $collection1->hiddenfromtenants);
+
+        $all = [$collection0, $collection0h, $collection1, $collection2];
+        $check = function (array $expected, int $userid, ?int $tenantid, bool $frontpageonly = false) use ($all): void {
+            $collections = catalogue::get_visible_collections($userid, $frontpageonly, $tenantid);
+            $this->assertEquals(array_column($expected, 'id'), array_keys($collections));
+            if ($frontpageonly) {
+                return;
+            }
+            // Individual check must match the list.
+            foreach ($all as $collection) {
+                $this->assertSame(
+                    isset($collections[$collection->id]),
+                    catalogue::is_collection_visible($collection, $userid, $tenantid),
+                    $collection->name
+                );
+                $this->assertSame(
+                    isset($collections[$collection->id]),
+                    catalogue::is_collection_visible((int)$collection->id, $userid, $tenantid),
+                    $collection->name
+                );
+            }
+        };
+
+        // No tenant.
+        $check([$collection0, $collection0h], $user0->id, null);
+        $check([$collection0], $user0->id, null, true);
+        $check([$collection0, $collection0h], $guest->id, null);
+        $check([$collection0, $collection0h], 0, null);
+
+        // Tenant members see collections of own tenant and collections without tenant that are not hidden from tenants.
+        $check([$collection0, $collection1], $user1->id, $tenant1->id);
+        $check([$collection0, $collection1], $user1->id, $tenant1->id, true);
+        $check([$collection0, $collection2], $user2->id, $tenant2->id);
+        $check([$collection0], $user2->id, $tenant2->id, true);
+
+        // Guests in tenant.
+        $check([$collection0, $collection1], $guest->id, $tenant1->id);
+        $check([$collection0], $guest->id, $tenant2->id);
+
+        // Other users switched to tenant.
+        $check([$collection0, $collection1], $user0->id, $tenant1->id);
+        $check([$collection0, $collection2], $user1->id, $tenant2->id);
+    }
+
+    public function test_get_visible_items_tenant(): void {
+        if (!\tool_mulib\local\mulib::is_mutenancy_available()) {
+            $this->markTestSkipped('tenant support not available');
+        }
+
+        \tool_mutenancy\local\tenancy::activate();
+
+        /** @var \tool_mutenancy_generator $tenantgenerator */
+        $tenantgenerator = $this->getDataGenerator()->get_plugin_generator('tool_mutenancy');
+        /** @var \tool_mucatalog_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('tool_mucatalog');
+
+        $tenant1 = $tenantgenerator->create_tenant();
+        $tenant2 = $tenantgenerator->create_tenant();
+        $catcontext1 = \context_coursecat::instance($tenant1->categoryid);
+        $catcontext2 = \context_coursecat::instance($tenant2->categoryid);
+
+        $guest = guest_user();
+        $user0 = $this->getDataGenerator()->create_user();
+        $user1 = $this->getDataGenerator()->create_user(['tenantid' => $tenant1->id]);
+        $user2 = $this->getDataGenerator()->create_user(['tenantid' => $tenant2->id]);
+
+        $course0 = $this->getDataGenerator()->create_course(['fullname' => 'Course 0']);
+        $course0h = $this->getDataGenerator()->create_course(['fullname' => 'Course 0 hidden']);
+        $course1 = $this->getDataGenerator()->create_course(['fullname' => 'Course 1']);
+        $course2 = $this->getDataGenerator()->create_course(['fullname' => 'Course 2']);
+
+        $section0 = $generator->create_section(['status' => util::STATUS_ACTIVE, 'guestvisible' => 1, 'uservisible' => 1]);
+        $section0h = $generator->create_section(['status' => util::STATUS_ACTIVE, 'guestvisible' => 1, 'uservisible' => 1, 'hiddenfromtenants' => 1]);
+        $section1 = $generator->create_section(['status' => util::STATUS_ACTIVE, 'guestvisible' => 1, 'uservisible' => 1, 'contextid' => $catcontext1->id]);
+        $section2 = $generator->create_section(['status' => util::STATUS_ACTIVE, 'guestvisible' => 0, 'uservisible' => 1, 'contextid' => $catcontext2->id]);
+
+        $item0 = $generator->create_item(['sectionid' => $section0->id, 'type' => 'course', 'referenceid' => $course0->id]);
+        $item0h = $generator->create_item(['sectionid' => $section0h->id, 'type' => 'course', 'referenceid' => $course0h->id]);
+        $item1 = $generator->create_item(['sectionid' => $section1->id, 'type' => 'course', 'referenceid' => $course1->id]);
+        $item2 = $generator->create_item(['sectionid' => $section2->id, 'type' => 'course', 'referenceid' => $course2->id]);
+
+        // Collection without tenant that includes everything.
+        $collection = $generator->create_collection(['guestvisible' => 1, 'uservisible' => 1]);
+        foreach ([$item0, $item0h, $item1, $item2] as $item) {
+            $generator->create_collection_item(['collectionid' => $collection->id, 'itemid' => $item->id]);
+        }
+
+        $all = [$item0, $item0h, $item1, $item2];
+        $check = function (array $expected, int $userid, ?int $tenantid) use ($all, $collection): void {
+            $items = catalogue::get_visible_items(0, $userid, $tenantid, catalogue::ITEMS_BY_NAME, 0, 100);
+            $this->assertEquals(array_column($expected, 'id'), array_keys($items));
+            // Items in collections are restricted by visibility of their sections.
+            $items = catalogue::get_visible_items(-1 * $collection->id, $userid, $tenantid, catalogue::ITEMS_BY_NAME, 0, 100);
+            $this->assertEquals(array_column($expected, 'id'), array_keys($items));
+            // Individual and per section checks must match the list.
+            foreach ($all as $item) {
+                $visible = in_array($item->id, array_column($expected, 'id'));
+                $this->assertSame($visible, catalogue::is_item_visible($item, (int)$item->sectionid, $userid, $tenantid), $item->name);
+                $items = catalogue::get_visible_items((int)$item->sectionid, $userid, $tenantid, catalogue::ITEMS_BY_NAME, 0, 100);
+                $this->assertEquals($visible ? [$item->id] : [], array_keys($items), $item->name);
+            }
+        };
+
+        // No tenant.
+        $check([$item0, $item0h], $user0->id, null);
+        $check([$item0, $item0h], $guest->id, null);
+        $check([$item0, $item0h], 0, null);
+
+        // Tenant members.
+        $check([$item0, $item1], $user1->id, $tenant1->id);
+        $check([$item0, $item2], $user2->id, $tenant2->id);
+
+        // Guests in tenant.
+        $check([$item0, $item1], $guest->id, $tenant1->id);
+        $check([$item0], $guest->id, $tenant2->id);
+
+        // Other users switched to tenant.
+        $check([$item0, $item1], $user0->id, $tenant1->id);
+        $check([$item0, $item2], $user1->id, $tenant2->id);
+
+        // Filters work together with tenant restrictions.
+        $filters = [['field' => 'search', 'value' => 'Course'], ['field' => 'type', 'value' => 'course']];
+        $items = catalogue::get_visible_items(0, $user1->id, $tenant1->id, catalogue::ITEMS_BY_NAME, 0, 100, $filters);
+        $this->assertEquals([$item0->id, $item1->id], array_keys($items));
+        $items = catalogue::get_visible_items(0, $user1->id, $tenant1->id, catalogue::ITEMS_BY_NAME, 1, 100, $filters);
+        $this->assertEquals([$item1->id], array_keys($items));
+    }
 }

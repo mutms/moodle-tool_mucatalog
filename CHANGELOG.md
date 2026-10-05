@@ -8,5 +8,4 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
 ### Added
 
-- program self-allocation and certification self-assignment actions on item page
-- adding of programs and certifications to catalogue sections from their Catalogue visibility tab
+- first release

@@ -88,7 +88,7 @@ final class catalogue {
 
         if (\tool_mulib\local\mulib::is_mutenancy_active()) {
             if ($tenantid) {
-                $sql = $sql->replace_comment('tenantwhere', "AND (ctx.tenantid IS NULL OR ctx.tenantid = $tenantid) AND s.hiddenfromtenants = 0");
+                $sql = $sql->replace_comment('tenantwhere', "AND (ctx.tenantid = $tenantid OR (ctx.tenantid IS NULL AND s.hiddenfromtenants = 0))");
             } else {
                 $sql = $sql->replace_comment('tenantwhere', "AND ctx.tenantid IS NULL");
             }
@@ -198,7 +198,7 @@ final class catalogue {
                     /* frontpageonly */
                     /* tenantwhere */
                     /* sectionvisiblewhere */
-           ORDER BY NAME",
+           ORDER BY c.name ASC",
             []
         );
 
@@ -228,7 +228,7 @@ final class catalogue {
 
         if (\tool_mulib\local\mulib::is_mutenancy_active()) {
             if ($tenantid) {
-                $sql = $sql->replace_comment('tenantwhere', "AND (ctx.tenantid IS NULL OR ctx.tenantid = $tenantid) AND s.hiddenfromtenants = 0");
+                $sql = $sql->replace_comment('tenantwhere', "AND (ctx.tenantid = $tenantid OR (ctx.tenantid IS NULL AND c.hiddenfromtenants = 0))");
             } else {
                 $sql = $sql->replace_comment('tenantwhere', "AND ctx.tenantid IS NULL");
             }
@@ -344,6 +344,7 @@ final class catalogue {
             "SELECT i.*, s.name AS sectionname
                FROM {tool_mucatalog_item} i
                JOIN {tool_mucatalog_section} s ON s.id = i.sectionid
+               JOIN {context} ctx ON ctx.id = s.contextid
                /* sectionvisiblejoin */
                /* collectionjoin */
               WHERE s.status = :active1 AND i.status = :active2
@@ -393,7 +394,7 @@ final class catalogue {
 
         if (\tool_mulib\local\mulib::is_mutenancy_active()) {
             if ($tenantid) {
-                $sql = $sql->replace_comment('tenantwhere', "AND (ctx.tenantid IS NULL OR ctx.tenantid = $tenantid) AND s.hiddenfromtenants = 0");
+                $sql = $sql->replace_comment('tenantwhere', "AND (ctx.tenantid = $tenantid OR (ctx.tenantid IS NULL AND s.hiddenfromtenants = 0))");
             } else {
                 $sql = $sql->replace_comment('tenantwhere', "AND ctx.tenantid IS NULL");
             }

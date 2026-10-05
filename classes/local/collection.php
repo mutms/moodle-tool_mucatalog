@@ -240,6 +240,10 @@ final class collection {
             'contextid' => $context->id,
             'timemodified' => time(),
         ];
+        if ($context->tenantid) {
+            // Hiding from tenants is supported outside of tenants only.
+            $record['hiddenfromtenants'] = 0;
+        }
         $DB->update_record('tool_mucatalog_collection', $record);
 
         return $DB->get_record('tool_mucatalog_collection', ['id' => $collection->id], '*', MUST_EXIST);

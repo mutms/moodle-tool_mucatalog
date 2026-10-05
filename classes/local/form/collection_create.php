@@ -74,7 +74,7 @@ final class collection_create extends form {
         $this->add(new autocompletemany('cohortvisible', get_string('cohortvisible', 'tool_mucatalog'), $source));
         $this->get_display_manager()->hide_if('cohortvisible', 'uservisible', 'checked');
 
-        if (mulib::is_mutenancy_active()) {
+        if (mulib::is_mutenancy_active() && !$context->tenantid) {
             $this->add(new checkbox('hiddenfromtenants', get_string('hiddenfromtenants', 'tool_mucatalog')));
         }
 
