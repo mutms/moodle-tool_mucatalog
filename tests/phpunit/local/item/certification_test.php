@@ -1031,6 +1031,10 @@ final class certification_test extends \advanced_testcase {
     }
 
     public function test_reference_helpers(): void {
+        if (!mulib::is_mucertify_available()) {
+            $this->markTestSkipped('tool_mucertify not available');
+        }
+
         $category = $this->getDataGenerator()->create_category();
         $catcontext = \context_coursecat::instance($category->id);
         $record = $this->getDataGenerator()->get_plugin_generator('tool_mucertify')->create_certification(['fullname' => 'Some name', 'contextid' => $catcontext->id]);
