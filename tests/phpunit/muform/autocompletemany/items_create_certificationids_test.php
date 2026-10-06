@@ -198,4 +198,22 @@ final class items_create_certificationids_test extends \advanced_testcase {
         $this->assertSame($expected, $source->search('', 50, []));
         $this->assertSame([(string)$certification2->id => 'Error'], $source->validate($all));
     }
+
+    public function test_search_archived(): void {
+        /** @var \tool_mucatalog_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('tool_mucatalog');
+        /** @var \tool_mucertify_generator $certificationgenerator */
+        $certificationgenerator = $this->getDataGenerator()->get_plugin_generator('tool_mucertify');
+
+        $certification1 = $certificationgenerator->create_certification(['fullname' => 'Certification 1']);
+        $certification2 = $certificationgenerator->create_certification(['fullname' => 'Certification 2', 'archived' => 1]);
+        $section = $generator->create_section();
+        $all = [(string)$certification1->id, (string)$certification2->id];
+
+        $this->setAdminUser();
+
+        $source = new items_create_certificationids((int)$section->id);
+        $this->assertSame([(string)$certification1->id => 'Certification 1'], $source->search('', 50, []));
+        $this->assertSame([(string)$certification1->id => 'Certification 1'], $source->labels($all));
+    }
 }

@@ -50,6 +50,9 @@ if (!$context) {
     throw new \core\exception\invalid_parameter_exception('Invalid item reference');
 }
 require_capability($typeclass::get_add_capability(), $context);
+if (!$typeclass::is_reference_add_possible($referenceid)) {
+    throw new \core\exception\invalid_parameter_exception('Item reference cannot be added to catalogue');
+}
 
 $currenturl = new url('/admin/tool/mucatalog/management/reference_add.php', ['type' => $type, 'referenceid' => $referenceid]);
 if ($returnurl !== '') {

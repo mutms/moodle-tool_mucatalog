@@ -1048,4 +1048,47 @@ final class certification_test extends \advanced_testcase {
         $this->assertSame('Some name', \tool_mucatalog\local\item\certification::get_reference_name($record->id));
         $this->assertSame('', \tool_mucatalog\local\item\certification::get_reference_name($record->id + 100));
     }
+
+    public function test_create_archived(): void {
+        global $DB;
+
+        if (!mulib::is_mucertify_available()) {
+            $this->markTestSkipped('tool_mucertify not available');
+        }
+
+        /** @var \tool_mucertify_generator $certificationgenerator */
+        $certificationgenerator = $this->getDataGenerator()->get_plugin_generator('tool_mucertify');
+        /** @var \tool_mucatalog_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('tool_mucatalog');
+
+        $certification1 = $certificationgenerator->create_certification();
+        $certification2 = $certificationgenerator->create_certification(['archived' => 1]);
+        $section = $generator->create_section();
+
+        $this->assertTrue(certification::is_reference_add_possible($certification1->id));
+        $this->assertFalse(certification::is_reference_add_possible($certification2->id));
+        $this->assertFalse(certification::is_reference_add_possible($certification2->id + 100));
+
+        try {
+            certification::create((object)[
+                'sectionid' => $section->id,
+                'type' => 'certification',
+                'referenceid' => $certification2->id,
+            ]);
+            $this->fail('Exception expected');
+        } catch (moodle_exception $ex) {
+            $this->assertInstanceOf(invalid_parameter_exception::class, $ex);
+            $this->assertStringContainsString('archived certifications cannot be added to catalogue', $ex->getMessage());
+        }
+        $this->assertFalse($DB->record_exists('tool_mucatalog_item', ['sectionid' => $section->id]));
+
+        $this->setAdminUser();
+        $returnurl = new \core\url('/admin/tool/mucertify/management/certification_visibility.php');
+        $this->assertNotNull(
+            \tool_mucatalog\local\management::get_reference_add_button('certification', (int)$certification1->id, $returnurl)
+        );
+        $this->assertNull(
+            \tool_mucatalog\local\management::get_reference_add_button('certification', (int)$certification2->id, $returnurl)
+        );
+    }
 }

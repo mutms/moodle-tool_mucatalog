@@ -102,6 +102,18 @@ abstract class item {
     }
 
     /**
+     * Can the course, program, etc. be added to catalogue sections?
+     *
+     * NOTE: this does not include any access control.
+     *
+     * @param int $referenceid
+     * @return bool
+     */
+    public static function is_reference_add_possible(int $referenceid): bool {
+        return true;
+    }
+
+    /**
      * Returns context of course, program, etc.
      *
      * @param int $referenceid

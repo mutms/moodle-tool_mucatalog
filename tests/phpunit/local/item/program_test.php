@@ -1044,4 +1044,60 @@ final class program_test extends \advanced_testcase {
         $this->assertSame('Some name', \tool_mucatalog\local\item\program::get_reference_name($record->id));
         $this->assertSame('', \tool_mucatalog\local\item\program::get_reference_name($record->id + 100));
     }
+
+    public function test_create_archived_draft(): void {
+        global $DB;
+
+        if (!mulib::is_muprog_available()) {
+            $this->markTestSkipped('tool_muprog not available');
+        }
+
+        /** @var \tool_muprog_generator $programgenerator */
+        $programgenerator = $this->getDataGenerator()->get_plugin_generator('tool_muprog');
+        /** @var \tool_mucatalog_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('tool_mucatalog');
+
+        $program1 = $programgenerator->create_program();
+        $program2 = $programgenerator->create_program(['archived' => 1]);
+        $program3 = $programgenerator->create_program(['draft' => 1]);
+        $section = $generator->create_section();
+
+        $this->assertTrue(program::is_reference_add_possible($program1->id));
+        $this->assertFalse(program::is_reference_add_possible($program2->id));
+        $this->assertFalse(program::is_reference_add_possible($program3->id));
+        $this->assertFalse(program::is_reference_add_possible($program3->id + 100));
+
+        foreach ([$program2, $program3] as $program) {
+            try {
+                program::create((object)[
+                    'sectionid' => $section->id,
+                    'type' => 'program',
+                    'referenceid' => $program->id,
+                ]);
+                $this->fail('Exception expected');
+            } catch (moodle_exception $ex) {
+                $this->assertInstanceOf(invalid_parameter_exception::class, $ex);
+                $this->assertStringContainsString('archived and draft programs cannot be added to catalogue', $ex->getMessage());
+            }
+        }
+        $this->assertFalse($DB->record_exists('tool_mucatalog_item', ['sectionid' => $section->id]));
+
+        $this->setAdminUser();
+        $returnurl = new \core\url('/admin/tool/muprog/management/program_visibility.php');
+        $this->assertNotNull(\tool_mucatalog\local\management::get_reference_add_button('program', (int)$program1->id, $returnurl));
+        $this->assertNull(\tool_mucatalog\local\management::get_reference_add_button('program', (int)$program2->id, $returnurl));
+        $this->assertNull(\tool_mucatalog\local\management::get_reference_add_button('program', (int)$program3->id, $returnurl));
+
+        // Released and restored programs can be added.
+        \tool_muprog\local\program::restore($program2->id);
+        \tool_muprog\local\program::release($program3->id);
+        foreach ([$program2, $program3] as $program) {
+            $item = program::create((object)[
+                'sectionid' => $section->id,
+                'type' => 'program',
+                'referenceid' => $program->id,
+            ]);
+            $this->assertSame($program->id, $item->referenceid);
+        }
+    }
 }

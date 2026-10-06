@@ -23,6 +23,7 @@ use tool_mucatalog\local\item;
 use stdClass;
 use tool_mucatalog\local\util;
 use core\exception\coding_exception;
+use core\exception\invalid_parameter_exception;
 use core\url;
 use tool_mulib\local\sql;
 
@@ -58,6 +59,10 @@ final class program extends item {
         global $DB;
 
         $program = $DB->get_record('tool_muprog_program', ['id' => $record->referenceid], '*', MUST_EXIST);
+
+        if ($program->archived || $program->draft) {
+            throw new invalid_parameter_exception('archived and draft programs cannot be added to catalogue');
+        }
 
         if ($record->syncname) {
             $record->name = $program->fullname;
@@ -431,6 +436,13 @@ final class program extends item {
         }
 
         return \tool_muprog\local\program::get_catalogue_actions($program);
+    }
+
+    #[\Override]
+    public static function is_reference_add_possible(int $referenceid): bool {
+        global $DB;
+
+        return $DB->record_exists('tool_muprog_program', ['id' => $referenceid, 'archived' => 0, 'draft' => 0]);
     }
 
     #[\Override]

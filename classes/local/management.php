@@ -375,6 +375,9 @@ final class management {
         if (!$context || !has_capability($typeclass::get_add_capability(), $context)) {
             return null;
         }
+        if (!$typeclass::is_reference_add_possible($referenceid)) {
+            return null;
+        }
 
         $url = new url(
             '/admin/tool/mucatalog/management/reference_add.php',

@@ -71,7 +71,7 @@ final class items_create_certificationids extends \tool_mulib\muform\autocomplet
                    /* capjoin */
               LEFT JOIN {tool_mucatalog_item} ci
                         ON ci.sectionid = :sectionid AND ci.type = 'certification' AND ci.referenceid = c.id
-                  WHERE ci.id IS NULL
+                  WHERE ci.id IS NULL AND c.archived = 0
                         /* capwhere */ /* searchsql */ /* tenantwhere */ /* exclude */
                GROUP BY c.id, c.fullname, c.contextid
                ORDER BY c.fullname ASC, c.id ASC",
@@ -117,6 +117,9 @@ final class items_create_certificationids extends \tool_mulib\muform\autocomplet
 
         $result = [];
         foreach ($this->get_certifications($values) as $id => $certification) {
+            if ($certification->archived) {
+                continue;
+            }
             // Adding one certification repeatedly to one section would be confusing.
             $params = ['sectionid' => $this->sectionid, 'type' => 'certification', 'referenceid' => $certification->id];
             if ($DB->record_exists('tool_mucatalog_item', $params)) {
@@ -160,7 +163,8 @@ final class items_create_certificationids extends \tool_mulib\muform\autocomplet
             return [];
         }
         $result = [];
-        $certifications = $DB->get_records_list('tool_mucertify_certification', 'id', $ids, 'id ASC', 'id, contextid, fullname');
+        $fields = 'id, contextid, fullname, archived';
+        $certifications = $DB->get_records_list('tool_mucertify_certification', 'id', $ids, 'id ASC', $fields);
         foreach ($certifications as $certification) {
             $result[(string)$certification->id] = $certification;
         }

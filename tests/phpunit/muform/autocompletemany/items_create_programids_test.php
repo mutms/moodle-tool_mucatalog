@@ -198,4 +198,33 @@ final class items_create_programids_test extends \advanced_testcase {
         $this->assertSame($expected, $source->search('', 50, []));
         $this->assertSame([(string)$program2->id => 'Error'], $source->validate($all));
     }
+
+    public function test_search_archived_draft(): void {
+        /** @var \tool_mucatalog_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('tool_mucatalog');
+        /** @var \tool_muprog_generator $programgenerator */
+        $programgenerator = $this->getDataGenerator()->get_plugin_generator('tool_muprog');
+
+        $program1 = $programgenerator->create_program(['fullname' => 'Program 1']);
+        $program2 = $programgenerator->create_program(['fullname' => 'Program 2', 'archived' => 1]);
+        $program3 = $programgenerator->create_program(['fullname' => 'Program 3', 'draft' => 1]);
+        $section = $generator->create_section();
+        $all = [(string)$program1->id, (string)$program2->id, (string)$program3->id];
+
+        $this->setAdminUser();
+
+        $source = new items_create_programids((int)$section->id);
+        $this->assertSame([(string)$program1->id => 'Program 1'], $source->search('', 50, []));
+        $this->assertSame([(string)$program1->id => 'Program 1'], $source->labels($all));
+
+        \tool_muprog\local\program::restore($program2->id);
+        \tool_muprog\local\program::release($program3->id);
+        $expected = [
+            (string)$program1->id => 'Program 1',
+            (string)$program2->id => 'Program 2',
+            (string)$program3->id => 'Program 3',
+        ];
+        $this->assertSame($expected, $source->search('', 50, []));
+        $this->assertSame($expected, $source->labels($all));
+    }
 }

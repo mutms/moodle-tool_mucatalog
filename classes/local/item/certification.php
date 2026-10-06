@@ -23,6 +23,7 @@ use tool_mucatalog\local\item;
 use stdClass;
 use tool_mucatalog\local\util;
 use core\exception\coding_exception;
+use core\exception\invalid_parameter_exception;
 use core\url;
 use tool_mulib\local\sql;
 
@@ -58,6 +59,10 @@ final class certification extends item {
         global $DB;
 
         $certification = $DB->get_record('tool_mucertify_certification', ['id' => $record->referenceid], '*', MUST_EXIST);
+
+        if ($certification->archived) {
+            throw new invalid_parameter_exception('archived certifications cannot be added to catalogue');
+        }
 
         if ($record->syncname) {
             $record->name = $certification->fullname;
@@ -431,6 +436,13 @@ final class certification extends item {
         }
 
         return \tool_mucertify\local\certification::get_catalogue_actions($certification);
+    }
+
+    #[\Override]
+    public static function is_reference_add_possible(int $referenceid): bool {
+        global $DB;
+
+        return $DB->record_exists('tool_mucertify_certification', ['id' => $referenceid, 'archived' => 0]);
     }
 
     #[\Override]

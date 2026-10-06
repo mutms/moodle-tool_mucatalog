@@ -70,7 +70,7 @@ final class items_create_programids extends \tool_mulib\muform\autocompletemany\
                    JOIN {context} ctx ON ctx.id = p.contextid
                    /* capjoin */
               LEFT JOIN {tool_mucatalog_item} ci ON ci.sectionid = :sectionid AND ci.type = 'program' AND ci.referenceid = p.id
-                  WHERE ci.id IS NULL
+                  WHERE ci.id IS NULL AND p.archived = 0 AND p.draft = 0
                         /* capwhere */ /* searchsql */ /* tenantwhere */ /* exclude */
                GROUP BY p.id, p.fullname, p.contextid
                ORDER BY p.fullname ASC, p.id ASC",
@@ -115,6 +115,9 @@ final class items_create_programids extends \tool_mulib\muform\autocompletemany\
 
         $result = [];
         foreach ($this->get_programs($values) as $id => $program) {
+            if ($program->archived || $program->draft) {
+                continue;
+            }
             // Adding one program repeatedly to one section would be confusing.
             $params = ['sectionid' => $this->sectionid, 'type' => 'program', 'referenceid' => $program->id];
             if ($DB->record_exists('tool_mucatalog_item', $params)) {
@@ -157,7 +160,8 @@ final class items_create_programids extends \tool_mulib\muform\autocompletemany\
             return [];
         }
         $result = [];
-        foreach ($DB->get_records_list('tool_muprog_program', 'id', $ids, 'id ASC', 'id, contextid, fullname') as $program) {
+        $programs = $DB->get_records_list('tool_muprog_program', 'id', $ids, 'id ASC', 'id, contextid, fullname, archived, draft');
+        foreach ($programs as $program) {
             $result[(string)$program->id] = $program;
         }
         return $result;
