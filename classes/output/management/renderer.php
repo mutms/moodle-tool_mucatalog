@@ -71,7 +71,7 @@ class renderer extends \plugin_renderer_base {
         if (!$section->uservisible) {
             $cohorts = section::get_cohortvisible_menu($section->id);
             if ($cohorts) {
-                $cohrotsstr = implode(', ', array_map('format_string', $cohorts));
+                $cohrotsstr = implode(', ', \tool_mulib\local\cohort_util::format_cohort_names(array_keys($cohorts)));
             } else {
                 $cohrotsstr = '-';
             }
@@ -148,7 +148,7 @@ class renderer extends \plugin_renderer_base {
         if (!$collection->uservisible) {
             $cohorts = collection::get_cohortvisible_menu($collection->id);
             if ($cohorts) {
-                $cohrotsstr = implode(', ', array_map('format_string', $cohorts));
+                $cohrotsstr = implode(', ', \tool_mulib\local\cohort_util::format_cohort_names(array_keys($cohorts)));
             } else {
                 $cohrotsstr = '-';
             }
@@ -293,8 +293,8 @@ class renderer extends \plugin_renderer_base {
                 $audience[] = get_string('audience_allusers', 'tool_mucatalog');
             } else {
                 $cohorts = section::get_cohortvisible_menu($record->sectionid);
-                foreach ($cohorts as $cohortname) {
-                    $audience[] = format_string($cohortname);
+                foreach (\tool_mulib\local\cohort_util::format_cohort_names(array_keys($cohorts)) as $cohortname) {
+                    $audience[] = $cohortname;
                 }
             }
 
