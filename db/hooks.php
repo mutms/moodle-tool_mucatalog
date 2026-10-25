@@ -36,4 +36,8 @@ $callbacks = [
         'hook' => \tool_mutenancy\hook\tenant_management_menu::class,
         'callback' => [\tool_mucatalog\callback\tool_mutenancy::class, 'hook_tenant_management_menu'],
     ],
+    [
+        'hook' => \tool_mucohort\hook\cohort_usage::class,
+        'callback' => [\tool_mucatalog\callback\tool_mucohort::class, 'cohort_usage'],
+    ],
 ];
