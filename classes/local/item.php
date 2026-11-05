@@ -23,6 +23,7 @@ use core\exception\coding_exception;
 use core\exception\invalid_parameter_exception;
 use stdClass;
 use core\url;
+
 /**
  * Base class for section items.
  *

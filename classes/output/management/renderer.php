@@ -23,7 +23,9 @@ use tool_mucatalog\local\util;
 use tool_mucatalog\local\section;
 use tool_mucatalog\local\collection;
 use tool_mucatalog\local\item;
-use core\url, stdClass, html_writer;
+use core\url;
+use stdClass;
+use html_writer;
 
 /**
  * Catalogue section management renderer.
