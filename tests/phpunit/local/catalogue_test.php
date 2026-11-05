@@ -22,17 +22,18 @@ namespace tool_mucatalog\phpunit\local;
 
 use tool_mucatalog\local\catalogue;
 use tool_mucatalog\local\util;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Universal catalogue browser test.
  *
- * @group       MuTMS
  * @package     tool_mucatalog
  * @copyright   2026 Petr Skoda
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- *
- * @covers \tool_mucatalog\local\catalogue
  */
+#[CoversClass(\tool_mucatalog\local\catalogue::class)]
+#[Group('MuTMS')]
 final class catalogue_test extends \advanced_testcase {
     protected function setUp(): void {
         parent::setUp();

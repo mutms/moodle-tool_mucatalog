@@ -21,17 +21,18 @@ namespace tool_mucatalog\phpunit\muform\autocomplete;
 use tool_mucatalog\muform\autocomplete\item_move_sectionid;
 use tool_mucatalog\local\util;
 use tool_mulib\local\mulib;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Item move section autocomplete source test.
  *
- * @group      MuTMS
  * @package    tool_mucatalog
  * @copyright  2026 Petr Skoda
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- *
- * @covers \tool_mucatalog\muform\autocomplete\item_move_sectionid
  */
+#[CoversClass(\tool_mucatalog\muform\autocomplete\item_move_sectionid::class)]
+#[Group('MuTMS')]
 final class item_move_sectionid_test extends \advanced_testcase {
     #[\Override]
     public function setUp(): void {

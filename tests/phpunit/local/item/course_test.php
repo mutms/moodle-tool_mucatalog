@@ -26,17 +26,18 @@ use tool_mucatalog\local\item\course;
 use core\exception\invalid_parameter_exception;
 use core\exception\coding_exception;
 use core\exception\moodle_exception;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Course item test.
  *
- * @group       MuTMS
  * @package     tool_mucatalog
  * @copyright   2026 Petr Skoda
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- *
- * @covers \tool_mucatalog\local\item\course
  */
+#[CoversClass(\tool_mucatalog\local\item\course::class)]
+#[Group('MuTMS')]
 final class course_test extends \advanced_testcase {
     protected function setUp(): void {
         parent::setUp();

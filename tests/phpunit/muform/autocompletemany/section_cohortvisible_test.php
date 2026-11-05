@@ -20,17 +20,18 @@ namespace tool_mucatalog\phpunit\muform\autocompletemany;
 
 use tool_mucatalog\muform\autocompletemany\section_cohortvisible;
 use tool_mulib\local\mulib;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Section visibility cohorts autocomplete source test.
  *
- * @group      MuTMS
  * @package    tool_mucatalog
  * @copyright  2026 Petr Skoda
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- *
- * @covers \tool_mucatalog\muform\autocompletemany\section_cohortvisible
  */
+#[CoversClass(\tool_mucatalog\muform\autocompletemany\section_cohortvisible::class)]
+#[Group('MuTMS')]
 final class section_cohortvisible_test extends \advanced_testcase {
     #[\Override]
     public function setUp(): void {

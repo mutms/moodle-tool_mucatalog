@@ -20,17 +20,18 @@ namespace tool_mucatalog\phpunit\muform\autocomplete;
 
 use tool_mucatalog\muform\autocomplete\collection_contextid;
 use tool_mulib\local\mulib;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Collection context autocomplete source test.
  *
- * @group      MuTMS
  * @package    tool_mucatalog
  * @copyright  2026 Petr Skoda
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- *
- * @covers \tool_mucatalog\muform\autocomplete\collection_contextid
  */
+#[CoversClass(\tool_mucatalog\muform\autocomplete\collection_contextid::class)]
+#[Group('MuTMS')]
 final class collection_contextid_test extends \advanced_testcase {
     #[\Override]
     public function setUp(): void {

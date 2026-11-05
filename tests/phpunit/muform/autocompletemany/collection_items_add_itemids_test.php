@@ -21,17 +21,18 @@ namespace tool_mucatalog\phpunit\muform\autocompletemany;
 use tool_mucatalog\muform\autocompletemany\collection_items_add_itemids;
 use tool_mucatalog\local\util;
 use tool_mulib\local\mulib;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Collection items autocomplete source test.
  *
- * @group      MuTMS
  * @package    tool_mucatalog
  * @copyright  2026 Petr Skoda
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- *
- * @covers \tool_mucatalog\muform\autocompletemany\collection_items_add_itemids
  */
+#[CoversClass(\tool_mucatalog\muform\autocompletemany\collection_items_add_itemids::class)]
+#[Group('MuTMS')]
 final class collection_items_add_itemids_test extends \advanced_testcase {
     #[\Override]
     public function setUp(): void {

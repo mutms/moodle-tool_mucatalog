@@ -25,17 +25,18 @@ use core\router\util as router_util;
 use core\tests\router\route_testcase;
 use tool_mucatalog\route\controller\browse;
 use tool_mucatalog\local\util;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Catalogue browsing page endpoints test.
  *
- * @group       MuTMS
  * @package     tool_mucatalog
  * @copyright   2026 Petr Skoda
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- *
- * @covers \tool_mucatalog\route\controller\browse
  */
+#[CoversClass(\tool_mucatalog\route\controller\browse::class)]
+#[Group('MuTMS')]
 final class browse_test extends route_testcase {
     #[\Override]
     public function setUp(): void {

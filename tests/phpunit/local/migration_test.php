@@ -22,17 +22,18 @@ namespace tool_mucatalog\phpunit\local;
 
 use tool_mucatalog\local\migration;
 use tool_mucatalog\local\util;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Legacy catalogue migration API test.
  *
- * @group       MuTMS
  * @package     tool_mucatalog
  * @copyright   2026 Petr Skoda
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- *
- * @covers \tool_mucatalog\local\migration
  */
+#[CoversClass(\tool_mucatalog\local\migration::class)]
+#[Group('MuTMS')]
 final class migration_test extends \advanced_testcase {
     protected function setUp(): void {
         parent::setUp();

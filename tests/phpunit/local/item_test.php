@@ -21,17 +21,18 @@
 namespace tool_mucatalog\phpunit\local;
 
 use tool_mucatalog\local\item;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Catalogue item test.
  *
- * @group       MuTMS
  * @package     tool_mucatalog
  * @copyright   2026 Petr Skoda
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- *
- * @covers \tool_mucatalog\local\item
  */
+#[CoversClass(\tool_mucatalog\local\item::class)]
+#[Group('MuTMS')]
 final class item_test extends \advanced_testcase {
     protected function setUp(): void {
         parent::setUp();
