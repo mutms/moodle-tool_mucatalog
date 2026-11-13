@@ -58,7 +58,12 @@ $report = \core_reportbuilder\system_report_factory::create(
     \tool_mucatalog\reportbuilder\local\systemreports\sections::class,
     $context
 );
-echo $OUTPUT->render(new \tool_mulib\output\report_filter_bar($report));
+echo $OUTPUT->render(new \tool_mulib\output\report_filter_bar($report, pinned: [
+    'section:name' => null,
+    'section:currentcontextonly' => null,
+    'section:status' => null,
+]));
 echo $report->output();
+echo $OUTPUT->render(new \tool_mulib\output\report_pager($report));
 
 echo $OUTPUT->footer();
