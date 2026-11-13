@@ -22,7 +22,6 @@ namespace tool_mucatalog\reportbuilder\local\systemreports;
 use tool_mucatalog\reportbuilder\local\entities\section;
 use core_reportbuilder\system_report;
 use core_reportbuilder\local\report\filter;
-use core_reportbuilder\local\filters\boolean_select;
 use lang_string;
 use core\url;
 
@@ -108,12 +107,13 @@ final class sections extends system_report {
         $context = $this->get_context();
 
         $filter = new filter(
-            boolean_select::class,
+            \tool_mulib\reportbuilder\local\filters\boolean_yes::class,
             'currentcontextonly',
             new lang_string('currentcontextonly', 'tool_mucatalog'),
             $this->sectionentity->get_entity_name(),
             "CASE WHEN {$this->sectionalias}.contextid = {$context->id} THEN 1 ELSE 0 END"
         );
+        $filter->set_limited_operators(\tool_mulib\reportbuilder\local\filters\boolean_yes::OPERATORS);
         $this->add_filter($filter);
     }
 
