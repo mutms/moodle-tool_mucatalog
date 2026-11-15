@@ -95,34 +95,46 @@ final class item_move_sectionid_test extends \advanced_testcase {
             (int)$section2->id => $section2->name,
             (int)$section3->id => $section3->name,
         ];
-        $this->assertSame($expected, $source->search('', 50));
-        $this->assertNull($source->search('', 2));
+        $this->assertSame($expected, $source->search('', 50, []));
+        $this->assertNull($source->search('', 2, []));
 
-        $this->assertNull($source->label((string)$section0->id));
-        $this->assertSame($section1->name, $source->label((string)$section1->id));
-        $this->assertSame($section2->name, $source->label((string)$section2->id));
-        $this->assertSame($section3->name, $source->label((string)$section3->id));
-        $this->assertNull($source->label('0'));
-        $this->assertNull($source->label('-1'));
-        $this->assertNull($source->label('abc'));
-        $this->assertNull($source->label((string)($section3->id + 100)));
-        $this->assertNull($source->validate((string)$section1->id));
+        $value = (string)$section0->id;
+        $this->assertNull($source->labels([$value])[$value] ?? null);
+        $value = (string)$section1->id;
+        $this->assertSame($section1->name, $source->labels([$value])[$value] ?? null);
+        $value = (string)$section2->id;
+        $this->assertSame($section2->name, $source->labels([$value])[$value] ?? null);
+        $value = (string)$section3->id;
+        $this->assertSame($section3->name, $source->labels([$value])[$value] ?? null);
+        $this->assertNull($source->labels(['0'])['0'] ?? null);
+        $this->assertNull($source->labels(['-1'])['-1'] ?? null);
+        $this->assertNull($source->labels(['abc'])['abc'] ?? null);
+        $value = (string)($section3->id + 100);
+        $this->assertNull($source->labels([$value])[$value] ?? null);
+        $value = (string)$section1->id;
+        $this->assertNull($source->validate([$value])[$value] ?? null);
 
         $source = new item_move_sectionid((int)$item1->id);
-        $this->assertSame([(int)$section0->id => $section0->name], $source->search('fancy', 50));
-        $this->assertSame([(int)$section0->id => $section0->name], $source->search('small', 50));
-        $this->assertSame([], $source->search('xyz', 50));
-        $this->assertSame($section0->name, $source->label((string)$section0->id));
-        $this->assertNull($source->label((string)$section1->id));
+        $this->assertSame([(int)$section0->id => $section0->name], $source->search('fancy', 50, []));
+        $this->assertSame([(int)$section0->id => $section0->name], $source->search('small', 50, []));
+        $this->assertSame([], $source->search('xyz', 50, []));
+        $value = (string)$section0->id;
+        $this->assertSame($section0->name, $source->labels([$value])[$value] ?? null);
+        $value = (string)$section1->id;
+        $this->assertNull($source->labels([$value])[$value] ?? null);
 
         $this->setUser($user2);
 
         $source = new item_move_sectionid((int)$item2->id);
-        $this->assertSame([(int)$section3->id => $section3->name], $source->search('', 50));
-        $this->assertNull($source->label((string)$section0->id));
-        $this->assertNull($source->label((string)$section1->id));
-        $this->assertNull($source->label((string)$section2->id));
-        $this->assertSame($section3->name, $source->label((string)$section3->id));
+        $this->assertSame([(int)$section3->id => $section3->name], $source->search('', 50, []));
+        $value = (string)$section0->id;
+        $this->assertNull($source->labels([$value])[$value] ?? null);
+        $value = (string)$section1->id;
+        $this->assertNull($source->labels([$value])[$value] ?? null);
+        $value = (string)$section2->id;
+        $this->assertNull($source->labels([$value])[$value] ?? null);
+        $value = (string)$section3->id;
+        $this->assertSame($section3->name, $source->labels([$value])[$value] ?? null);
 
         try {
             new item_move_sectionid((int)$item1->id);
@@ -171,13 +183,17 @@ final class item_move_sectionid_test extends \advanced_testcase {
             (int)$section1->id => $section1->name,
             (int)$section2->id => $section2->name,
         ];
-        $this->assertSame($expected, $source->search('', 50));
-        $this->assertNull($source->validate((string)$section1->id));
-        $this->assertNull($source->validate((string)$section2->id));
+        $this->assertSame($expected, $source->search('', 50, []));
+        $value = (string)$section1->id;
+        $this->assertNull($source->validate([$value])[$value] ?? null);
+        $value = (string)$section2->id;
+        $this->assertNull($source->validate([$value])[$value] ?? null);
 
         $source = new item_move_sectionid((int)$item1->id);
-        $this->assertSame([(int)$section0->id => $section0->name], $source->search('', 50));
-        $this->assertNull($source->validate((string)$section0->id));
-        $this->assertSame('Error', $source->validate((string)$section2->id));
+        $this->assertSame([(int)$section0->id => $section0->name], $source->search('', 50, []));
+        $value = (string)$section0->id;
+        $this->assertNull($source->validate([$value])[$value] ?? null);
+        $value = (string)$section2->id;
+        $this->assertSame('Error', $source->validate([$value])[$value] ?? null);
     }
 }

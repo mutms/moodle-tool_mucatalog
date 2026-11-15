@@ -16,7 +16,7 @@
 
 // phpcs:disable moodle.Files.BoilerplateComment.CommentEndedTooSoon
 
-namespace tool_mucatalog\muform\autocompletemany;
+namespace tool_mucatalog\muform\autocomplete;
 
 use tool_mulib\local\search_util;
 use tool_mulib\local\context_map;
@@ -30,7 +30,7 @@ use tool_mulib\local\sql;
  * @copyright   2026 Petr Skoda
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-final class items_create_programids extends \tool_mulib\muform\autocompletemany\base {
+final class items_create_programids extends \tool_mulib\muform\autocomplete\base {
     /** @var string capability required in the program context */
     private const string CAPABILITY = 'tool/mucatalog:addprogram';
 

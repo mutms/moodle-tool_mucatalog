@@ -16,9 +16,9 @@
 
 // phpcs:disable moodle.Files.BoilerplateComment.CommentEndedTooSoon
 
-namespace tool_mucatalog\phpunit\muform\autocompletemany;
+namespace tool_mucatalog\phpunit\muform\autocomplete;
 
-use tool_mucatalog\muform\autocompletemany\collection_cohortvisible;
+use tool_mucatalog\muform\autocomplete\collection_cohortvisible;
 use tool_mulib\local\mulib;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
@@ -30,7 +30,7 @@ use PHPUnit\Framework\Attributes\Group;
  * @copyright  2026 Petr Skoda
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-#[CoversClass(\tool_mucatalog\muform\autocompletemany\collection_cohortvisible::class)]
+#[CoversClass(\tool_mucatalog\muform\autocomplete\collection_cohortvisible::class)]
 #[Group('MuTMS')]
 final class collection_cohortvisible_test extends \advanced_testcase {
     #[\Override]

@@ -16,29 +16,29 @@
 
 // phpcs:disable moodle.Files.BoilerplateComment.CommentEndedTooSoon
 
-namespace tool_mucatalog\phpunit\muform\autocompletemany;
+namespace tool_mucatalog\phpunit\muform\autocomplete;
 
-use tool_mucatalog\muform\autocompletemany\items_create_programids;
+use tool_mucatalog\muform\autocomplete\items_create_certificationids;
 use tool_mucatalog\local\util;
 use tool_mulib\local\mulib;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
 
 /**
- * Section programs autocomplete source test.
+ * Section certifications autocomplete source test.
  *
  * @package    tool_mucatalog
  * @copyright  2026 Petr Skoda
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-#[CoversClass(\tool_mucatalog\muform\autocompletemany\items_create_programids::class)]
+#[CoversClass(\tool_mucatalog\muform\autocomplete\items_create_certificationids::class)]
 #[Group('MuTMS')]
-final class items_create_programids_test extends \advanced_testcase {
+final class items_create_certificationids_test extends \advanced_testcase {
     #[\Override]
     public function setUp(): void {
         parent::setUp();
-        if (!mulib::is_muprog_available()) {
-            $this->markTestSkipped('tool_muprog is not available');
+        if (!mulib::is_mucertify_available()) {
+            $this->markTestSkipped('tool_mucertify is not available');
         }
         $this->resetAfterTest();
     }
@@ -47,8 +47,8 @@ final class items_create_programids_test extends \advanced_testcase {
         /** @var \tool_mucatalog_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('tool_mucatalog');
 
-        /** @var \tool_muprog_generator $programgenerator */
-        $programgenerator = $this->getDataGenerator()->get_plugin_generator('tool_muprog');
+        /** @var \tool_mucertify_generator $certificationgenerator */
+        $certificationgenerator = $this->getDataGenerator()->get_plugin_generator('tool_mucertify');
 
         $syscontext = \context_system::instance();
 
@@ -60,20 +60,20 @@ final class items_create_programids_test extends \advanced_testcase {
         $user1 = $this->getDataGenerator()->create_user();
         $user2 = $this->getDataGenerator()->create_user();
 
-        $program0 = $programgenerator->create_program([
+        $certification0 = $certificationgenerator->create_certification([
             'contextid' => $syscontext->id,
-            'fullname' => 'Program 1',
-            'idnumber' => 'PR1',
+            'fullname' => 'Certification 1',
+            'idnumber' => 'CT1',
         ]);
-        $program1 = $programgenerator->create_program([
+        $certification1 = $certificationgenerator->create_certification([
             'contextid' => $catcontext1->id,
-            'fullname' => 'Program 2',
-            'idnumber' => 'PR2',
+            'fullname' => 'Certification 2',
+            'idnumber' => 'CT2',
         ]);
-        $program2 = $programgenerator->create_program([
+        $certification2 = $certificationgenerator->create_certification([
             'contextid' => $catcontext2->id,
-            'fullname' => 'Program 3',
-            'idnumber' => 'PR3',
+            'fullname' => 'Certification 3',
+            'idnumber' => 'CT3',
         ]);
 
         $section0 = $generator->create_section(['contextid' => $syscontext->id]);
@@ -82,46 +82,46 @@ final class items_create_programids_test extends \advanced_testcase {
 
         $generator->create_item([
             'sectionid' => $section1->id,
-            'type' => 'program',
-            'referenceid' => $program1->id,
+            'type' => 'certification',
+            'referenceid' => $certification1->id,
         ]);
 
         $editorroleid = $this->getDataGenerator()->create_role();
         assign_capability('tool/mucatalog:manage', CAP_ALLOW, $editorroleid, $syscontext);
-        assign_capability('tool/mucatalog:addprogram', CAP_ALLOW, $editorroleid, $syscontext);
+        assign_capability('tool/mucatalog:addcertification', CAP_ALLOW, $editorroleid, $syscontext);
         role_assign($editorroleid, $user1->id, $syscontext->id);
         role_assign($editorroleid, $user2->id, $catcontext2->id);
 
-        $all = [(string)$program0->id, (string)$program1->id, (string)$program2->id];
+        $all = [(string)$certification0->id, (string)$certification1->id, (string)$certification2->id];
 
         $this->setUser($user1);
 
-        $source = new items_create_programids((int)$section0->id);
+        $source = new items_create_certificationids((int)$section0->id);
         $this->assertSame([(int)$section0->id], $source->get_args());
         $expected = [
-            (int)$program0->id => $program0->fullname,
-            (int)$program1->id => $program1->fullname,
-            (int)$program2->id => $program2->fullname,
+            (int)$certification0->id => $certification0->fullname,
+            (int)$certification1->id => $certification1->fullname,
+            (int)$certification2->id => $certification2->fullname,
         ];
         $this->assertSame($expected, $source->search('', 50, []));
         $this->assertNull($source->search('', 2, []));
         $this->assertSame(
-            [(int)$program0->id => $program0->fullname, (int)$program2->id => $program2->fullname],
-            $source->search('', 50, [(string)$program1->id])
+            [(int)$certification0->id => $certification0->fullname, (int)$certification2->id => $certification2->fullname],
+            $source->search('', 50, [(string)$certification1->id])
         );
-        $this->assertSame([(int)$program0->id => $program0->fullname], $source->search('ram 1', 50, []));
-        $this->assertSame([(int)$program0->id => $program0->fullname], $source->search('R1', 50, []));
+        $this->assertSame([(int)$certification0->id => $certification0->fullname], $source->search('ion 1', 50, []));
+        $this->assertSame([(int)$certification0->id => $certification0->fullname], $source->search('T1', 50, []));
         $this->assertSame($expected, $source->labels($all));
         $this->assertSame([], $source->validate($all));
 
         // Unknown and invalid values.
-        $this->assertSame([], $source->labels(['0', '-1', 'abc', '', (string)($program2->id + 100)]));
+        $this->assertSame([], $source->labels(['0', '-1', 'abc', '', (string)($certification2->id + 100)]));
 
-        // Programs already in the section are excluded.
-        $source = new items_create_programids((int)$section1->id);
+        // Certifications already in the section are excluded.
+        $source = new items_create_certificationids((int)$section1->id);
         $expected = [
-            (int)$program0->id => $program0->fullname,
-            (int)$program2->id => $program2->fullname,
+            (int)$certification0->id => $certification0->fullname,
+            (int)$certification2->id => $certification2->fullname,
         ];
         $this->assertSame($expected, $source->search('', 50, []));
         $this->assertSame($expected, $source->labels($all));
@@ -129,13 +129,13 @@ final class items_create_programids_test extends \advanced_testcase {
 
         $this->setUser($user2);
 
-        $source = new items_create_programids((int)$section2->id);
-        $this->assertSame([(int)$program2->id => $program2->fullname], $source->search('', 50, []));
-        $this->assertSame([(int)$program2->id => $program2->fullname], $source->labels($all));
+        $source = new items_create_certificationids((int)$section2->id);
+        $this->assertSame([(int)$certification2->id => $certification2->fullname], $source->search('', 50, []));
+        $this->assertSame([(int)$certification2->id => $certification2->fullname], $source->labels($all));
         $this->assertSame([], $source->validate($all));
 
         try {
-            new items_create_programids((int)$section1->id);
+            new items_create_certificationids((int)$section1->id);
             $this->fail('Exception expected');
         } catch (\moodle_exception $ex) {
             $this->assertInstanceOf(\required_capability_exception::class, $ex);
@@ -159,8 +159,8 @@ final class items_create_programids_test extends \advanced_testcase {
         /** @var \tool_mucatalog_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('tool_mucatalog');
 
-        /** @var \tool_muprog_generator $programgenerator */
-        $programgenerator = $this->getDataGenerator()->get_plugin_generator('tool_muprog');
+        /** @var \tool_mucertify_generator $certificationgenerator */
+        $certificationgenerator = $this->getDataGenerator()->get_plugin_generator('tool_mucertify');
 
         $syscontext = \context_system::instance();
         $tenant1 = $tenantgenerator->create_tenant();
@@ -168,64 +168,53 @@ final class items_create_programids_test extends \advanced_testcase {
         $tenant2 = $tenantgenerator->create_tenant();
         $tenant2catcontext = \context_coursecat::instance($tenant2->categoryid);
 
-        $program0 = $programgenerator->create_program(['fullname' => 'Program 1']);
-        $program1 = $programgenerator->create_program(
-            ['fullname' => 'Program 2', 'contextid' => $tenant1catcontext->id]
+        $certification0 = $certificationgenerator->create_certification(['fullname' => 'Certification 1']);
+        $certification1 = $certificationgenerator->create_certification(
+            ['fullname' => 'Certification 2', 'contextid' => $tenant1catcontext->id]
         );
-        $program2 = $programgenerator->create_program(
-            ['fullname' => 'Program 3', 'contextid' => $tenant2catcontext->id]
+        $certification2 = $certificationgenerator->create_certification(
+            ['fullname' => 'Certification 3', 'contextid' => $tenant2catcontext->id]
         );
-        $all = [(string)$program0->id, (string)$program1->id, (string)$program2->id];
+        $all = [(string)$certification0->id, (string)$certification1->id, (string)$certification2->id];
 
         $section0 = $generator->create_section(['contextid' => $syscontext->id]);
         $section1 = $generator->create_section(['contextid' => $tenant1catcontext->id]);
 
         $this->setAdminUser();
 
-        $source = new items_create_programids((int)$section0->id);
+        $source = new items_create_certificationids((int)$section0->id);
         $expected = [
-            (int)$program0->id => $program0->fullname,
-            (int)$program1->id => $program1->fullname,
-            (int)$program2->id => $program2->fullname,
+            (int)$certification0->id => $certification0->fullname,
+            (int)$certification1->id => $certification1->fullname,
+            (int)$certification2->id => $certification2->fullname,
         ];
         $this->assertSame($expected, $source->search('', 50, []));
         $this->assertSame([], $source->validate($all));
 
-        $source = new items_create_programids((int)$section1->id);
+        $source = new items_create_certificationids((int)$section1->id);
         $expected = [
-            (int)$program0->id => $program0->fullname,
-            (int)$program1->id => $program1->fullname,
+            (int)$certification0->id => $certification0->fullname,
+            (int)$certification1->id => $certification1->fullname,
         ];
         $this->assertSame($expected, $source->search('', 50, []));
-        $this->assertSame([(string)$program2->id => 'Error'], $source->validate($all));
+        $this->assertSame([(string)$certification2->id => 'Error'], $source->validate($all));
     }
 
-    public function test_search_archived_draft(): void {
+    public function test_search_archived(): void {
         /** @var \tool_mucatalog_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('tool_mucatalog');
-        /** @var \tool_muprog_generator $programgenerator */
-        $programgenerator = $this->getDataGenerator()->get_plugin_generator('tool_muprog');
+        /** @var \tool_mucertify_generator $certificationgenerator */
+        $certificationgenerator = $this->getDataGenerator()->get_plugin_generator('tool_mucertify');
 
-        $program1 = $programgenerator->create_program(['fullname' => 'Program 1']);
-        $program2 = $programgenerator->create_program(['fullname' => 'Program 2', 'archived' => 1]);
-        $program3 = $programgenerator->create_program(['fullname' => 'Program 3', 'draft' => 1]);
+        $certification1 = $certificationgenerator->create_certification(['fullname' => 'Certification 1']);
+        $certification2 = $certificationgenerator->create_certification(['fullname' => 'Certification 2', 'archived' => 1]);
         $section = $generator->create_section();
-        $all = [(string)$program1->id, (string)$program2->id, (string)$program3->id];
+        $all = [(string)$certification1->id, (string)$certification2->id];
 
         $this->setAdminUser();
 
-        $source = new items_create_programids((int)$section->id);
-        $this->assertSame([(string)$program1->id => 'Program 1'], $source->search('', 50, []));
-        $this->assertSame([(string)$program1->id => 'Program 1'], $source->labels($all));
-
-        \tool_muprog\local\program::restore($program2->id);
-        \tool_muprog\local\program::release($program3->id);
-        $expected = [
-            (string)$program1->id => 'Program 1',
-            (string)$program2->id => 'Program 2',
-            (string)$program3->id => 'Program 3',
-        ];
-        $this->assertSame($expected, $source->search('', 50, []));
-        $this->assertSame($expected, $source->labels($all));
+        $source = new items_create_certificationids((int)$section->id);
+        $this->assertSame([(string)$certification1->id => 'Certification 1'], $source->search('', 50, []));
+        $this->assertSame([(string)$certification1->id => 'Certification 1'], $source->labels($all));
     }
 }

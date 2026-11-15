@@ -20,7 +20,7 @@
 namespace tool_mucatalog\local\form;
 
 use tool_mucatalog\muform\autocomplete\collection_contextid;
-use tool_mucatalog\muform\autocompletemany\collection_cohortvisible;
+use tool_mucatalog\muform\autocomplete\collection_cohortvisible;
 use tool_mulib\local\mulib;
 use tool_mulib\muform\element\autocomplete;
 use tool_mulib\muform\element\autocompletemany;

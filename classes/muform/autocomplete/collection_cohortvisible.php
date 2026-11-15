@@ -16,7 +16,7 @@
 
 // phpcs:disable moodle.Files.BoilerplateComment.CommentEndedTooSoon
 
-namespace tool_mucatalog\muform\autocompletemany;
+namespace tool_mucatalog\muform\autocomplete;
 
 use tool_mulib\muform\util\autocomplete\cohort_trait;
 
@@ -27,7 +27,7 @@ use tool_mulib\muform\util\autocomplete\cohort_trait;
  * @copyright   2026 Petr Skoda
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-final class collection_cohortvisible extends \tool_mulib\muform\autocompletemany\base {
+final class collection_cohortvisible extends \tool_mulib\muform\autocomplete\base {
     use cohort_trait;
 
     /** @var \context collection context */

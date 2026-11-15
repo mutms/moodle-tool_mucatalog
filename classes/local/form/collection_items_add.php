@@ -19,7 +19,7 @@
 
 namespace tool_mucatalog\local\form;
 
-use tool_mucatalog\muform\autocompletemany\collection_items_add_itemids;
+use tool_mucatalog\muform\autocomplete\collection_items_add_itemids;
 use tool_mulib\muform\element\autocompletemany;
 use tool_mulib\muform\element\buttons;
 use tool_mulib\muform\element\cancel;

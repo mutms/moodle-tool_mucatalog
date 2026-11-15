@@ -16,7 +16,7 @@
 
 // phpcs:disable moodle.Files.BoilerplateComment.CommentEndedTooSoon
 
-namespace tool_mucatalog\muform\autocompletemany;
+namespace tool_mucatalog\muform\autocomplete;
 
 use tool_mulib\local\search_util;
 use tool_mulib\local\context_map;
@@ -24,15 +24,15 @@ use tool_mulib\local\mulib;
 use tool_mulib\local\sql;
 
 /**
- * Certifications that may be added to a catalogue section.
+ * Courses that may be added to a catalogue section.
  *
  * @package     tool_mucatalog
  * @copyright   2026 Petr Skoda
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-final class items_create_certificationids extends \tool_mulib\muform\autocompletemany\base {
-    /** @var string capability required in the certification context */
-    private const string CAPABILITY = 'tool/mucatalog:addcertification';
+final class items_create_courseids extends \tool_mulib\muform\autocomplete\base {
+    /** @var string capability required in the course context */
+    private const string CAPABILITY = 'tool/mucatalog:addcourse';
 
     /** @var \context section context */
     private \context $context;
@@ -65,24 +65,23 @@ final class items_create_certificationids extends \tool_mulib\muform\autocomplet
 
         $sql = (
             new sql(
-                "SELECT c.id, c.fullname, c.contextid
-                   FROM {tool_mucertify_certification} c
-                   JOIN {context} ctx ON ctx.id = c.contextid
+                "SELECT c.id, c.fullname
+                   FROM {course} c
+                   JOIN {context} ctx ON ctx.contextlevel = :courselevel AND ctx.instanceid = c.id
                    /* capjoin */
-              LEFT JOIN {tool_mucatalog_item} ci
-                        ON ci.sectionid = :sectionid AND ci.type = 'certification' AND ci.referenceid = c.id
-                  WHERE ci.id IS NULL AND c.archived = 0
+              LEFT JOIN {tool_mucatalog_item} ci ON ci.sectionid = :sectionid AND ci.type = 'course' AND ci.referenceid = c.id
+                  WHERE c.category <> 0 AND ci.id IS NULL
                         /* capwhere */ /* searchsql */ /* tenantwhere */ /* exclude */
-               GROUP BY c.id, c.fullname, c.contextid
+               GROUP BY c.id, c.fullname
                ORDER BY c.fullname ASC, c.id ASC",
-                ['sectionid' => $this->sectionid]
+                ['courselevel' => CONTEXT_COURSE, 'sectionid' => $this->sectionid]
             )
         )
             ->replace_comment('capjoin', $capjoin['join'])
             ->replace_comment('capwhere', $capjoin['where']->wrap("AND ", ""))
             ->replace_comment(
                 'searchsql',
-                search_util::get_search_query(trim($query), ['fullname', 'idnumber'], 'c')->wrap("AND ", "")
+                search_util::get_search_query(trim($query), ['fullname', 'shortname', 'idnumber'], 'c')->wrap("AND ", "")
             );
 
         if (mulib::is_mutenancy_active() && $this->context->tenantid) {
@@ -98,15 +97,14 @@ final class items_create_certificationids extends \tool_mulib\muform\autocomplet
             $sql = $sql->replace_comment('exclude', new sql("AND c.id $notin", $params));
         }
 
-        $certifications = $DB->get_records_sql($sql->sql, $sql->params, 0, $maxitems + 1);
-        if (count($certifications) > $maxitems) {
+        $courses = $DB->get_records_sql($sql->sql, $sql->params, 0, $maxitems + 1);
+        if (count($courses) > $maxitems) {
             return null;
         }
         $result = [];
-        foreach ($certifications as $certification) {
-            $certificationcontext = \context::instance_by_id($certification->contextid);
-            $fullname = format_string($certification->fullname, true, ['context' => $certificationcontext]);
-            $result[(string)$certification->id] = clean_text($fullname);
+        foreach ($courses as $course) {
+            $coursecontext = \context_course::instance($course->id);
+            $result[(string)$course->id] = clean_text(format_string($course->fullname, true, ['context' => $coursecontext]));
         }
         return $result;
     }
@@ -116,21 +114,17 @@ final class items_create_certificationids extends \tool_mulib\muform\autocomplet
         global $DB;
 
         $result = [];
-        foreach ($this->get_certifications($values) as $id => $certification) {
-            if ($certification->archived) {
-                continue;
-            }
-            // Adding one certification repeatedly to one section would be confusing.
-            $params = ['sectionid' => $this->sectionid, 'type' => 'certification', 'referenceid' => $certification->id];
+        foreach ($this->get_courses($values) as $id => $course) {
+            // Adding one course repeatedly to one section would be confusing.
+            $params = ['sectionid' => $this->sectionid, 'type' => 'course', 'referenceid' => $course->id];
             if ($DB->record_exists('tool_mucatalog_item', $params)) {
                 continue;
             }
-            $certificationcontext = \context::instance_by_id($certification->contextid);
-            if (!has_capability(self::CAPABILITY, $certificationcontext)) {
+            $coursecontext = \context_course::instance($course->id);
+            if (!has_capability(self::CAPABILITY, $coursecontext)) {
                 continue;
             }
-            $fullname = format_string($certification->fullname, true, ['context' => $certificationcontext]);
-            $result[$id] = clean_text($fullname);
+            $result[$id] = clean_text(format_string($course->fullname, true, ['context' => $coursecontext]));
         }
         return $result;
     }
@@ -141,9 +135,9 @@ final class items_create_certificationids extends \tool_mulib\muform\autocomplet
         if (!mulib::is_mutenancy_active() || !$this->context->tenantid) {
             return $result;
         }
-        foreach ($this->get_certifications($values) as $id => $certification) {
-            $certificationcontext = \context::instance_by_id($certification->contextid);
-            if ($certificationcontext->tenantid && $certificationcontext->tenantid != $this->context->tenantid) {
+        foreach ($this->get_courses($values) as $id => $course) {
+            $coursecontext = \context_course::instance($course->id);
+            if ($coursecontext->tenantid && $coursecontext->tenantid != $this->context->tenantid) {
                 $result[$id] = get_string('error');
             }
         }
@@ -151,22 +145,23 @@ final class items_create_certificationids extends \tool_mulib\muform\autocomplet
     }
 
     /**
-     * Fetch certifications.
+     * Fetch courses in categories.
      *
      * @param string[] $ids
      * @return \stdClass[] indexed by string id
      */
-    private function get_certifications(array $ids): array {
+    private function get_courses(array $ids): array {
         global $DB;
         $ids = array_values(array_filter($ids, fn($id) => is_string($id) && preg_match('/^[1-9][0-9]*$/D', $id)));
         if (!$ids) {
             return [];
         }
         $result = [];
-        $fields = 'id, contextid, fullname, archived';
-        $certifications = $DB->get_records_list('tool_mucertify_certification', 'id', $ids, 'id ASC', $fields);
-        foreach ($certifications as $certification) {
-            $result[(string)$certification->id] = $certification;
+        foreach ($DB->get_records_list('course', 'id', $ids, 'id ASC', 'id, category, fullname') as $course) {
+            if (!$course->category) {
+                continue;
+            }
+            $result[(string)$course->id] = $course;
         }
         return $result;
     }

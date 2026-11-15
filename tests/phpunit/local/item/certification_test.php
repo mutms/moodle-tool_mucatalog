@@ -68,7 +68,7 @@ final class certification_test extends \advanced_testcase {
 
     public function test_get_create_form_referenceids_class(): void {
         $this->assertSame(
-            \tool_mucatalog\muform\autocompletemany\items_create_certificationids::class,
+            \tool_mucatalog\muform\autocomplete\items_create_certificationids::class,
             certification::get_create_form_referenceids_class()
         );
     }

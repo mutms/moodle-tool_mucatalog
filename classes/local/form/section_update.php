@@ -20,7 +20,7 @@
 namespace tool_mucatalog\local\form;
 
 use tool_mucatalog\local\util;
-use tool_mucatalog\muform\autocompletemany\section_cohortvisible;
+use tool_mucatalog\muform\autocomplete\section_cohortvisible;
 use tool_mulib\local\mulib;
 use tool_mulib\muform\element\autocompletemany;
 use tool_mulib\muform\element\buttons;

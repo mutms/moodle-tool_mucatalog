@@ -142,11 +142,11 @@ abstract class item {
     /**
      * Return item creation form referenceids autocomplete source class name.
      *
-     * @return class-string<\tool_mulib\muform\autocompletemany\base>
+     * @return class-string<\tool_mulib\muform\autocomplete\base>
      */
     public static function get_create_form_referenceids_class(): string {
         $type = static::get_type();
-        return "tool_mucatalog\\muform\\autocompletemany\\items_create_{$type}ids";
+        return "tool_mucatalog\\muform\\autocomplete\\items_create_{$type}ids";
     }
 
     /**

@@ -69,7 +69,7 @@ final class reference_add_sectionid extends \tool_mulib\muform\autocomplete\base
     }
 
     #[\Override]
-    public function search(string $query, int $maxitems): ?array {
+    public function search(string $query, int $maxitems, array $exclude): ?array {
         global $DB, $USER;
 
         $capjoin = context_map::get_contexts_by_capability_join(self::CAPABILITY, $USER->id, 'ctx');
@@ -115,7 +115,7 @@ final class reference_add_sectionid extends \tool_mulib\muform\autocomplete\base
     }
 
     #[\Override]
-    public function label(string $value): ?string {
+    protected function label_value(string $value): ?string {
         global $DB;
 
         $section = $this->get_section($value);
@@ -134,7 +134,7 @@ final class reference_add_sectionid extends \tool_mulib\muform\autocomplete\base
     }
 
     #[\Override]
-    public function validate(string $value): ?string {
+    protected function validate_value(string $value): ?string {
         if (!mulib::is_mutenancy_active() || !$this->context->tenantid) {
             return null;
         }
