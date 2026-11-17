@@ -16,27 +16,50 @@
 
 // phpcs:disable moodle.Files.BoilerplateComment.CommentEndedTooSoon
 
-namespace tool_mucatalog\phpunit\muform\autocomplete;
+namespace tool_mucatalog\phpunit\muform\cohortpicker;
 
-use tool_mucatalog\muform\autocomplete\collection_cohortvisible;
+use tool_mucatalog\muform\cohortpicker\collection_cohortvisible;
 use tool_mulib\local\mulib;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
 
 /**
- * Collection visibility cohorts autocomplete source test.
+ * Collection visibility cohorts picker source test.
  *
  * @package    tool_mucatalog
  * @copyright  2026 Petr Skoda
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-#[CoversClass(\tool_mucatalog\muform\autocomplete\collection_cohortvisible::class)]
+#[CoversClass(\tool_mucatalog\muform\cohortpicker\collection_cohortvisible::class)]
 #[Group('MuTMS')]
 final class collection_cohortvisible_test extends \advanced_testcase {
     #[\Override]
     public function setUp(): void {
         parent::setUp();
         $this->resetAfterTest();
+    }
+
+    /**
+     * Cohorts offered by the source.
+     *
+     * @param \tool_mulib\muform\cohortpicker\base $source
+     * @param string $query
+     * @param string[] $exclude
+     * @return string[] cohort names indexed with cohort ids, in the order of names
+     */
+    private function search(\tool_mulib\muform\cohortpicker\base $source, string $query, array $exclude = []): array {
+        return array_column($source->search($query, $exclude)['cohorts'], 'name', 'id');
+    }
+
+    /**
+     * Values the source does not accept.
+     *
+     * @param \tool_mulib\muform\cohortpicker\base $source
+     * @param string[] $values
+     * @return string[]
+     */
+    private function refused(\tool_mulib\muform\cohortpicker\base $source, array $values): array {
+        return array_values(array_diff($values, array_map('strval', array_keys($source->labels($values)))));
     }
 
     public function test_search(): void {
@@ -84,20 +107,19 @@ final class collection_cohortvisible_test extends \advanced_testcase {
         // New collection.
         $source = new collection_cohortvisible(0, (int)$syscontext->id);
         $this->assertSame([0, (int)$syscontext->id], $source->get_args());
-        $this->assertSame($all, $source->search('', 50, []));
+        $this->assertSame($all, $this->search($source, ''));
         $source = new collection_cohortvisible(0, (int)$catcontext1->id);
-        $this->assertSame($all, $source->search('', 50, []));
+        $this->assertSame($all, $this->search($source, ''));
 
         // Existing collection.
         $source = new collection_cohortvisible((int)$collection1->id, 0);
         $this->assertSame([(int)$collection1->id, 0], $source->get_args());
-        $this->assertSame($all, $source->search('', 50, []));
-        $this->assertSame([(int)$cohort1->id => $cohort1->name], $source->search('ta 1', 50, []));
+        $this->assertSame($all, $this->search($source, ''));
+        $this->assertSame([(int)$cohort1->id => $cohort1->name], $this->search($source, 'ta 1'));
         $this->assertSame(
             [(int)$cohort1->id => $cohort1->name, (int)$cohort3->id => $cohort3->name],
-            $source->search('', 50, [(string)$cohort2->id])
+            $this->search($source, '', [(string)$cohort2->id])
         );
-        $this->assertNull($source->search('', 2, []));
 
         $this->setUser($user2);
 
@@ -106,7 +128,7 @@ final class collection_cohortvisible_test extends \advanced_testcase {
             (int)$cohort2->id => $cohort2->name,
             (int)$cohort3->id => $cohort3->name,
         ];
-        $this->assertSame($expected, $source->search('', 50, []));
+        $this->assertSame($expected, $this->search($source, ''));
 
         try {
             new collection_cohortvisible((int)$collection1->id, 0);
@@ -124,9 +146,9 @@ final class collection_cohortvisible_test extends \advanced_testcase {
         $this->setUser($user3);
 
         $source = new collection_cohortvisible((int)$collection2->id, 0);
-        $this->assertSame([(int)$cohort3->id => $cohort3->name], $source->search('', 50, []));
+        $this->assertSame([(int)$cohort3->id => $cohort3->name], $this->search($source, ''));
         $source = new collection_cohortvisible(0, (int)$catcontext1->id);
-        $this->assertSame([(int)$cohort3->id => $cohort3->name], $source->search('', 50, []));
+        $this->assertSame([(int)$cohort3->id => $cohort3->name], $this->search($source, ''));
     }
 
     public function test_search_tenant(): void {
@@ -177,10 +199,10 @@ final class collection_cohortvisible_test extends \advanced_testcase {
             (int)$tenantcohort2->id => $tenantcohort2->name,
         ];
         $source = new collection_cohortvisible(0, (int)$syscontext->id);
-        $this->assertSame($expected, $source->search('', 50, []));
+        $this->assertSame($expected, $this->search($source, ''));
         $source = new collection_cohortvisible((int)$collection0->id, 0);
-        $this->assertSame($expected, $source->search('', 50, []));
-        $this->assertSame([], $source->validate([(string)$cohort2->id]));
+        $this->assertSame($expected, $this->search($source, ''));
+        $this->assertSame([], $this->refused($source, [(string)$cohort2->id]));
 
         $expected = [
             (int)$cohort0->id => $cohort0->name,
@@ -189,18 +211,18 @@ final class collection_cohortvisible_test extends \advanced_testcase {
             (int)$tenantcohort2->id => $tenantcohort2->name,
         ];
         $source = new collection_cohortvisible(0, (int)$tenant1catcontext->id);
-        $this->assertSame($expected, $source->search('', 50, []));
+        $this->assertSame($expected, $this->search($source, ''));
         $source = new collection_cohortvisible((int)$collection1->id, 0);
-        $this->assertSame($expected, $source->search('', 50, []));
+        $this->assertSame($expected, $this->search($source, ''));
 
         // Cohorts of other tenants are not allowed.
         $this->assertSame([], $source->labels([(string)$cohort2->id]));
-        $this->assertSame([(string)$cohort2->id => 'Error'], $source->validate([(string)$cohort2->id]));
+        $this->assertSame([(string)$cohort2->id], $this->refused($source, [(string)$cohort2->id]));
         $this->assertSame([(int)$cohort1->id => $cohort1->name], $source->labels([(string)$cohort1->id]));
-        $this->assertSame([], $source->validate([(string)$cohort1->id]));
+        $this->assertSame([], $this->refused($source, [(string)$cohort1->id]));
     }
 
-    public function test_labels_validate(): void {
+    public function test_labels(): void {
         /** @var \tool_mucatalog_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('tool_mucatalog');
 
@@ -257,15 +279,15 @@ final class collection_cohortvisible_test extends \advanced_testcase {
         ];
         foreach ($sources as $source) {
             $this->assertSame($alllabels, $source->labels($all));
-            $this->assertSame([], $source->validate($all));
+            $this->assertSame([], $this->refused($source, $all));
         }
 
         // Unknown and invalid values.
         $source = new collection_cohortvisible((int)$collection2->id, 0);
         $this->assertSame([], $source->labels(['0', '-1', 'abc', '', (string)($cohort3->id + 100)]));
         $this->assertSame(
-            [(string)($cohort3->id + 100) => 'Error'],
-            $source->validate([(string)($cohort3->id + 100)])
+            [(string)($cohort3->id + 100)],
+            $this->refused($source, [(string)($cohort3->id + 100)])
         );
 
         $this->setUser($user2);
@@ -277,38 +299,38 @@ final class collection_cohortvisible_test extends \advanced_testcase {
         ];
         foreach ($sources as $source) {
             $this->assertSame($expected, $source->labels($all));
-            $this->assertSame([(string)$cohort1->id => 'Error'], $source->validate($all));
+            $this->assertSame([(string)$cohort1->id], $this->refused($source, $all));
         }
         $source = new collection_cohortvisible((int)$collection2->id, 0);
         $this->assertSame($expected, $source->labels($all));
-        $this->assertSame([(string)$cohort1->id => 'Error'], $source->validate($all));
+        $this->assertSame([(string)$cohort1->id], $this->refused($source, $all));
 
         // Cohorts already used by the collection are always allowed.
         $source = new collection_cohortvisible((int)$collection1->id, 0);
         $this->assertSame($alllabels, $source->labels($all));
-        $this->assertSame([], $source->validate($all));
+        $this->assertSame([], $this->refused($source, $all));
 
         $this->setUser($user3);
 
         $expected = [(int)$cohort3->id => $cohort3->name];
-        $errors = [(string)$cohort1->id => 'Error', (string)$cohort2->id => 'Error'];
+        $errors = [(string)$cohort1->id, (string)$cohort2->id];
         $sources = [
             new collection_cohortvisible(0, (int)$syscontext->id),
             new collection_cohortvisible(0, (int)$catcontext1->id),
         ];
         foreach ($sources as $source) {
             $this->assertSame($expected, $source->labels($all));
-            $this->assertSame($errors, $source->validate($all));
+            $this->assertSame($errors, $this->refused($source, $all));
         }
         $source = new collection_cohortvisible((int)$collection2->id, 0);
         $this->assertSame($expected, $source->labels($all));
-        $this->assertSame($errors, $source->validate($all));
+        $this->assertSame($errors, $this->refused($source, $all));
 
         $source = new collection_cohortvisible((int)$collection1->id, 0);
         $this->assertSame(
             [(int)$cohort1->id => $cohort1->name, (int)$cohort3->id => $cohort3->name],
             $source->labels($all)
         );
-        $this->assertSame([(string)$cohort2->id => 'Error'], $source->validate($all));
+        $this->assertSame([(string)$cohort2->id], $this->refused($source, $all));
     }
 }

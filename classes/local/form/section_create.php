@@ -21,10 +21,10 @@ namespace tool_mucatalog\local\form;
 
 use tool_mucatalog\local\util;
 use tool_mucatalog\muform\autocomplete\section_contextid;
-use tool_mucatalog\muform\autocomplete\section_cohortvisible;
+use tool_mucatalog\muform\cohortpicker\section_cohortvisible;
 use tool_mulib\local\mulib;
 use tool_mulib\muform\element\autocomplete;
-use tool_mulib\muform\element\autocompletemany;
+use tool_mulib\muform\element\cohortpickermany;
 use tool_mulib\muform\element\buttons;
 use tool_mulib\muform\element\cancel;
 use tool_mulib\muform\element\checkbox;
@@ -73,7 +73,7 @@ final class section_create extends form {
         $this->add(new checkbox('uservisible', get_string('uservisible', 'tool_mucatalog')));
 
         $source = new section_cohortvisible(0, (int)$context->id);
-        $this->add(new autocompletemany('cohortvisible', get_string('cohortvisible', 'tool_mucatalog'), $source));
+        $this->add(new cohortpickermany('cohortvisible', get_string('cohortvisible', 'tool_mucatalog'), $source));
         $this->get_display_manager()->hide_if('cohortvisible', 'uservisible', 'checked');
 
         if (mulib::is_mutenancy_active() && !$context->tenantid) {
@@ -100,10 +100,10 @@ final class section_create extends form {
             $allerrors['frontpagepriority'][] = get_string('error');
         }
 
-        // Cohorts must fit the selected category, the autocomplete source validated them for the current category only.
+        // Cohorts must fit the selected category, the picker source validated them for the current category only.
         if (!empty($data['cohortvisible']) && empty($allerrors['contextid']) && $data['contextid'] != $context->id) {
             $source = new section_cohortvisible(0, (int)$data['contextid']);
-            if ($source->validate($data['cohortvisible'])) {
+            if (!$source->are_allowed($data['cohortvisible'])) {
                 $allerrors['cohortvisible'][] = get_string('error');
             }
         }

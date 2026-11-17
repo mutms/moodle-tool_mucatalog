@@ -16,9 +16,9 @@
 
 // phpcs:disable moodle.Files.BoilerplateComment.CommentEndedTooSoon
 
-namespace tool_mucatalog\muform\autocomplete;
+namespace tool_mucatalog\muform\cohortpicker;
 
-use tool_mulib\muform\util\autocomplete\cohort_trait;
+use core\context;
 
 /**
  * Cohorts that may see a section.
@@ -27,17 +27,15 @@ use tool_mulib\muform\util\autocomplete\cohort_trait;
  * @copyright   2026 Petr Skoda
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-final class section_cohortvisible extends \tool_mulib\muform\autocomplete\base {
-    use cohort_trait;
-
-    /** @var \context section context */
-    private \context $context;
+final class section_cohortvisible extends \tool_mulib\muform\cohortpicker\base {
+    /** @var context section context */
+    private context $context;
 
     /**
      * Constructor.
      *
      * @param int $sectionid existing section, 0 for a new one
-     * @param int $contextid context of a new section, ignored for existing sections
+     * @param int $contextid context of a new section, ignored for existing ones
      */
     public function __construct(
         /** @var int section id */
@@ -48,9 +46,9 @@ final class section_cohortvisible extends \tool_mulib\muform\autocomplete\base {
         global $DB;
         if ($sectionid) {
             $section = $DB->get_record('tool_mucatalog_section', ['id' => $sectionid], '*', MUST_EXIST);
-            $this->context = \context::instance_by_id($section->contextid);
+            $this->context = context::instance_by_id($section->contextid);
         } else {
-            $this->context = \context::instance_by_id($contextid);
+            $this->context = context::instance_by_id($contextid);
         }
         require_capability('tool/mucatalog:manage', $this->context);
     }
@@ -61,32 +59,22 @@ final class section_cohortvisible extends \tool_mulib\muform\autocomplete\base {
     }
 
     #[\Override]
-    public function search(string $query, int $maxitems, array $exclude): ?array {
-        return $this->search_cohorts($this->context, $query, $maxitems, $exclude);
-    }
-
-    #[\Override]
-    public function labels(array $values): array {
-        return $this->cohort_labels($this->context, $values, $this->get_current());
-    }
-
-    #[\Override]
-    public function validate(array $values): array {
-        return $this->validate_cohorts($this->context, $values, $this->get_current());
+    protected function get_context(): context {
+        return $this->context;
     }
 
     /**
-     * Cohorts already used.
+     * Cohorts already used stay valid.
      *
      * @return int[]
      */
-    private function get_current(): array {
+    #[\Override]
+    protected function get_current_cohortids(): array {
         global $DB;
         if (!$this->sectionid) {
             return [];
         }
-        $params = ['sectionid' => $this->sectionid];
-        $cohortids = $DB->get_fieldset('tool_mucatalog_section_cohortvisible', 'cohortid', $params);
+        $cohortids = $DB->get_fieldset('tool_mucatalog_section_cohortvisible', 'cohortid', ['sectionid' => $this->sectionid]);
         return array_map('intval', $cohortids);
     }
 }

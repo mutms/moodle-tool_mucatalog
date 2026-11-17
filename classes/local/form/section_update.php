@@ -20,9 +20,9 @@
 namespace tool_mucatalog\local\form;
 
 use tool_mucatalog\local\util;
-use tool_mucatalog\muform\autocomplete\section_cohortvisible;
+use tool_mucatalog\muform\cohortpicker\section_cohortvisible;
 use tool_mulib\local\mulib;
-use tool_mulib\muform\element\autocompletemany;
+use tool_mulib\muform\element\cohortpickermany;
 use tool_mulib\muform\element\buttons;
 use tool_mulib\muform\element\cancel;
 use tool_mulib\muform\element\checkbox;
@@ -67,7 +67,7 @@ final class section_update extends form {
         $this->add(new checkbox('uservisible', get_string('uservisible', 'tool_mucatalog')));
 
         $source = new section_cohortvisible((int)$this->get_current_data()['id'], 0);
-        $this->add(new autocompletemany('cohortvisible', get_string('cohortvisible', 'tool_mucatalog'), $source));
+        $this->add(new cohortpickermany('cohortvisible', get_string('cohortvisible', 'tool_mucatalog'), $source));
         $this->get_display_manager()->hide_if('cohortvisible', 'uservisible', 'checked');
 
         if (mulib::is_mutenancy_active() && !$context->tenantid) {
