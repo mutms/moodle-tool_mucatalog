@@ -92,10 +92,7 @@ jobs:
         run: |
           moodle-plugin-ci add-plugin --branch $MOODLE_BRANCH mutms/moodle-tool_mulib
           moodle-plugin-ci add-plugin --branch $MOODLE_BRANCH mutms/moodle-enrol_muprog
-          moodle-plugin-ci add-plugin --branch $MOODLE_BRANCH mutms/moodle-block_muprog_my
-          moodle-plugin-ci add-plugin --branch $MOODLE_BRANCH mutms/moodle-block_muprogmyoverview
           moodle-plugin-ci add-plugin --branch $MOODLE_BRANCH mutms/moodle-tool_muprog
-          moodle-plugin-ci add-plugin --branch $MOODLE_BRANCH mutms/moodle-block_mucertify_my
           moodle-plugin-ci install --plugin ./plugin --db-host=127.0.0.1
         env:
           DB: ${{ matrix.db }}
