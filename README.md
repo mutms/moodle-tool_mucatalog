@@ -10,8 +10,7 @@ Provides a single browsable catalogue combining courses, Programs, and
 Certifications. Access is controlled by visibility flags and cohort membership, with full
 compatibility with MuTMS multi-tenancy — each tenant may have their own catalogue content.
 
-> **Preview release** — this plugin is not yet registered in the Moodle plugins database.
-> The API and features will change before the stable release.
+> **Preview release** — the API and features will change before the stable release.
 
 ## Features
 
