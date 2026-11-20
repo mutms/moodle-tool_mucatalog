@@ -16,7 +16,8 @@ compatibility with MuTMS multi-tenancy — each tenant may have their own catalo
 
 * Unified catalogue of courses, programs, and certifications in one place
 * Access control based on visibility flags and cohort membership
-* Multi-tenancy aware
+* Multi-tenancy aware, a section visible to guests can be seen by any anonymous visitor
+  who opens the login page of its tenant
 
 ## Requirements
 
